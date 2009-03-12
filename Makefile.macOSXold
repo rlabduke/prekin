@@ -1,0 +1,91 @@
+# prekin 
+# GUI uses Motif or Lesstif 
+# ftp://ftp.lesstif.org/pub/hungry/lesstif/bindist/lesstif-0.91.4-1.i386.rpm
+# ftp://ftp.lesstif.org/pub/hungry/lesstif/bindist/lesstif-devel-0.91.4-1.i386.rpm
+
+ifeq ($(MAKECMDGOALS),debug)
+CFLAGS = -g -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
+else
+CFLAGS = -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
+endif
+ 
+# for Mac OSX try:
+# LIBS = -L/sw/lib -L/usr/X11R6/lib -lXm -lXt -lX11 -lSM -lICE
+# LIBS = -L/usr/local/lib -lXm -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
+LIBS = -L/Applications/Mage.app/Contents/lib -L/usr/X11R6/lib -lXm -lXt -lX11 -lSM -lICE
+
+ifeq ($(MAKECMDGOALS),nogui)
+CFLAGS = -D NOGUI -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
+LIBS = -L/Applications/Mage.app/Contents/lib -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
+endif
+ifeq ($(MAKECMDGOALS),debugnogui)
+CFLAGS = -g -D NOGUI -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
+LIBS = -L/Applications/Mage.app/Contents/lib -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
+endif
+
+# ------------------------------------------------------------------------
+# Variables specific to clients created by this Makefile
+PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h
+
+SRCS = PKINANGL.c PKINCRTL.c PKINCSBS.c PKINCSUB.c PKINCOUT.c PKINMENU.c PKINROTL.c PKINDLOG.c PKINFILE.c PKINHBND.c PKININPT.c PKININIT.c PKINRIBN.c PKINRIBB.c PKINRNGE.c PKINRSUB.c PKINSCRT.c PKINSPOS.c PKINUTIL.c PUXMFILE.c PUXMMAIN.c PUXMINIT.c PUXMDLOG.c PUXMMENU.c PUXMOUTP.c PUXMTEXT.c PUXMOSX.c 
+OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o PKINMENU.o PKINROTL.o PKINDLOG.o PKINFILE.o PKINHBND.o PKININPT.o PKININIT.o PKINRIBN.o PKINRIBB.o PKINRNGE.o PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o PUXMTEXT.o PUXMOSX.c
+
+
+# macOSX libXp.6.dylib(AuRead.o) & libX11.dylib(AuRead.o) define _XauReadAuth
+# loader warning, suggests using -bind_at_load, so maybe this would help?
+FIN =  -lm  -bind_at_load
+
+# ------------------------------------------------------------------------
+# Commands specific to clients created by this Makefile 
+
+prekin: $(OBJS)
+	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+#	cc -static -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+debug: $(OBJS)
+	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+static: $(OBJS)
+#	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+#	cc -static -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+dynamic: $(OBJS)
+#	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+#	cc -static -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+nogui: $(OBJS)
+	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+debugnogui: $(OBJS)
+	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+
+clean:
+	rm -f *.o
+# ------------------------------------------------------------------------
+# Dependencies  (presume .o<-.c by standard cc compiler)
+# ?? gnu doesn't seem to make the .o<-.c connection automatically 
+
+PKINANGL.o: $(PKINHEADERS) 
+PKINCRTL.o: $(PKINHEADERS) 
+PKINCSBS.o: $(PKINHEADERS) 
+PKINCSUB.o: $(PKINHEADERS) 
+PKINCOUT.o: $(PKINHEADERS) 
+PKINMENU.o: $(PKINHEADERS) 
+PKINROTL.o: $(PKINHEADERS) 
+PKINDLOG.o: $(PKINHEADERS) 
+PKINFILE.o: $(PKINHEADERS) 
+PKINHBND.o: $(PKINHEADERS) 
+PKININPT.o: $(PKINHEADERS) 
+PKININIT.o: $(PKINHEADERS) 
+PKINRIBN.o: $(PKINHEADERS) 
+PKINRIBB.o: $(PKINHEADERS) 
+PKINRNGE.o: $(PKINHEADERS) 
+PKINRSUB.o: $(PKINHEADERS) 
+PKINSCRT.o: $(PKINHEADERS)
+PKINSPOS.o: $(PKINHEADERS) 
+PKINUTIL.o: $(PKINHEADERS) 
+PUXMFILE.o: $(PKINHEADERS) 
+PUXMMAIN.o: $(PKINHEADERS) 
+PUXMINIT.o: $(PKINHEADERS) 
+PUXMDLOG.o: $(PKINHEADERS) 
+PUXMMENU.o: $(PKINHEADERS) 
+PUXMOUTP.o: $(PKINHEADERS) 
+PUXMTEXT.o: $(PKINHEADERS)
+PUXMOSX.o:  $(PKINHEADERS)
+
+
