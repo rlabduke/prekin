@@ -2249,6 +2249,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
    long   iexist;
    char   header[256];
    char   keyword[32],colorword[32],masterword[36]; /*990126 mod 991122*/
+   char   zbufferword[32]; /*rear,fore: thick black edge behind worm 090704*/
    char   xth = ' '; /*991128*/
    /*int    npoints=0;*/ /*011202in 030125out see SIZEofLISTs*/
    char   sizestr[32]; /*011202*/
@@ -2428,9 +2429,11 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                /*on list use:  color= {name}  instead of  color= color  */
               /*ribbonlist interruption, needs new header== @ribbonlist line*/
               LOK = 1;/*presume this point belongs in this list*/
-              if(     (temps[3]=='e')  /*edge, or protein coil*/
-                    ||(temps[3]=='c')  /*nucleic coil*/
-                    ||(temps[3]==' ')  /*old default*/
+              zbufferword[0] = '\0'; /*clear special use header entry 090704*/
+              if(  (temps[3]=='c')  /*single strand worm, nucleic coil,...*/
+                 ||(temps[3]=='e')  /*black rearground for single strand worm*/
+                 ||(temps[3]==' ')  /*old default*/
+                /*coil edge is now rbce 090704*/
                 )                    
               {
                  sprintf(keyword,"@vectorlist ");
@@ -2501,6 +2504,11 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                       if(Lribbonmasters) /*051128*/
                            {sprintf(masterword," master= {coil}");}
                       else {masterword[0] = '\0';}
+                      if(temps[3]=='e') /*thick black in rear for edge 090704*/
+                      {sprintf(zbufferword,"rear");}
+                      else if(temps[3]=='c') /*fore colored worm 090704*/
+                      {sprintf(zbufferword,"fore");}
+
                    }
                    else
                    {
@@ -2549,8 +2557,9 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
               {/*finish defining ribbon interruption*/
 
                  sprintf(header
-                   ,"%s {%s} color= %s %s nobutton%s\n"
-                   ,keyword,aname,colorword,extra,masterword);                 
+                   ,"%s {%s} color= %s %s %s nobutton%s\n"
+                   ,keyword,aname,colorword,zbufferword    /*090704*/
+                   ,extra,masterword);
 
                  iexist = 0; /*set for new header to be inserted*/
                  /*using this point, so reset last: */
