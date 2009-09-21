@@ -1708,6 +1708,7 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
       /*{{{------  cycle, or at last residue, make ultimate dummy guidepoint */
       if(theribresptr == theribfragptr->lastribresptr) 
       {/*at the last ribresptr*/  
+
           /*alloc a final dummy residue to extend the spline*/
           theribresptr = allocribresstructure(theribfragptr);
           if(theribresptr != NULL )
@@ -1719,12 +1720,6 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
             nm1resptr = nthresptr; /*the last residue: guide not defined yet */
             nthresptr = theribresptr; /*which is now a C (3prime) end dummy*/
             
-/*090223 if total of actual residues is less than 4, no info to tweak guides*/
-/*so just skip this and hope for the best */
-/*  meanwhile, make sure that HETATMs not artificially fragmenting chain*/
-/* i.e. deal with travesty of non-std residues being declared hets */
-if(theribresptr->number >= 8)/*3 start dummies + 4 actual + 1 end dummy 090223*/
-{/*at least 4 actual residues in this fragment 090223*/
             /*assign cross direction of penultimate guide to ultimate guide*/
             nm1resptr->dvecnptr->x = nm2resptr->dvecnptr->x;
             nm1resptr->dvecnptr->y = nm2resptr->dvecnptr->y;
@@ -1851,7 +1846,6 @@ if(theribresptr->number >= 8)/*3 start dummies + 4 actual + 1 end dummy 090223*/
          */
                  /*so will trigger Lhead at finish end*/
 
-}/*at least 4 actual residues in this fragment 090223*/
           }/*pad end with a dummy residue so ribbon can tail off nicely*/
 
           theribresptr = NULL; /*now we can end this fragment*/
@@ -2530,6 +2524,8 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
   char  PL[5]={'\0','\0','\0','\0','\0' };  /*Point,Line (Move,Draw) */
   char  Ue[5]={'\0','\0','\0','\0','\0' }; /*Unpickable indicator when == U */
   char  W[10]; /*single strand width# */
+  char  Z[10]; /*single strand width# black bkg 090622*/
+  int   thick=0; /*single strand black bkg width <= 7, 090704*/
   char  strnd[3]={'\0','\0','\0' };
   char  cntl[5]={'\0','\0','\0','\0','\0' };
   int   ns=0; 
@@ -2550,6 +2546,32 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
 #define BETA  2
 #define COIL  3
 #define FUDGE 7
+/*090704 use of cntl string...
+rbgp Lribbonguidepts
+extB spline points
+rbsp spline chords
+rbaf ALPHA face
+rbbf BETA  face
+rbcf COIL  face
+rbcf FUDGE face
+rbBf BETA  face, cap B signals {colorset name}
+rbce midline thick line
+rbae ALPHA faced ribbon edges
+rbbe BETA  faced ribbon edges
+rb1c odd-residue coil
+rb2c even-residue coil
+rb   default ribbon vectorlist
+VR%2d VRML splines
+VRML  VRML arrowhead
+scv  sidechain stubs (attach to sc lists)
+rbhb pseudo H-bonds
+
+rbn  nucleic defined in PKINCOUT, not used PKINRIBB
+rbne edge for nucleic "
+rb   considered coil in PKINCOUT
+rbc  considered coil in PKINCOUT
+
+*/
   /*}}}*/
 
  /*{{{-- loop through section fragments, work with residue splinesets, TEST*/
@@ -3022,10 +3044,11 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
            }
            
            /*}}}define strand_chordset for both faced and skeined ribbons*/
-
-           /*{{{---- faced ribbon: set pt-color,loop over chords,define points*/
+/*+++ FACED RIBBON FACES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+        /*{{{faced ribbon*/
+          /*{{{faced ribbon faces: set pt-color,loop over chords,define points*/
            if(!Lskeinedribbon)
-           {/*faced ribbon faces*/
+           {/*faced ribbon faces +++++++++++++++++++++++++++++++++++++++++*/
             Ue[0]='\0'; /*{sprintf(Ue," P ";}*/ /*Unpickable indicator*/
             Listrib = 1;
             typenow=typerib; /*global output controls for old prekin*/
@@ -3198,14 +3221,42 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
                    putonetextblockline(&mainscratch,temps);
               /*__________face triangles: cntl = rb.f */
                  /*midline thick line*/
-                 if(!LcolorbyNtoC && !LcolorbyBval && !Lcolorbycurvature)
-                    {sprintf(color," white");}
+                 
+                 /*if(!LcolorbyNtoC && !LcolorbyBval && !Lcolorbycurvature)*/
+                    /*{sprintf(color," white");}*/   /*jumper 090704*/
                  /*else use this region's point color*/
-                 sprintf(cntl,"rbce");  /*vectorlist*/
                  sprintf(W," width%d ",onestrandcoilwidth);
+                 if((thick=(onestrandcoilwidth+2)) >7){thick = 7;} /*090704*/
+                 sprintf(Z," width%d ",thick); /*090704*/
+                 /*first make a thick black worm behind colored worm*/
                  if(num > 4)
                  {
                    /*reach back and connect from previous residue mid chord 3*/
+                  sprintf(cntl,"rbce"); /*vectorlist rear black edge 090704*/
+                  sprintf(temps,"%s{R3 %s}P%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                       ,cntl,resID,Ue,Z
+                       ,mspre[3].pt->x,mspre[3].pt->y,mspre[3].pt->z);/*pre m3*/
+                     putonetextblockline(&mainscratch,temps);
+                  sprintf(temps,"%s{R0 %s}L%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                       ,cntl,resID,Ue,Z
+                       ,ms[0].pt->x,ms[0].pt->y,ms[0].pt->z);  /* m0 */
+                     putonetextblockline(&mainscratch,temps);
+                 }
+                 /*make a short stub in the first chord of this residue*/
+                 sprintf(cntl,"rbce"); /*vectorlist rear black edge 090704*/
+                 sprintf(temps,"%s{R0 %s}P%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                      ,cntl,resID,Ue,Z
+                      ,ms[0].pt->x,ms[0].pt->y,ms[0].pt->z);  /* m0 */
+                   putonetextblockline(&mainscratch,temps);
+                 sprintf(temps,"%s{R1 %s}L%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                      ,cntl,resID,Ue,Z
+                      ,ms[1].pt->x,ms[1].pt->y,ms[1].pt->z);  /* m1 */
+                   putonetextblockline(&mainscratch,temps);
+                 /*then make the colored worm*/
+                 if(num > 4)
+                 {
+                   /*reach back and connect from previous residue mid chord 3*/
+                   sprintf(cntl,"rbcc"); /*vectorlist fore inside black edge*/
                    sprintf(temps,"%s{R3 %s}P%s%s%s %.3f, %.3f, %.3f"EOLO   
                        ,cntl,resID,Ue,color,W
                        ,mspre[3].pt->x,mspre[3].pt->y,mspre[3].pt->z);/*pre m3*/
@@ -3216,6 +3267,7 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
                      putonetextblockline(&mainscratch,temps);
                  }
                  /*make a short stub in the first chord of this residue*/
+                 sprintf(cntl,"rbcc"); /*vectorlist fore inside black edge*/
                  sprintf(temps,"%s{R0 %s}P%s%s%s %.3f, %.3f, %.3f"EOLO
                       ,cntl,resID,Ue,color,W
                       ,ms[0].pt->x,ms[0].pt->y,ms[0].pt->z);  /* m0 */
@@ -3228,14 +3280,28 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
               }
               /*}}}-------- FACE TAIL */
               /*{{{-------- COIL FAT LINE */
-              else if(type==COIL)
+              else if(type==COIL) /*090622 target coil with black edge...*/
               {/*COIL*/
                  /*midline thick line*/
-                 sprintf(cntl,"rbce");  /*vectorlist*/
                  sprintf(W," width%d ",onestrandcoilwidth);
+                 if((thick=(onestrandcoilwidth+2)) >7){thick = 7;} /*090704*/
+                 sprintf(Z," width%d ",thick); /*090704*/
                 if(j==0 && (num > 4)) /*num==4 is first real residue*/
                 {
                  /*reach back and connect from previous residue's mid chord 3 */
+
+                 sprintf(cntl,"rbce"); /*vectorlist rear for black edge 090704*/
+                 sprintf(temps,"%s{R0 %s}P%s deadblack %s %.3f, %.3f, %.3f"EOLO 
+                      ,cntl,resID,Ue,Z
+                      ,mspre[3].pt->x,mspre[3].pt->y,mspre[3].pt->z);  
+                   putonetextblockline(&mainscratch,temps);
+                 sprintf(temps,"%s{R0 %s}L%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                      ,cntl,resID,Ue,Z
+                      ,ms[0].pt->x,ms[0].pt->y,ms[0].pt->z);  /* m0 */
+                   putonetextblockline(&mainscratch,temps);
+
+
+                 sprintf(cntl,"rbcc"); /*vectorlist fore inside black edge*/
                  sprintf(temps,"%s{R0 %s}P%s%s%s %.3f, %.3f, %.3f"EOLO   
                       ,cntl,resID,Ue,color,W
                       ,mspre[3].pt->x,mspre[3].pt->y,mspre[3].pt->z);  
@@ -3248,6 +3314,18 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
                 else if(j>0)  /*interior of a residue-spline region */
                 {
                  /*connect the midline chords of this residue*/
+
+                 sprintf(cntl,"rbce"); /*vectorlist rear for black edge 090704*/
+                 sprintf(temps,"%s{R%d %s}P%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                      ,cntl,j,resID,Ue,Z
+                      ,ms[j].pt->x,ms[j].pt->y,ms[j].pt->z);  /* ms */
+                   putonetextblockline(&mainscratch,temps);
+                 sprintf(temps,"%s{R%d %s}L%s deadblack %s %.3f, %.3f, %.3f"EOLO
+                      ,cntl,j-1,resID,Ue,Z
+                      ,ms[j-1].pt->x,ms[j-1].pt->y,ms[j-1].pt->z);  /* ms-1 */
+                   putonetextblockline(&mainscratch,temps);
+
+                 sprintf(cntl,"rbcc"); /*vectorlist fore inside black edge*/
                  sprintf(temps,"%s{R%d %s}P%s%s%s %.3f, %.3f, %.3f"EOLO
                       ,cntl,j,resID,Ue,color,W
                       ,ms[j].pt->x,ms[j].pt->y,ms[j].pt->z);  /* ms */
@@ -3284,10 +3362,11 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
               }
               /*}}}-------- FACE BETA ARROWHEAD WINGS */
             }/*loop over chords to make face triangles and fat coil*/
-           }/*faced ribbon faces*/
-           /*}}}faced ribbon: set color,loop over chords, define points*/
-
-           /*{{{---- faced ribbon: loop over chords, construct edge vectors  */
+           }/*faced ribbon faces ++++++++++++++++++++++++++++++++++++++++*/
+           /*}}}faced ribbon faces: set color,loop over chords, define points*/
+/*+++ FACED RIBBON FACES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*+++ FACED RIBBON EDGES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+           /*{{{faced ribbon edges: loop over chords, construct edge vectors  */
            if(!Lskeinedribbon)
            {/*faced ribbon edges*/
 
@@ -3440,8 +3519,9 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
               /*}}}-------- EDGE ALPHA ARROWHEAD */
             }/*loop over chords to construct edge vectors*/
            }/*faced ribbon edges*/
-           /*}}}faced ribbon: loop over chords and write defining points*/
-
+           /*}}}faced ribbon edges: loop over chords, construct edge vectors  */
+         /*}}}faced ribbon*/
+/*+++ FACED RIBBON EDGES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
            /*{{{----skeined ribbon:loop over chords, construct strand vectors*/
            if(Lskeinedribbon)
            {/*skeined ribbon strands*/

@@ -276,6 +276,10 @@ static char* prekinchanges[] =
 ,"081112 fix mchb to always calculate its own H of NH (avoid H name issues)\r"
 ,"081120,081122 fix ribbon failure when using ribnhet -model \"1\"...\r"
 ,"090219 now try to fix ribnhet failure...\r"
+,"090223 established, but record of why...\r"
+,"090622,\r"
+,"090704 ribbon coil needs black outline...\r"
+,"\r"
 ,"\r"
 ,"END\r"
 }; /*prekinchanges[]*/
@@ -287,7 +291,7 @@ void getversion()
    char guiness[64];
 
    PREKINVERSION = (float)6.52;
-   sprintf(PREKINDATE,"090219 "); 
+   sprintf(PREKINDATE,"090704 "); 
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
