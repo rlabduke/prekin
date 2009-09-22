@@ -1,68 +1,41 @@
-# prekin 
+#
+CFLAGS = -I/usr/X11R6/include  
 
 ifeq ($(MAKECMDGOALS),debug)
-	CFLAGS = -g  -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-                 -mmacosx-version-min=10.4 \
-	         -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
-else
-	CFLAGS = -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-                 -mmacosx-version-min=10.4 \
-	         -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
+CFLAGS = -g -I/usr/X11R6/include  
 endif
-   LIBS = -L/Applications/Mage.app/Contents/lib -L/usr/X11R6/lib \
-          -lXm -lXt -lX11 -lSM -lICE -lpng.3 -ljpeg.62
+
+LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXm -lXt -lSM -lICE -lXext -lX11
 
 ifeq ($(MAKECMDGOALS),nogui)
-   CFLAGS = -D NOGUI -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-            -mmacosx-version-min=10.4 \
-            -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
-   LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
+CFLAGS = -D NOGUI -I/usr/X11R6/include
+LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXt -lSM -lICE -lXext -lX11
 endif
 
-ifeq ($(MAKECMDGOALS),debugnogui)
-   CFLAGS = -g -D NOGUI -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-            -mmacosx-version-min=10.4 \
-            -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
-   LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
-endif
+FIN =  -lm -pthread #for RH9.0, ok for RH7.3 & RH8.0
 
-   PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h PKINHY36.h
 
-   SRCS = PKINANGL.c PKINCRTL.c PKINCSBS.c PKINCSUB.c PKINCOUT.c \
-          PKINMENU.c PKINROTL.c PKINDLOG.c PKINFILE.c PKINHBND.c \
-          PKINHY36.c PKININPT.c PKININIT.c PKINRIBB.c PKINRNGE.c \
-          PKINRSUB.c PKINSCRT.c PKINSPOS.c PKINUTIL.c PUXMFILE.c \
-          PUXMMAIN.c PUXMINIT.c PUXMDLOG.c PUXMMENU.c PUXMOUTP.c \
-          PUXMTEXT.c PUXMOSX.c
-          
-   OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o \
-          PKINMENU.o PKINROTL.o PKINDLOG.o PKINFILE.o PKINHBND.o \
-          PKINHY36.o PKININPT.o PKININIT.o PKINRIBB.o PKINRNGE.o \
-          PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o \
-          PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o \
-          PUXMTEXT.o PUXMOSX.c
+# ------------------------------------------------------------------------
+# Variables specific to clients created by this Makefile
+PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h PKINHY36.h
 
-   FIN =  -lm -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk \
-          -arch i386 -arch ppc -bind_at_load -mmacosx-version-min=10.4
+SRCS = PKINANGL.c PKINCRTL.c PKINCSBS.c PKINCSUB.c PKINCOUT.c PKINMENU.c PKINROTL.c PKINDLOG.c PKINFILE.c PKINHBND.c PKINHY36.c PKININPT.c PKININIT.c PKINRIBB.c PKINRNGE.c PKINRSUB.c PKINSCRT.c PKINSPOS.c PKINUTIL.c PUXMFILE.c PUXMMAIN.c PUXMINIT.c PUXMDLOG.c PUXMMENU.c PUXMOUTP.c PUXMTEXT.c PUXMLNX.c
+OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o PKINMENU.o PKINROTL.o PKINDLOG.o PKINFILE.o PKINHBND.o PKINHY36.o PKININPT.o PKININIT.o PKINRIBB.o PKINRNGE.o PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o PUXMTEXT.o PUXMLNX.o
 
 # ------------------------------------------------------------------------
 # Commands specific to clients created by this Makefile 
 
 prekin: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
 
 debug: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
 
 nogui: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
-
-debugnogui: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
 
 clean:
-	rm -f *.o
-
+	rm *.o
 # ------------------------------------------------------------------------
 # Dependencies  (presume .o<-.c by standard cc compiler)
 # ?? gnu doesn't seem to make the .o<-.c connection automatically 
@@ -93,6 +66,6 @@ PUXMDLOG.o: $(PKINHEADERS)
 PUXMMENU.o: $(PKINHEADERS) 
 PUXMOUTP.o: $(PKINHEADERS) 
 PUXMTEXT.o: $(PKINHEADERS)
-PUXMOSX.o:  $(PKINHEADERS)
+PUXMLNX.o:  $(PKINHEADERS)
 
 

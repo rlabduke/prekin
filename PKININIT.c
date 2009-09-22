@@ -279,6 +279,7 @@ static char* prekinchanges[] =
 ,"090223 established, but record of why...\r"
 ,"090622,\r"
 ,"090704 ribbon coil needs black outline...\r"
+,"090922 vbc3 adding gjk adjustment of pperp params...\r"
 ,"\r"
 ,"\r"
 ,"END\r"
