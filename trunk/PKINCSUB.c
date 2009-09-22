@@ -1836,6 +1836,15 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
            }
         }/*HETATM within chain identified as Nucleic Acid */
 
+/*090223 DIRTY TRICK TO GET AROUND HETATM THAT SHOULD BE ATOM RECORDS 090223*/
+        if(Lribnhet 
+           &&(typechainfirstpass[level]=='P' || typechainfirstpass[level]=='N'))
+        {
+           sprintf(name[n],"atom  ");
+        }
+
+
+
         if(CompArgStr(res[n],"cyo",3))
         {/*special case, should use a general equivalence table*/
            /*for residues where res name different for only a few atoms*/

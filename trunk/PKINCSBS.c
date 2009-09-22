@@ -3013,9 +3013,9 @@ int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
    /* 3' perp dist for C3' pucker (delta==  60° -- 100°) range: 2.9 -- 5.0 */
    /* 3' perp dist for C2' pucker (delta== 125° -- 165°) range: 0.0 -- 3.0 */ 
    float delta3pmin = (float)65,  delta3pmax = (float)104;
-   float dist3pmin  = (float)3.5, dist3pmax  = (float)5.0;
+   float dist3pmin  = (float)2.9, dist3pmax  = (float)5.0;
    float delta2pmin = (float)129, delta2pmax = (float)162;
-   float dist2pmin  = (float)0.0, dist2pmax  = (float)2.6;
+   float dist2pmin  = (float)0.0, dist2pmax  = (float)3.0;
    int   Lout = 0; /*not an outlier*/
   
    /*delta values: delta3pmin delta3pmax delta2pmin delta2pmax */
