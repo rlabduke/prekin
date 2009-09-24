@@ -279,7 +279,7 @@ static char* prekinchanges[] =
 ,"090223 established, but record of why...\r"
 ,"090622,\r"
 ,"090704 ribbon coil needs black outline...\r"
-,"090922 vbc3 adding gjk adjustment of pperp params...\r"
+,"090924 vbc3 reconcile 090223, 090304, and 090704...\r"
 ,"\r"
 ,"\r"
 ,"END\r"
@@ -291,8 +291,8 @@ void getversion()
    char *OS;
    char guiness[64];
 
-   PREKINVERSION = (float)6.52;
-   sprintf(PREKINDATE,"090704 "); 
+   PREKINVERSION = (float)6.53;
+   sprintf(PREKINDATE,"090924 "); 
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
