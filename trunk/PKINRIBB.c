@@ -3051,7 +3051,6 @@ rbc  considered coil in PKINCOUT
            }
            
            /*}}}define strand_chordset for both faced and skeined ribbons*/
-
 /*+++ FACED RIBBON FACES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
         /*{{{faced ribbon*/
           /*{{{faced ribbon faces: set pt-color,loop over chords,define points*/
@@ -3233,7 +3232,6 @@ rbc  considered coil in PKINCOUT
                  /*if(!LcolorbyNtoC && !LcolorbyBval && !Lcolorbycurvature)*/
                     /*{sprintf(color," white");}*/   /*jumper 090704*/
                  /*else use this region's point color*/
-                 sprintf(cntl,"rbce");  /*vectorlist*/
                  sprintf(W," width%d ",onestrandcoilwidth);
                  if((thick=(onestrandcoilwidth+2)) >7){thick = 7;} /*090704*/
                  sprintf(Z," width%d ",thick); /*090704*/
@@ -3292,7 +3290,6 @@ rbc  considered coil in PKINCOUT
               else if(type==COIL) /*090622 target coil with black edge...*/
               {/*COIL*/
                  /*midline thick line*/
-                 sprintf(cntl,"rbce");  /*vectorlist*/
                  sprintf(W," width%d ",onestrandcoilwidth);
                  if((thick=(onestrandcoilwidth+2)) >7){thick = 7;} /*090704*/
                  sprintf(Z," width%d ",thick); /*090704*/
