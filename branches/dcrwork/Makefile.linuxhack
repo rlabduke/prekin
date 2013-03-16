@@ -1,0 +1,140 @@
+# http://www.gnu.org/manual/make/html_chapter/make.html  
+# prekin GUI uses Motif or Linux Lesstif 
+# ftp://ftp.lesstif.org/pub/hungry/lesstif/bindist/lesstif-0.91.4-1.i386.rpm
+# ftp://ftp.lesstif.org/pub/hungry/lesstif/bindist/lesstif-devel-0.91.4-1.i386.rpm
+# rpm -i ...rpm   (to install each in turn, where ...rpm is downloaded file
+# for Linux, try:
+# 030131 static designed for RH8 with implicit Motif libraries
+#  while dynamic used for RH7 where Motif is explict
+#  and static compile fails for RH 7.2 and 7.3
+#
+CC=gcc32  # for Fedora core 5
+ifeq ($(MAKECMDGOALS),dynamic)
+CFLAGS = -I/usr/X11R6/include  #RH7.3 has Xm includes already here
+# CFLAGS = -I/usr/X11R6/LessTif/Motif1.2/include  #RH7.1
+else
+CFLAGS = -D_STATIC_
+endif
+
+ifeq ($(MAKECMDGOALS),nikerp)
+CFLAGS = -g -I/usr/X11R6/include #for debug under RH7.3
+endif
+
+ifeq ($(MAKECMDGOALS),debug)
+CFLAGS = -g -D_STATIC_    #for RH9
+endif
+
+
+LIBS = -L/usr/X11R6/lib -u _XEditResCheckMessages -lXmu -lXm -lXt -lSM -lICE -lXext -lXp -lX11
+
+ifeq ($(MAKECMDGOALS),nogui)
+# CFLAGS = -D NOGUI -D_STATIC_  070524 cannot compile static anymore
+CFLAGS = -D NOGUI -I/usr/X11R6/include
+LIBS = -L/usr/X11R6/lib -u _XEditResCheckMessages -lXmu -lXt -lSM -lICE -lXext -lXp -lX11
+endif
+ifeq ($(MAKECMDGOALS),debugnogui)
+# CFLAGS = -g -D NOGUI -D_STATIC_  070524 cannot compile static anymore
+CFLAGS = -g -D NOGUI -I/usr/X11R6/include
+LIBS = -L/usr/X11R6/lib -u _XEditResCheckMessages -lXmu -lXt -lSM -lICE -lXext -lXp -lX11
+endif
+
+# CFLAGS = -I/usr/X11R6/LessTif/Motif1.2/include/
+# CFLAGS = -I/usr/X11R6/LessTif/Motif2.0/include
+# for SGI use
+# CFLAGS = -g -I/usr/include/X11 -n32 -mips3
+# CFLAGS =  -I/usr/include/X11 -n32 -mips3
+# for SUN Solaris
+# CFLAGS = -I/usr/openwin/include/X11
+
+# possible library paths:
+# LIBS =  /usr/X11R6/lib/libXm.a /usr/X11R6/lib/libXpm.a /usr/X11R6/lib/libXt.a /usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libSM.a /usr/X11R6/lib/libICE.a
+# LIBS =  /usr/lib/libXm.a /usr/lib/libXpm.a /usr/lib/libXt.a /usr/lib/libXext.a /usr/lib/libX11.a /usr/lib/libSM.a /usr/lib/libICE.a
+# LIBS =  -lXm -lXpm -lXt -lXext -lX11 -lSM -lICE
+# for SGI and Solaris just use: 
+# LIBS =  -lXm -lXt -lX11 
+# for linux, try:
+# LIBS = -L/usr/X11R6/LessTif/Motif1.2/lib/ -L/usr/X11R6/lib -lXm -lXt -lX11 -lSM -lICE
+# LIBS = -L/usr/X11R6/LessTif/Motif2.0/lib -L/usr/X11R6/lib -lXm -lXt -lX11
+
+# for most UNIX types, try just:
+# FIN =  -lm  
+FIN =  -lm -pthread #for RH9.0, ok for RH7.3 & RH8.0
+# for SGI use:
+# FIN =  -lm -n32 -mips3
+
+
+# ------------------------------------------------------------------------
+# Variables specific to clients created by this Makefile
+PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h
+
+SRCS = PKINANGL.c PKINCRTL.c PKINCSBS.c PKINCSUB.c PKINCOUT.c PKINMENU.c PKINROTL.c PKINDLOG.c PKINFILE.c PKINHBND.c PKININPT.c PKININIT.c PKINRIBN.c PKINRIBB.c PKINRNGE.c PKINRSUB.c PKINSCRT.c PKINSPOS.c PKINUTIL.c PUXMFILE.c PUXMMAIN.c PUXMINIT.c PUXMDLOG.c PUXMMENU.c PUXMOUTP.c PUXMTEXT.c PUXMLNX.c
+OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o PKINMENU.o PKINROTL.o PKINDLOG.o PKINFILE.o PKINHBND.o PKININPT.o PKININIT.o PKINRIBN.o PKINRIBB.o PKINRNGE.o PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o PUXMTEXT.o PUXMLNX.o
+
+# ------------------------------------------------------------------------
+# Commands specific to clients created by this Makefile 
+
+prekin: $(OBJS) dlstubs.o
+	cc -static -o prekin $(CFLAGS) $(OBJS) dlstubs.o $(LIBS) $(FIN)
+
+static: $(OBJS) dlstubs.o
+	cc -static -o prekin $(CFLAGS) $(OBJS) dlstubs.o $(LIBS) $(FIN)
+
+debug: $(OBJS) dlstubs.o
+	cc -static -o prekin $(CFLAGS) $(OBJS) dlstubs.o $(LIBS) $(FIN)
+
+# nogui: $(OBJS) dlstubs.o   070524 dlstubs breaks linking??
+# 	cc -static -o prekin $(CFLAGS) $(OBJS) dlstubs.o $(LIBS) $(FIN)
+# 
+# debugnogui: $(OBJS) dlstubs.o
+# 	cc -static -o prekin $(CFLAGS) $(OBJS) dlstubs.o $(LIBS) $(FIN)
+# 
+nogui: $(OBJS)
+	cc -static -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+
+debugnogui: $(OBJS)
+	cc -static -o prekin $(CFLAGS) $(OBJS) $(LIBS) $(FIN)
+
+dynamic: $(OBJS)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
+#	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/LessTif/Motif1.2/lib $(LIBS) -ldl $(FIN)
+# where RH7.1 needed explicit LessTif and could compile static
+# RH7.3 fails static in all tried cases, but has Xm libraries implicit	
+
+nikerp: $(OBJS)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
+
+clean:
+	rm *.o
+# ------------------------------------------------------------------------
+# Dependencies  (presume .o<-.c by standard cc compiler)
+# ?? gnu doesn't seem to make the .o<-.c connection automatically 
+
+PKINANGL.o: $(PKINHEADERS) 
+PKINCRTL.o: $(PKINHEADERS) 
+PKINCSBS.o: $(PKINHEADERS) 
+PKINCSUB.o: $(PKINHEADERS) 
+PKINCOUT.o: $(PKINHEADERS) 
+PKINMENU.o: $(PKINHEADERS) 
+PKINROTL.o: $(PKINHEADERS) 
+PKINDLOG.o: $(PKINHEADERS) 
+PKINFILE.o: $(PKINHEADERS) 
+PKINHBND.o: $(PKINHEADERS) 
+PKININPT.o: $(PKINHEADERS) 
+PKININIT.o: $(PKINHEADERS) 
+PKINRIBN.o: $(PKINHEADERS) 
+PKINRIBB.o: $(PKINHEADERS) 
+PKINRNGE.o: $(PKINHEADERS) 
+PKINRSUB.o: $(PKINHEADERS) 
+PKINSCRT.o: $(PKINHEADERS)
+PKINSPOS.o: $(PKINHEADERS) 
+PKINUTIL.o: $(PKINHEADERS) 
+PUXMFILE.o: $(PKINHEADERS) 
+PUXMMAIN.o: $(PKINHEADERS) 
+PUXMINIT.o: $(PKINHEADERS) 
+PUXMDLOG.o: $(PKINHEADERS) 
+PUXMMENU.o: $(PKINHEADERS) 
+PUXMOUTP.o: $(PKINHEADERS) 
+PUXMTEXT.o: $(PKINHEADERS)
+PUXMLNX.o:  $(PKINHEADERS)
+
+

@@ -1,0 +1,78 @@
+# prekin GUI uses Motif or Linux Lesstif 
+# ftp://ftp.lesstif.org/pub/hungry/lesstif/bindist/lesstif-0.91.4-1.i386.rpm
+# ftp://ftp.lesstif.org/pub/hungry/lesstif/bindist/lesstif-devel-0.91.4-1.i386.rpm
+# rpm -i ...rpm   (to install each in turn, where ...rpm is downloaded file
+# for Linux, try:
+# CFLAGS = -I/usr/X11R6/LessTif/Motif1.2/include/
+# CFLAGS = -I/usr/X11R6/LessTif/Motif2.0/include
+# for SGI use
+# CFLAGS = -g -I/usr/include/X11 -n32 -mips3
+CFLAGS =  -I/usr/include/X11 -n32 -mips3
+# for SUN Solaris
+# CFLAGS = -I/usr/openwin/include/X11
+
+# for most UNIX types, try just:
+# FIN =  -lm  
+# for SGI use:
+FIN =  -lm -n32 -mips3
+
+
+# ------------------------------------------------------------------------
+# Variables specific to clients created by this Makefile
+PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h
+
+SRCS = PKINANGL.c PKINCRTL.c PKINCSBS.c PKINCSUB.c PKINCOUT.c PKINMENU.c PKINROTL.c PKINDLOG.c PKINFILE.c PKINHBND.c PKININPT.c PKININIT.c PKINRIBN.c PKINRIBB.c PKINRNGE.c PKINRSUB.c PKINSCRT.c PKINSPOS.c PKINUTIL.c PUXMFILE.c PUXMMAIN.c PUXMINIT.c PUXMDLOG.c PUXMMENU.c PUXMOUTP.c PUXMTEXT.c PUXMSGI.c
+OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o PKINMENU.o PKINROTL.o PKINDLOG.o PKINFILE.o PKINHBND.o PKININPT.o PKININIT.o PKINRIBN.o PKINRIBB.o PKINRNGE.o PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o PUXMTEXT.o PUXMSGI.o
+
+# possible library paths:
+# LIBS =  /usr/X11R6/lib/libXm.a /usr/X11R6/lib/libXpm.a /usr/X11R6/lib/libXt.a /usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libSM.a /usr/X11R6/lib/libICE.a
+# LIBS =  /usr/lib/libXm.a /usr/lib/libXpm.a /usr/lib/libXt.a /usr/lib/libXext.a /usr/lib/libX11.a /usr/lib/libSM.a /usr/lib/libICE.a
+# LIBS =  -lXm -lXpm -lXt -lXext -lX11 -lSM -lICE
+# for SGI and Solaris just use: 
+LIBS =  -lXm -lXt -lX11 
+# for linux, try:
+# LIBS = -L/usr/X11R6/LessTif/Motif1.2/lib/ -L/usr/X11R6/lib -lXm -lXt -lX11 -lSM -lICE
+# LIBS = -L/usr/X11R6/LessTif/Motif2.0/lib -L/usr/X11R6/lib -lXm -lXt -lX11
+
+# ------------------------------------------------------------------------
+# Commands specific to clients created by this Makefile 
+
+prekin: $(OBJS)
+#	cc -o prekin $(OBJS) $(LIBS) $(FIN)
+	cc -static -o prekin $(OBJS) $(LIBS) $(FIN)
+
+clean:
+	rm *.o
+# ------------------------------------------------------------------------
+# Dependencies  (presume .o<-.c by standard cc compiler)
+# ?? gnu doesn't seem to make the .o<-.c connection automatically 
+
+PKINANGL.o: $(PKINHEADERS) 
+PKINCRTL.o: $(PKINHEADERS) 
+PKINCSBS.o: $(PKINHEADERS) 
+PKINCSUB.o: $(PKINHEADERS) 
+PKINCOUT.o: $(PKINHEADERS) 
+PKINMENU.o: $(PKINHEADERS) 
+PKINROTL.o: $(PKINHEADERS) 
+PKINDLOG.o: $(PKINHEADERS) 
+PKINFILE.o: $(PKINHEADERS) 
+PKINHBND.o: $(PKINHEADERS) 
+PKININPT.o: $(PKINHEADERS) 
+PKININIT.o: $(PKINHEADERS) 
+PKINRIBN.o: $(PKINHEADERS) 
+PKINRIBB.o: $(PKINHEADERS) 
+PKINRNGE.o: $(PKINHEADERS) 
+PKINRSUB.o: $(PKINHEADERS) 
+PKINSCRT.o: $(PKINHEADERS)
+PKINSPOS.o: $(PKINHEADERS) 
+PKINUTIL.o: $(PKINHEADERS) 
+PUXMFILE.o: $(PKINHEADERS) 
+PUXMMAIN.o: $(PKINHEADERS) 
+PUXMINIT.o: $(PKINHEADERS) 
+PUXMDLOG.o: $(PKINHEADERS) 
+PUXMMENU.o: $(PKINHEADERS) 
+PUXMOUTP.o: $(PKINHEADERS) 
+PUXMTEXT.o: $(PKINHEADERS)
+PUXMSGI.o:  $(PKINHEADERS)
+
+
