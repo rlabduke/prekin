@@ -64,6 +64,7 @@ typedef struct ribresstruct {
    float  extend;/*curvature extendedness fraction between minimum and maximum*/
    int    COside;
    char   ribidentity[5]; /*identity col 10--13 SHEET record  060929*/
+   float  azmangle; /*for Calpha+COazmuthalangle  100322*/
 }ribresstruct;
 PKINRIBB struct ribresstruct* thisribresptr;
 /*}}}*/

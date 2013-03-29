@@ -1959,7 +1959,7 @@ void   evalatomrecord(void)
   /*check if subunit code character has changed*/
   if(  (sub[n][0]  != oldsub[0])  /*char chainID  070926*/
      ||(sub[n][1]  != oldsub[1])) /*char chainID  080318*/
-   /*&&(sub[n][1]  != oldsub[1])) /*char chainID  070926*/
+   /*&&(sub[n][1]  != oldsub[1]))*/ /*char chainID  070926*/
   {
      delsub = 1 ;
   }
@@ -2258,6 +2258,244 @@ void   checkfocus(void)
   }/*actual fovea run*/
 }
 /*___checkfocus()___________________________________________________________*/
+
+/****connecthydrogenbyname()*************************************************/
+void   connecthydrogenbyname(void) /*130318dcr alt and name atom match*/
+{/*connecthydrogen rewritten 130318 to connect a hydrogen atom by name*/
+  /*fall back to closest distance connect if names not recognized*/
+
+  float  dist,hatdst,distminimum;
+  int    match,theatm,ipass,LOK;
+  char   positionchar;
+  int    branchnumber;
+  int    baseatm; /*remember theatm number for diagnostics after loop ends*/
+
+  /*note: for historic reasons, prekin uses lower case atom names*/
+  /*re: PKINCSUB/readbrkatmrecord() */
+  /*standard Brk PDB: 2 char element right adjusted digits 1&2 of atom name*/
+  /*NB this captures Alt character as 5th atom char; i.e. index 4 */
+  /*position out side chain: (A,B,G,D,E,Z,H) is 3rd atom char, i.e. index 2*/
+  /*--at least for heavy (not-a-hydrogen) atoms */
+  /*For H: H in 2nd atom char, 3rd atom char is it's own branch==twig */
+  /*       H in 1st atom char, 3rd atom char is parent atom's branch  */
+  /*        and                4th atom char is it's own branch==twig */
+  /*       only match parent branch !! */ 
+
+  /*--start with reference distance longer than willing to count as match */
+  hatdst = 2.0;
+  distminimum = 0.7; /*hydrogen to parent minimum distance*/
+  positionchar = ' ';
+  branchnumber = 0;
+  match = 0;
+  baseatm = 0;
+  LOK = 1; /*presume OK to make connection*/
+  
+  if(atom[natom][1] == 'q') /*should not be able to get here with this...*/
+  {
+    /*--make dot for NMR pseudo atoms, i.e. original atom name is 'q' */
+    base[natom] = natom;
+    LOK = 0;
+  }
+
+  if(LOK) /*atom[natom]==H, but determine branch vs twig number by position*/
+  { 
+    /*first check register of atom name in its character string */
+    if((atom[natom][0] == 'h')||(atom[natom][0] == 'd'))
+    {/*0123 H?## left adjusted, gives room for parent branch number*/
+      /*parent branch at index 2, hydrogen's own twig number is at index 3 */
+      positionchar = atom[natom][1];
+      if(isdigit(atom[natom][2])) /*branch number of parent*/
+          {branchnumber = atom[natom][2];}
+      else{branchnumber = 0;}
+      LOK = 1;
+    }
+    
+    else if((atom[natom][1] == 'h')||(atom[natom][1] == 'd'))
+    {/* index: 0123 _H## _HX# _H#_ branch/twig ambiguous number */
+     /*--3 cases depend on residue and position on residue: */
+     /*hydrogen mainchain, NO branch, hydrogen's own twig number is at index 2*/
+     /*parent branch NOT given, hydrogen's own twig number is at index 3 */
+     /*parent branch is given, hydrogen's parent branch number is at index 3 */
+     /* case: nterm NH3: hydrogen branch is blank, like blank branch on mc N */
+   /*Tyr _CD1,_CD2,_CE1,_CE2  vs _HD1,_HD2,_HE1,_HE2  */
+   /*Trp _CD1,_CD2,_NE1,_CE2,_CE3,_CZ2,_CZ3,_CH2:_HD1,_HE1,_HE3,_HZ2,_HZ3,_HH2*/
+   /*Arg ...*/
+
+      if(  (isdigit(atom[natom][2]))&&(atom[natom][2]>0)
+         &&(!isdigit(atom[natom][3])) )  /*i.e. digit,blank*/
+      {/* [2] likely is the twig number for, e.g. mc hydrogen e.g. -NH3 */
+         branchnumber = atom[natom][2]; /*where this is probably twig number*/
+         positionchar = ' '; /*for, e.g. mainchain */  
+      } 
+      else if(  (isdigit(atom[natom][2]))&&(atom[natom][2]>0)
+         &&(isdigit(atom[natom][3])) )  /*i.e. digit,digit*/
+      {/* [2] likely is a parent number for, e.g. hetatom varient */
+         branchnumber = atom[natom][3]; /*where this is probably twig number*/
+         positionchar = atom[natom][2]; /* e.g. het atom position number */  
+      } 
+      else if( !isdigit(atom[natom][2]) ) 
+      {/*index [2] has a non-digit character, likely parent position*/
+      
+         positionchar = atom[natom][2]; /*e.g. residue parent branch char*/ 
+         if( isdigit(atom[natom][3]) )
+         {
+            branchnumber = atom[natom][3]; /*e.g. residue H twig number*/
+         }
+         else
+         {
+            branchnumber = 0; /*atom name pattern wierd*/
+         }
+      }
+      /*since parent branch maybe NOT given... */
+      /* if((isdigit(atom[natom][3]))&&(atom[natom][3]>0)) */
+      /* {*//*hydrogen's own twig OR parent's branch*/
+      /*    branchnumber = atom[natom][3];*/ /*in case parent has a branch*/
+      /* }*/
+      else /*give up...*/
+      {
+         positionchar = ' ';
+         branchnumber = 0;
+      }
+      LOK = 1;
+    }
+  }
+
+  if(LOK)
+  {/*LOK*/
+    ipass = 1;   /*970422*/
+    for(ipass = 1;(ipass <= 5)&&(match==0); ipass++)
+    {/*5 passes 130323, include Jane's at-least-match-alt-chars(if both given)*/
+     /* 1 try to match alternate conformations of both H and parent*/
+     /* 2 try to match H alternate conformations to non-alt parent atom*/
+     /* 3 try to match non alt H conformations to alt A parent atom 130323*/
+     /*   cases 1 & 2 & 3 are legal name combinations */
+     /* 4 at least match H alt characters if both given*/
+     /* 5 try just connect H to nearest heavy atom */
+     /*   case 3 is OK by old rules, cases 4 & 5 are pathological */
+      for( theatm=1 ; theatm <= maxatm ; theatm++ )
+      {/*LOOP theatm = 1,maxatm*/
+        /*--skip hydrogens and pseudo-hydrogens named 'q' */
+        if(!isahydrogen(name[theatm],atom[theatm],element[theatm]))
+        {/*connect h to non-hydrogen atoms*/
+          /*--check distance */
+/*s*/     dist = (float)distan(x[natom],y[natom],z[natom]
+                              ,x[theatm],y[theatm],z[theatm]);
+          if(dist <= hatdst)
+          {/*close enough*/ 
+            /*--check for alternate conformation designator */
+            if(ipass==1)
+            {/*pass 1: try to exactly match alternate conformation*/
+              if(  (atom[theatm][4] == althed[0])
+                 &&(atom[theatm][2] == positionchar))
+              {/*alt indicators and position chars match*/
+                /*good so far... check on possible branch...*/
+                { 
+                  match = 1;
+                  if(  ( (isdigit(atom[theatm][3])) && (atom[theatm][3] > 0) )
+                     &&(atom[theatm][3] != branchnumber) )
+                  {/*if putative parent at correct position is wrong branch*/
+                     match=0;
+                  }
+                  if(match)
+                  {
+                     base[natom] =  theatm;
+                     baseatm = theatm;
+                     hatdst = dist;
+                     break; /*should be correct match by names and alt chars*/
+                  }
+                }
+              }/*alt indicators and position chars match*/
+            }/*pass 1: try to exactly match alternate conformation*/
+            else if(ipass==2)
+            {/*2: try to match alternate H to non-alt heavy atom at position*/
+              if((atom[theatm][4] == ' ') && (atom[theatm][2] == positionchar))
+              { 
+                match = 2;
+                base[natom] =  theatm;
+                baseatm = theatm;
+                hatdst = dist;
+                break; /*as good as be can done by match by names*/
+              }
+            }/*2*/
+            else if(ipass==3)
+            {/*3: try to match non-alt H to alt A heavy atom at position*/
+              if(  (atom[theatm][2] == positionchar)
+                 &&(atom[theatm][4] == 'a')&&(althed[0]==' ') )
+              { 
+                match = 3;
+                base[natom] =  theatm;
+                baseatm = theatm;
+                hatdst = dist;
+                break; /*as good as be can done by match by names*/
+              }
+            }/*3*/
+            else if(ipass==4) /*failed clean match*/
+            {/*4: match-alt-chars if both given & closest but not too close*/
+              if( (atom[theatm][4] == althed[0])&&(dist > distminimum) ) 
+              { 
+                match = 4;
+                base[natom] =  theatm;
+                baseatm = theatm;
+                hatdst = dist;
+                continue; /*cycle matching alt chars for closest above minimum*/
+              }
+            }/*4*/
+            else if(ipass==5) /*desperate attempt...*/
+            {/*5: try to match H to closest heavy atom*/
+              { /*here a TOO CLOSE distance makes a problem more obvious*/
+                match = 5; /*take each in turn ---*/
+                base[natom] =  theatm;
+                baseatm = theatm;
+                hatdst = dist; /*--looking for closest---*/
+                continue; /*--keep cycling to get shortest connection--*/
+              }
+            }/*5*/
+          }/*close enough*/ 
+        }/*connect h to non-hydrogen atoms*/
+      }/*LOOP theatm = 1,maxatm*/ /*BEWARE theatm incremented when loop ends*/
+      /*baseatm == theatm at time of match*/
+    }/*5 passes*/
+    if((!LOK)||(match == 0))
+    {/*!OK*/
+      /*--did not find a base for this hydrogen: print message and continue */
+       sprintf(alertstr,"no base for hydrogen: %s %s %s %d"CRLF
+               ,name[natom],atom[natom],res[natom],num[natom]);
+       pkintextinsert(alertstr);  /*PKMCTEXT.C PKPCTEXT.C*/
+       adjusttext(1);             /*PKMCTEXT.C PKPCTEXT.C*/
+      /*--make a dot so have an entry in the output: */
+      base[natom] = natom;
+if(Lreport)
+{
+      fprintf(stderr,"ORPHANdot hydrogen:(#%d) %s %s %s %d\n"
+              ,natom,name[natom],atom[natom],res[natom],num[natom]);
+} 
+   }/*!OK*/
+    else if(match > 3)
+    {/*report imperfect match to terminal using standard error */
+     if(match == 4)
+     {
+if(Lreport)
+{
+      fprintf(stderr,"uncertain hydrogen:(#%d) %s %s %s %d\
+  to parent:(#%d) %s %s %s %d\n"
+              ,natom,name[natom],atom[natom],res[natom],num[natom]
+              ,baseatm,name[baseatm],atom[baseatm],res[baseatm],num[baseatm]);
+}
+     }
+     else /*report imperfect match to terminal using standard error */
+     {
+if(Lreport)
+{
+      fprintf(stderr,"desperate hydrogen:(#%d) %s %s %s %d\
+  to parent:(#%d) %s %s %s %d\n"
+              ,natom,name[natom],atom[natom],res[natom],num[natom]
+              ,baseatm,name[baseatm],atom[baseatm],res[baseatm],num[baseatm]);
+}
+     }
+    }
+  }/*LOK*/
+}
+/*___connecthydrogenbyname()_________________________________________________*/      
 
 /****connecthydrogen()*******************************************************/
 void   connecthydrogen(void)
@@ -2742,7 +2980,7 @@ void   storecyssg(int maxcounter)
     else
     {
           sprintf(alertstr,"No room in cys sg array for:"
-                        CRLF"%s|%s|%s|%s|%s|%d|%f %f %f"
+                        CRLF"%s|%s|%s|%s|%s|%s|%f %f %f"
                  ,name[natom],Anum[natom],atom[natom],res[natom]
                  ,sub[natom],rins[natom],x[natom],y[natom],z[natom]);
 /*Ms*/    DoReportDialog();

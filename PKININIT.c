@@ -276,11 +276,23 @@ static char* prekinchanges[] =
 ,"081112 fix mchb to always calculate its own H of NH (avoid H name issues)\r"
 ,"081120,081122 fix ribbon failure when using ribnhet -model \"1\"...\r"
 ,"090219 now try to fix ribnhet failure...\r"
-,"090223 established, but record of why...\r"
+,"090223 dirty trick: hetatm to atom for prot/nuc ribbons within P or N chain\r"
 ,"090622,\r"
 ,"090704 ribbon coil needs black outline...\r"
 ,"090924 vbc3 reconcile 090223, 090304, and 090704...\r"
-,"\r"
+,"091129 -operp pperp code for RNA uses O3' instead of next residue P\r"
+,"100322 incorporate Calpha + Oazimuth angle from PKINRIBN.070731 to PKINRIBB\r"
+,"101024 try to recover plain ribbon output -- nothing done for this\r"
+,"101225 tinker output for magekinjas: 3 mc, 3 sc, places in PKINCSUB\r"
+,"111106 line 876 PKINRIBB discon=0 always to do VTF fakeCa plots\r"
+,"121031 compile for only i386\r"
+,"130121 flag -ca3rib use perp to ca-1,ca,ca+1 instead of C=O for rib plane\r"
+,"       Makefile for 10.8.2, recompile...\r"
+,"       compiler logic warning: beware PKINCSBS:1133:cbstubsrib \r"
+,"130317 6.54 integrate 090924 vbc3 with 130121 dcr code into svnwork/dcrwork\r"
+,"130318 connecthydrogenbyname supersede connecthydrogen by distance\r"
+,"130324 ... very tricky, empower -report for suspect connections \r"
+,"130329 pperpoutlier limits slightly changed\r"
 ,"\r"
 ,"END\r"
 }; /*prekinchanges[]*/
@@ -291,8 +303,8 @@ void getversion()
    char *OS;
    char guiness[64];
 
-   PREKINVERSION = (float)6.53;
-   sprintf(PREKINDATE,"090924 "); 
+   PREKINVERSION = (float)6.54;
+   sprintf(PREKINDATE,"130329 "); 
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
@@ -307,7 +319,7 @@ void getversion()
    }
    else
    {
-      sprintf(version,"version %.2f,%s dated: %s%s"
+      sprintf(version,"version %.2f,%s dated: %s"
          ,PREKINVERSION,PREKINDATE,guiness);
    }
 }
@@ -374,6 +386,7 @@ static char* prekincmdhelp[] =
 ,"-dnaribbon : force nucleic acid ribbons to be Bform type\r"
 ,"\r"
 ,"-strand # : # of strands for skeined ribbon, local curvature offsets.\r"
+,"-fakecalphas : fake Calphas, no Ca--Ca distance filter\r"
 ,"\r"
 ,"  overrides and extras issued after -ribbon or -bestribbon (or -arrows): \r"
 ,"-also : also do selected sidechains\r"
@@ -396,6 +409,7 @@ static char* prekincmdhelp[] =
 ,"-spline :  (newribbons) ribbon splines displayed\r"
 ,"-axis: (newribbons) ribbon axial spline \r"
 ,"-density : (newribbons) local density of ribbon axial splines \r"
+,"-ca3rib : Lca3ribbon perp to ca-1,ca,ca+1 instead of C=O for ribbon plane\r"
 ,"\r"
 ,"   set of specialized calculations that use the ribbon code:\r"
 ,"-cispeponly : cispeptides emphasized as independent part of a kinemage\r"
@@ -767,6 +781,7 @@ void initialvalues(void)
   Lhetconnect = 1; /*990403*/
   Lribnhet = 0; /*051214 distinguish this call to make ribbons, re RCSB PDB*/
   Lexplanation = 0;
+  Lmagekinjas = 0; /*101225*/
 
   /*ribbon and reduced-representation default parameters*/
   Lribbon = 0;
@@ -798,6 +813,7 @@ void initialvalues(void)
   LpsiphiCO = 0; /*030128*/
   LvectCOpdb = 0; /*030129*/
   LpdbCACOpdb = 0; /*030202*/
+  LfakeCaCaspline = 0; /*111106*/
   fpoutput = 0;
 
   /*more ribbon default parameters*/
@@ -986,6 +1002,7 @@ Lnobutton = 0; /*060120*/
 Lresiduegroups = 0; /*060120*/
 Lconnectresiduesdump = 0; /*061202*/
 Loldpdb = 0; /*071215 default is new pdb format v3.1 */
+Lca3ribbon = 0; /*130121 use ca-1,ca,ca+1 perp instead of C=O for ribbon plane*/
 
   rangestartinitialize(); /*PKINRNGE*/
 
@@ -1136,7 +1153,7 @@ void parsecommandline(int *argc, char** argv)
    char *p;
    char valuestr[32];
    int   h,i,j,k,nbegin,ncount,resnumrotate,resnummutate,ncnt,iok;
-   int   Lreport = 0;
+   /*int   Lreport = 0;*/ /*made global 130324*/
    int   nnumber = 0,sign = +1,deliniated = 0;
    int   chainnumber=0; 
    int   ln=0; /*strlen for ranges of aa   050309*/
@@ -1432,6 +1449,10 @@ void parsecommandline(int *argc, char** argv)
             Lcommanded = 6;
             Lbuiltin = 1;
          }
+         else if(CompArgStr(p+1,"magekinjas", 10)) /*101225*/
+         {/*modified format for feeding current magekinjas parser*/
+            Lmagekinjas = 1;
+         }
          else if(CompArgStr(p+1,"ribnhet", 7)) /*041031*/
          {/*-ribnhet -arrows -colornc -blackedge -nohetconnect -ballradius 0.32 -show "ht,at"*/
             Lribnhet = 1; /*distinguish this call to make ribbons, re RCSB PDB*/
@@ -1447,6 +1468,10 @@ void parsecommandline(int *argc, char** argv)
             htal[1] = 1; /*set this here to simulate rangeend logic*/
             mrange = 1; /*050731*/
             LNtermBetaFudge = 0; /*090219 avoid orphan betaarrow at start frag*/
+         }
+         else if(CompArgStr(p+1,"ca3rib", 6)) /*130121 for ribbon plane */
+         {/*-ca3rib for ca-1,ca,ca+1 perp instead of C=O for ribbon plane*/
+            Lca3ribbon = 1;
          }
          else if(CompArgStr(p+1,"ribbonmasters", 12)) /*BEFORE -ribbon !! */
          {/*-ribbonmasters: optional masters for alpha,beta,coil*/
@@ -1670,6 +1695,11 @@ void parsecommandline(int *argc, char** argv)
             extoutl = 1; /*generic extra output...*/
             Lcommanded = 8; /*fudge for now  030125*/
             Lbuiltin = 1;
+         }
+         else if(CompArgStr(p+1,"fakecalphas", 10))
+         {/*-fakecalphas :fake calphas: no Calpha--Calpha distance check */
+            /*no Ca--Ca distance filter*/
+            LfakeCaCaspline = 1; /*111106*/
          }
          /*___________________Command Performance___________________*/
          /*___________________Command Performance___________________*/
@@ -2757,6 +2787,16 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             if(!Lcommanded) Lcommanded = 99; /*command performance*/
          }         
          
+         else if(CompArgStr(p+1,"operptoline",11 )) /*091129*/
+         {/*O3' instead of phosphate perpendiculars to base C1'--N19*/
+            Loperptoc1nline = 1; /*091129 mimics Lpperptoc1nline */
+            Lpperptobase = 1; /*uses machinery of pperptobase*/ 
+            /*simulate -scope flag so -operptoline can be used alone*/
+            n = mrange+1; /*new range*/
+            nbegin = n; /*in case ranges sets up more than one for show set*/
+            mrange = n; /*at least*/
+            if(!Lcommanded) Lcommanded = 99; /*command performance*/
+         }         
          else if(CompArgStr(p+1,"pperptobase",11 ))
          {/*phosphate perpendiculars to base*/
             Lpperptobase = 1; 

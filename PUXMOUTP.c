@@ -82,8 +82,9 @@ int    openoutput(void)
      XmStringFree(xmstring);
 
     XtManageChild(fileoutdialog); /*puts the file dialog widget on screen */
-  return(1);
+  /* return(1); 130121 move out of conditional  to avoid compiler warning*/ 
 #endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
+  return(1);
 }
 /*___openoutput()____________________________________________________________*/
 
@@ -162,9 +163,11 @@ int    openscriptout(void)
      XmStringFree(xmstring);
 
     XtManageChild(scriptfiledialog); /*puts the file dialog widget on screen */
+   /* Lwaiting = 1;*/
+   /* return(1); 130121 move out of conditional to avoid compile warning*/
+#endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
     Lwaiting = 1;
    return(1);
-#endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
 }
 /*___openscriptout()________________________________________________________*/
     
