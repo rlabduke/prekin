@@ -152,7 +152,7 @@ int constructbeta(float betaideal[3],char targetresidue[4]
 
       if(n>0)
       {/*atom is grist for Cbeta mill*/
-         if( (atom[j][4]==' ') ) /*alt char in 5th place (index==4) of name*/
+         if( atom[j][4]==' ' ) /*alt char in 5th place (index==4) of name*/
          {/*alt==' '*/
             /*putatively a primary conformation*/
             if(L[n][1]==0)
@@ -1440,7 +1440,7 @@ void    doaxisrot(double *dxp,double *dyp,double *dzp,float theta
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
 
 /****constructcircle()********************************************************/
-constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float radius)
+int  constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float radius)
 {
    /*taken from MAGEUTIL/arrowtoscreen() */
 

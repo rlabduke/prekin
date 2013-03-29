@@ -131,6 +131,7 @@ void   evalatomrecord(void);
 void   screenaltconf(void);
 void   checkfocus(void);
 void   connecthydrogen(void);
+void   connecthydrogenbyname(void);/*130318 supersede connecthydrogen(by dist)*/
 void   connectheavyatom(int,int);
 void   storecyssg(int);
 void   connecthetatms(void);
@@ -229,6 +230,15 @@ void DogenericDialog();
 /*PKPCINIT or PKMCINIT or PUXMOSX,PUXMLNX,PUXMSGI*/ 
 char* operatingsystem(void); /*051201*/
 
+/*general declarations 130121 etc... copied here... */
+void    mainsetup(int *, char **); /*130121*/
+void    getmactextselect(void); /*130121*/
+void    AdjustMenus(void);     /*130121*/
+int     getkeydownstate(void); /*130121*/
+long    TickCount(void);       /*130121*/
+
+
+
 #ifdef MACINTOSH
 void    waste(long); /*for number of seconds as originally written*/
 /*PKMCFILE*/
@@ -242,7 +252,7 @@ void  ConvertFilename(FSSpec *) ;
 #endif /*SYSTEM6*/
 
 /*PKMCINIT*/
-void    mainsetup(void);
+/*void    mainsetup(void); 130121 declare this outside of ifdef MACINTOSH*/
 void    beginnings(void);
 void    InitMacintosh(void);
 void    setdemo(void);
@@ -275,19 +285,19 @@ void    HandleMouseDown(EventRecord *);
 void    cursorstandard(void);
 void    cursorshowwait(void);
 int     HandleloopEvent(void);
-int     getkeydownstate(void);
+/*int getkeydownstate(void);130121 declare this outside of ifdef MACINTOSH*/
 
 /*PKMCMENU*/
 OSErr  FindAProcess(OSType,OSType,ProcessSerialNumber*);
 OSErr  OpenSelection(FSSpecPtr);
 void   SetUpMenus(void);
-void   AdjustMenus(void);
+/*void   AdjustMenus(void);130121 declare this outside of ifdef MACINTOSH*/
 void   enable(MenuHandle , int , int );
 int    exec(char *, ...);
 void   HandleMenu (long );
 
 /*PKMCTEXT*/
-void    getmactextselect(void);
+/*void getmactextselect(void); 130121 declare this outside of ifdef MACINTOSH*/
 
 #endif /*MACINTOSH*/
 
@@ -297,10 +307,10 @@ void    getmactextselect(void);
 /* PKPCMAIN.C */
 int  WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
-long TickCount(void);
+/*long TickCount(void);130121 declare this outside of ifdef...*/
 
 char* dirstrip(char[256]);
-int  getkeydownstate(void);
+/*int  getkeydownstate(void);130121 declare this outside of ifdef...*/
 
 /* PKPCINIT.C */
 void beginnings(void);
@@ -317,7 +327,7 @@ void PKIN_FileQuit(void);
 void PKIN_NewPass(void);
 
 /* PKPCTEXT.C (text.c) */
-void getmactextselect(void);
+/*void getmactextselect(void);130121 declare this outside of ifdef...*/
 void SetTextCaption(HWND, LPSTR);
 void SystemFontSize(void);
 long totalbufferlines(HWND, HDC, LPSTR);
@@ -331,7 +341,7 @@ int  sizeoftextline(HDC, int, char*);
 void completetext(void);
 
 /* PKPCMENU.C (pkmenu.c) */
-void AdjustMenus(void);
+/*void AdjustMenus(void);130121 declare this outside of ifdef...*/
 void checkamenuitem(int, int);
 void enableamenuitem(int, int);
 void openfilebyname(LPSTR);
