@@ -743,7 +743,11 @@ int  loadribbonatoms()  /*of current residue*/
       else
       {/*PROTEIN: partial or fully missing requisite atoms to make a ribbon*/
          Lgotatoms = 0; 
+
          /*as of 051025 still no graceful way of dealing with imperfect data*/
+         /*130406 prune flawed segment end residue, avoid singleton N segfault*/
+ 
+         discon=1; /*force disconnection at this flawed, unuseable, residue*/
       }
     }/*PROTEIN tricks*/
     /*}}}---- PROTEIN tricks*/
@@ -883,15 +887,18 @@ int  loadribbonatoms()  /*of current residue*/
     /*}}}-- check for disconnection because residues too far apart */
     }/*full number of atoms in to do a ribbon seqment*/
     /*{{{-- disconnection, alloc new fragment*/
-    if(discon || !Lgotatoms)  /*090219*/
-    {/*this residue disconnects from previous residue: create new fragment...*/
+
+    if(discon || !Lgotatoms)  /*090219, 130406 routine rearranged*/
+    {/*this residue disconnects from previous residue: backoff counters */
             /*reset current global thisribfragptr->lastribresptr  */
             /* to the previous ribresptr */
+
             thisribfragptr->lastribresptr = thisribresptr->previousptr;
             thisribfragptr->lastribresptr->nextptr = NULL; /*an end*/
             /*back-off residue count of working fragment*/
-            
+
             thisribfragptr->number--;
+
             thisribsectionptr->number--;
 
             thisribresptr = NULL;
@@ -899,7 +906,10 @@ int  loadribbonatoms()  /*of current residue*/
             previousribbontype = 4; /*090219 clear flag before next residue*/
             explicitribbontype = 4; /*4==COIL*/
 
-            /*then alloc a new global thisribfragptr */
+      if(Lgotatoms)
+      {/*ribbon could continue in a new fragment with the current residue*/
+     	    /*  Ribbon continues!? try to create new fragment...*/
+            /*  alloc a new global thisribfragptr */
             /*  and start it with the current, disconnected ribresptr */
             /*  if this current residue has sufficient atoms, */
             /*  else skip and expect next residue to start new fragment */
@@ -907,7 +917,7 @@ int  loadribbonatoms()  /*of current residue*/
             thisribfragptr = allocribfragstructure(thisribsectionptr);
                      /* allocates global thisribfragptr  051214*/
 
-            if((thisribfragptr != NULL) && Lgotatoms)
+            if(thisribfragptr != NULL)
             {
                /*re-entrant to start another fragment with current residue*/
                /*reloads a newly allocated ribresptr in this new fragment*/
@@ -915,11 +925,13 @@ int  loadribbonatoms()  /*of current residue*/
 
                loadribbonatoms(); /*works on current inputed residue*/
             }
-    }/*this residue disconnected from previous residue: create new fragment...*/
+      }/*ribbon could continue in a new fragment with the current residue*/
+    }/*this residue disconnected from previous residue*/
     /*}}}-- disconnection, alloc new fragment*/
 
    }/*ribres allocated*/
   }/*itr: iteration for multi-residue pseudo-hets like GFPchromophore*/
+ 
   return(Lgotatoms);
 }
 /*___loadribbonatoms()____________________________________________________}}}*/
@@ -1993,7 +2005,7 @@ void buildallguides()  /*051214*/
 
 /*{{{expandsectionguides()****************************************************/
 void expandsectionguides(ribsectionstruct* theribsectionptr)
-{
+{  /*safer allocations and tests, 130406 */
   /*{{{--declarations:                                                       */
   ribfragstruct*    theribfragptr=NULL;
   ribresstruct*     theribresptr=NULL;
@@ -2005,59 +2017,81 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
   float deldcx=0,deldcy=0,deldcz=0; /* width direction of ribbon */
   float widena=0,widenb=0,widenc=0;
   int   j=0;
+  int   LOK = 0; /*130406*/
   /*}}}*/
-  
+
     /*{{{---- loop down through fragments to the residues                    */
 
     /*section*/
 
     if(theribsectionptr->type == 'N') {Lnucleic = 1;}
     else                              {Lnucleic = 0;}
+    
     theribfragptr = theribsectionptr->firstribfragptr;
     while(theribfragptr != NULL)
     {/*frag*/
-      if(theribfragptr->guideset == NULL)
-      {
-        /*alloc the guide array to hold guide points of this frag*/
-        mmaxres = theribfragptr->lastribresptr->number;
-        theribfragptr->guideset = (guide*)malloc(sizeof(guide)*(mmaxres+1));
 
-        /*alloc the residue array of indexed residue pointers of this frag*/
+      if(theribfragptr->guideset == NULL)
+      {/*alloc guideset for this ribfrag*/
+        /*alloc the guide array to hold guide points of this frag*/
+        /*protect from unforeseen as unneeded extra allocations*/
+
+        if(theribfragptr->lastribresptr != NULL)
+        {/*theribfragptr OK, initialize guideset and alloc residueset*/
+           
+           mmaxres = theribfragptr->lastribresptr->number;
+
+           /*alloc the residue array of indexed residue pointers of this frag*/
+        theribfragptr->guideset=(guide*)malloc(sizeof(guide)*(mmaxres+1));
+           /*alloc the residue array of indexed residue pointers of this frag*/
         theribfragptr->residueset=(residue*)malloc(sizeof(residue)*(mmaxres+1));
            /* all real & dummy residues are in, now know maxres. 100322*/
+           
+           if(  (theribfragptr->guideset != NULL) 
+              &&(theribfragptr->residueset != NULL))
+           {/*guideset and residueset are allocated*/           
+              
+              for(j=0; j<mmaxres+1; j++) 
+              { 
+                 /*initialize members of each indexed guideset*/
+                 /*guide members will be calculated below in this subroutine*/
+                 theribfragptr->guideset[j].m0 = NULL;
+                 theribfragptr->guideset[j].a1 = NULL;
+                 theribfragptr->guideset[j].a2 = NULL;
+                 theribfragptr->guideset[j].b3 = NULL;
+                 theribfragptr->guideset[j].b4 = NULL;
+                 theribfragptr->guideset[j].c5 = NULL;
+                 theribfragptr->guideset[j].c6 = NULL;
+                 theribfragptr->guideset[j].x7 = NULL; /*axis 060115*/
+              
+                 /*initialize the member of each indexed residueset*/
+                 /*residue pointers point to existing residues of this frag*/
+                 theribfragptr->residueset[j].resptr = NULL;
+                 /* define residue-set array 100322*/
+              }
 
-        /*guideset has just be created, presumably first time through coords*/
-        for(j=0; j<mmaxres+1; j++) 
-        { 
-            /*initialize members of each indexed guideset*/
-            /*guide members will be calculated below in this subroutine*/
-            theribfragptr->guideset[j].m0 = NULL;
-            theribfragptr->guideset[j].a1 = NULL;
-            theribfragptr->guideset[j].a2 = NULL;
-            theribfragptr->guideset[j].b3 = NULL;
-            theribfragptr->guideset[j].b4 = NULL;
-            theribfragptr->guideset[j].c5 = NULL;
-            theribfragptr->guideset[j].c6 = NULL;
-            theribfragptr->guideset[j].x7 = NULL; /*axis 060115*/
-
-
-            /*initialize the member of each indexed residueset*/
-            /*residue pointers will point to existing residues of this frag*/
-            theribfragptr->residueset[j].resptr = NULL;
-            /* define residue-set array 100322*/
-            
+              /*initialization avoid problem: first time through, */
+              /*when allocating members, expect them to have been NULL.*/
+              /*Later, when re-doing all, expect just to change values,*/
+              /*BUT cannot trust uninitiated members to actually be NULL */
+           }/*guideset and residueset are allocated*/
+           LOK = 1;
+        }/*theribfragptr OK, initialize guideset and alloc residueset*/
+        else
+        {/*NOT OK, do not work this fragment*/
+           LOK = 0;	
         }
-        /*initialization avoid problem: first time through, */
-        /*when allocating members, expect them to have been NULL.*/
-        /*Later, when re-doing all, expect just to change values,*/
-        /*BUT cannot trust uninitiated members to actually be NULL */
-      }
-      /*}}}loop down through fragments to the residues*/
+      }/*alloc guideset for this ribfrag*/
+    /*}}}loop down through fragments to the residues*/
 
-     /*{{{---- for each strand of each residue, calc width offset and apply */
+     /*{{{---- for each strand of each residue, calc width offset and apply  */
+     if(LOK)
+     {/*build guides for this fragment*/
+
      theribresptr = theribfragptr->firstribresptr;
      while(theribresptr != NULL)
      {/*res*/
+
        num = theribresptr->number;
   
        /*{{{----calc widena, widenb, widenc                                  */
@@ -2081,6 +2115,7 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
        /*}}}calc widena, widenb, widenc */
        
        /*{{{----calc offset delta and apply for each strand (a,b,c pairs)    */
+
        deldax = (theribresptr->dvecnptr->x)*((widena) );
        delday = (theribresptr->dvecnptr->y)*((widena) );
        deldaz = (theribresptr->dvecnptr->z)*((widena) );
@@ -2141,7 +2176,6 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
        theribfragptr->guideset[num].x7->y = theribresptr->axialptr->y;
        theribfragptr->guideset[num].x7->z = theribresptr->axialptr->z;
 
-
        /*residue information available by storing pointer to this residue*/
        if(theribfragptr->residueset[num].resptr == NULL)
        {
@@ -2150,7 +2184,6 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
        }
        theribfragptr->residueset[num].resptr = theribresptr;
            /* ++++++ IMPORTANT: register theribresptr as member of set 100322*/
-       
        
        /*}}}calc offset delta and apply for each strand (a,b,c pairs)*/
 
@@ -2163,13 +2196,17 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
        {  
           theribresptr = theribresptr->nextptr;
        }
+
      }/*res*/ /*while(theribresptr != NULL)*/
      /*}}}for each strand of each residue, calc width offset and apply*/
 
-     /*{{{---- loop back up through fragments                                   */
+     /*{{{---- loop back up through fragments                               */
+
      if(theribfragptr == theribsectionptr->lastribfragptr) 
          {  theribfragptr = NULL;}
      else{  theribfragptr = theribfragptr->nextptr;}
+
+     }/*build guides for this fragment*/
     }/*frag*/ /*while(theribfragptr != NULL)*/
   /*}}}loop back up through fragments*/
 }

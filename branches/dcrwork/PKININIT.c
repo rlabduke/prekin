@@ -293,6 +293,7 @@ static char* prekinchanges[] =
 ,"130318 connecthydrogenbyname supersede connecthydrogen by distance\r"
 ,"130324 ... very tricky, empower -report for suspect connections \r"
 ,"130329 pperpoutlier limits slightly changed\r"
+,"130406 PKINRIBB prune flawed segment end residue, better alloc and tests\r"
 ,"\r"
 ,"END\r"
 }; /*prekinchanges[]*/
@@ -304,7 +305,7 @@ void getversion()
    char guiness[64];
 
    PREKINVERSION = (float)6.54;
-   sprintf(PREKINDATE,"130329 "); 
+   sprintf(PREKINDATE,"130406 "); 
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
