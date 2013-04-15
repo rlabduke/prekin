@@ -294,6 +294,8 @@ static char* prekinchanges[] =
 ,"130324 ... very tricky, empower -report for suspect connections \r"
 ,"130329 pperpoutlier limits slightly changed\r"
 ,"130406 PKINRIBB prune flawed segment end residue, better alloc and tests\r"
+,"130415 isahydrogen() elem dominant to name, now elem recognizes D Deuterium\r"
+,"\r"
 ,"\r"
 ,"END\r"
 }; /*prekinchanges[]*/
@@ -305,7 +307,7 @@ void getversion()
    char guiness[64];
 
    PREKINVERSION = (float)6.54;
-   sprintf(PREKINDATE,"130406 "); 
+   sprintf(PREKINDATE,"130415 "); 
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
