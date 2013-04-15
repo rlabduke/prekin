@@ -3475,7 +3475,9 @@ int    isawater(void)  /* res[MAXARR][4] && called with maxatm == 1 */
 /****isahydrogen()************************************************************/
 int  isahydrogen(char record[7], char atmname[6], char elem[3])/*070520,070730*/
 {
-  if     (elem[0]==' ' && (elem[1]=='H'||elem[1]=='h')){return(TRUE);}/*080326*/
+  if(    (elem[0]==' ')
+      && ( (elem[1]=='H'||elem[1]=='h')||(elem[1]=='D'||elem[1]=='d') ) )
+     {return(TRUE);}/*080326 H,h; 130415 D,d*/
   else if(elem[0] != '\0')                  {return(FALSE);}
   else /* elem field NOT present, work from atom name */ 
   {
