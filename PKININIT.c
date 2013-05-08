@@ -1,48 +1,48 @@
 
 /***PREKINinit.c*************************************************************/
-/* PREKIN reads Brookhaven PDB file and produces a file in kinemage format 
+/* PREKIN reads Brookhaven PDB file and produces a file in kinemage format
  *(that can be read by MAGE) ready to be edited into the kinemage as desired
  * by the author.
- * MAGE  shows KINEMAGEs: 
+ * MAGE  shows KINEMAGEs:
  */
-/* PREKIN determines the connectivity (covalent and H-bond) of the 
- *  coordinates,  
- *  sorts the vectors into hierarchical sets, 
+/* PREKIN determines the connectivity (covalent and H-bond) of the
+ *  coordinates,
+ *  sorts the vectors into hierarchical sets,
  *  associates identifying text with each vector,
- *  allows range and focus selection. 
+ *  allows range and focus selection.
  *
- * Attribution Notice:  
- * PREKIN program: copyright c David C. Richardson, 
+ * Attribution Notice:
+ * PREKIN program: copyright c David C. Richardson,
  *  1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005
- *                         all rights reserved   
+ *                         all rights reserved
  *         Little River Institute, 5820 Old Stony Way, Durham, NC 27705
- *  
- * Use and distribution for non-profit educational and research purposes 
- * encouraged. Rewrites for this and other platforms encouraged for similar 
+ *
+ * Use and distribution for non-profit educational and research purposes
+ * encouraged. Rewrites for this and other platforms encouraged for similar
  * use and distribution.
  *    Contact David C. Richardson, Little River Institute, for details.
  * Concept and MAGE  Developed by David C. Richardson and Jane S. Richardson
  *    "Kinemage" name invented by Caroline P. Usher
- * Grateful acknowledgement of many years of support from NIH, grant GM15000, 
- * which included visualization of protein structures and the development of 
+ * Grateful acknowledgement of many years of support from NIH, grant GM15000,
+ * which included visualization of protein structures and the development of
  * CHAOS: display program written in E&S PS300 function-net language,
  * CHAosIN Fortran program,  etc.
  *    Grateful acknowlegement to Fred Brooks and the UNC GRIP team for
  * many years of exposure to Computer Science and developing my sense of
  * what can and should be done with computer graphics.
  *
- *   Although this code obviously bears resemblance to many examples of .c 
- *   and Mac code, one hopes this combination and construction departs from 
- *   the examples far enough so that there is no danger of copyright 
- *   infringement, nor blame for failings, going back to earlier work.  
+ *   Although this code obviously bears resemblance to many examples of .c
+ *   and Mac code, one hopes this combination and construction departs from
+ *   the examples far enough so that there is no danger of copyright
+ *   infringement, nor blame for failings, going back to earlier work.
  *   On the other hand, there is a real intellectual debt owed.
- *   In particular:  
+ *   In particular:
  *     Think C development system, examples, and manual, Symantec Corp. 1989
  *      and several timely hints from Think C technical Support!
- *     Apple Inside Macintosh, Addison-Wesley, 1985 
+ *     Apple Inside Macintosh, Addison-Wesley, 1985
  *          (the essentual and eventually preferred ref.)
  *     Several suggestions and a look at real code by Warren Robinett.
- *     Using the Macintosh Toolbox with C, 
+ *     Using the Macintosh Toolbox with C,
  *            F.A.Huxham, D.Burnard,J.Takatsuka 2nd Ed. Sybex,1989
  *     Macintosh C Programming Primer, Vol. II, D. Mark, Addison-Wesley, 1990
  *     Robert Weiss who began making useful suggestions even before he signed
@@ -59,7 +59,7 @@
 #include "PKINDLOG.h"
 #include "PKINRIBB.h" /*051025*/
 
-FILE  *fphelp;   
+FILE  *fphelp;
 
 void writeversiontooutput(void); /*041011*/
 void writechangestooutput(void); /*040215*/
@@ -280,6 +280,9 @@ static char* prekinchanges[] =
 ,"090622,\r"
 ,"090704 ribbon coil needs black outline...\r"
 ,"090924 vbc3 reconcile 090223, 090304, and 090704...\r"
+,"130508 jjh added -segid option to use segid instead of chain id\r"
+,"       added functionality to read segid field\r"
+,"       cleaned up compiler warnings\r"
 ,"\r"
 ,"\r"
 ,"END\r"
@@ -291,8 +294,8 @@ void getversion()
    char *OS;
    char guiness[64];
 
-   PREKINVERSION = (float)6.53;
-   sprintf(PREKINDATE,"090924 "); 
+   PREKINVERSION = (float)6.57;
+   sprintf(PREKINDATE,"130508 ");
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
@@ -307,7 +310,7 @@ void getversion()
    }
    else
    {
-      sprintf(version,"version %.2f,%s dated: %s%s"
+      sprintf(version,"version %.2f dated: %s%s"
          ,PREKINVERSION,PREKINDATE,guiness);
    }
 }
@@ -387,8 +390,8 @@ static char* prekincmdhelp[] =
 ,"-fencepost :(temporary) if ribbons: do fencepost (==BDNA) orientation\r"
 ,"-noface :(temporary) if ribbons: do not fill in faces\r"
 ,"-noedge :(temporary) if ribbons: do not do a separate edge strand\r"
-,"-cbstubs : ribbon spline stubs to CB for sidechains\r" 
-,"-cacbvec : CA---CB vector angles to ribbon direction, use with cbstubs \r" 
+,"-cbstubs : ribbon spline stubs to CB for sidechains\r"
+,"-cacbvec : CA---CB vector angles to ribbon direction, use with cbstubs \r"
 ,"   e.g.:  prekin -bestribbon -cbstubs -cacbvec 1bch.pdb > 1bch.cacbvec.kin \r"
 ,"-cispep     : cispeptides emphasized as extra part of a ribbon kinemage\r"
 ,"-nofudge : ribbons without fudged width and without curvature fudge offset\r"
@@ -439,7 +442,7 @@ static char* prekincmdhelp[] =
 ,"-animate :adds \"animate\" to end of @group {} ...\r"
 ,"-nobutton :adds \"nobutton\" to end of @group {} ...\r"
 ,"-residuegroups: each residue in separate group, (multi-poses: ligand ATOMs)\r"
-,"    less than 1024 hidden groups: -residuegroup -animate -nobutton \r"  
+,"    less than 1024 hidden groups: -residuegroup -animate -nobutton \r"
 ,"-alt (-alt_) :selects atoms with NO alternate conformer flag\r"
 ,"-alta (-altx) :selects atoms with only alternate conformer flag 'a' ('x')\r"
 ,"-sclists :each sidechain in a separate, nobutton, list\r"
@@ -464,6 +467,7 @@ static char* prekincmdhelp[] =
 ,"-atomradii :individual radii on all c,n,o,s,h atoms\r"
 ,"-polarHradius #.# :radius for polar H atoms, default==1.0\r"
 ,"-ballradius #.# :radius for all atom marker balls, default==0.2\r" /*041020*/
+,"-segid :uses segid to differentiate chains, rather than chainid\r" /*130508*/
 ,"\r"
 ,"SELECTIONS:\r"
 ,"-focusresidue number :focuses on this numbered residue\r"
@@ -591,7 +595,7 @@ static char* prekinVRMLhelp[] =
 ,"Since option \"OK accepts and comes back for more\" is the default, then again get:\r"
 ,"PREKIN_DLOG: (Range Control)  type \"his\" in place of \"...\", select \"sc: sidechain\", select \"at: atom markers or balls (not C or H)\", select \"Ribbon: by curvature over entire range\", select \"OK accepts and end ranges\", click \"OK\"\r"
 ,"(Of course, here one would probably want to do one-by-one just the particularly important histidine sidechains to illustrate the active site.)\r"
-,"( in that case, set \"Number of start residue\" = \"Number of end residue\" = residue number of interest as well as that residue 3-letter code.)\r" 
+,"( in that case, set \"Number of start residue\" = \"Number of end residue\" = residue number of interest as well as that residue 3-letter code.)\r"
 ,"PREKIN_DLOG: Focus Point Options, select \"No focus at all\", click \"OK\"\r"
 ,"PREKIN_DLOG: Atom Marker choices:, \"Current radius of ball\" is probably set to something reasonable, and \"atom mark = ball, of radius given above\" should already be selected, click \"OK\".\r"
 ,"PREKIN_DLOG: Ribbon Control Values, defaults should be set for VRML, particularly \"number of strands\" 5 makes a good solid ribbon, and must use \"Ribbon of long skeins\", click \"OK\".\r"
@@ -623,7 +627,7 @@ fprintf(stderr,"Prekin enters mainlooprouter() with Lnewfile== %d, Lstartfile== 
    {/*must re-call writehelptohtmlfile() when opened with non-modal dialogs*/
       writehelptohtmlfile(1); /*called with 0 from menu, 1 revisits 040425*/
    }
-   if(Lnewfile) 
+   if(Lnewfile)
    {
        selectfiles(); /*PKINFILE.C, if successful, sets Lnewpass=1*/
        if(!Lnewpass)
@@ -640,15 +644,15 @@ fprintf(stderr,"Prekin enters mainlooprouter() with Lnewfile== %d, Lstartfile== 
           Lgetranges=1;
           if(Lin_stdin) Lthispass = 2;
        }
-   } 
-   if(Lnewpass) 
+   }
+   if(Lnewpass)
    {
 /*
 fprintf(stderr,"Prekin gets Lnewpass with Lcommanded: %d, Lbuiltin: %d, Lthispass: %d\n",Lcommanded,Lbuiltin,Lthispass);
 */
      if(Lthispass==1)
-     { 
-        Lnewpass = 0; 
+     {
+        Lnewpass = 0;
         Lnewpassflow = 1;
      }
      else
@@ -707,7 +711,7 @@ fprintf(stderr,"    Lskeinedribbon== %d\n", Lskeinedribbon);
 */
 
 
-       flowControl(); /*PKINCRTL.c*/  
+       flowControl(); /*PKINCRTL.c*/
 #ifdef PCWINDOWS
        makecursoractive(); /*990407b Future Feature for Mac, UNIX*/
 #endif
@@ -719,9 +723,9 @@ fprintf(stderr,"    Lskeinedribbon== %d\n", Lskeinedribbon);
 void initialvalues(void)
 {
   int j;
-  
+
   IDEMO = 0;
-           /* IDEMO == 1 for big type, terse comments, set in kludges dialog*/ 
+           /* IDEMO == 1 for big type, terse comments, set in kludges dialog*/
            /* IDEMO == 0 for regular use prekin, keep this 0 here!*/
   textHeight = 1;
   widMax = 1;
@@ -735,13 +739,19 @@ void initialvalues(void)
   Loption=0;
   Lallaminoacids = 0;
   Lthispass = 1; /*initial pass, scan for subunit pattern */
-  Nchainfirstpass = 0; 
+  UseSEGIDasChain = 0; /*initialization 130507 JJH*/
+  Nchainfirstpass = 0;
   for(j=0; j<256;j++)
      typechainfirstpass[j] =  ' '; /*char str*/  /*991210 Protein, Nucleic,...*/
      kindchainfirstpass[j] =  ' '; /*char str*/ /*060114: space char, Dna, Rna*/
      codechainfirstpass[j][0] = ' '; /*char str*/  /*010426, 2char 070926*/
      codechainfirstpass[j][1] = ' '; /*char str*/  /*010426, 2char 070926*/
      codechainfirstpass[j][2] = '\0'; /*char str*/  /*010426, 2char 070926*/
+     /*segidfirstpass[j][0] = ' ';
+     segidfirstpass[j][1] = ' ';
+     segidfirstpass[j][2] = ' ';
+     segidfirstpass[j][3] = ' ';
+     segidfirstpass[j][4] = '\0';*/
   Lnewpass = 0;  /*set this when get valid input/output files */
   Lpassposs = 0;
   npass = 1;
@@ -803,7 +813,7 @@ void initialvalues(void)
   /*more ribbon default parameters*/
   nstrnd = 2;
   onestrandcoilwidth = 4;  /*integer flag for point width*/
-  ribwidcoil = 1.0; 
+  ribwidcoil = 1.0;
   ribwidalpha = 2.0;
   ribwidbeta = 2.2;
   ribwidnucleic = 3.0;
@@ -842,7 +852,7 @@ void initialvalues(void)
   Lmadekin = 0;
   Lbrowsedefault = 0;
   Lindicator = 0;
-  Lquiet = 0; 
+  Lquiet = 0;
   Lstdoutreport = 0; /*030502*/
   Lpperptobase = 0; /*030515*/
   Lpperptoc1nline = 0; /*050125 pperp to c1'--nbase line instead of base plane*/
@@ -897,7 +907,7 @@ void initialvalues(void)
   strcpy(colorscale[9].origcolor,"yellowtint");
   strcpy(colorscale[10].origcolor,"white");
   for(j=1; j<=10; j++) strcpy(colorscale[j].color,colorscale[j].origcolor);
-  
+
   Leachsclist = 0;  /*each sidechain in its own list, set in Kludges Dialog*/
   Lballonscpoints=0; /*individual balls on sidechain points, Kludges Dialog*/
   Lfillscrings = 0; /*triangle tesselation fills sidechain rings*/
@@ -911,7 +921,7 @@ void initialvalues(void)
   Lnosubgroups = 0; /*NO subgroups 051129*/
   Ngroups = 0; /*counter for Number of groups per pass or MODEL */
   Lhypertextstuff = 0; /*hypertext commands, e.g. mutant rotamer angles */
-  
+
 /*------output color overrides, one for each type of output */
 colormcvec[0] = '\0';
 colorscvec[0] = '\0';
@@ -933,7 +943,7 @@ offwa[0] = '\0';
 offlb[0] = '\0';
 
 Naspectcode = 0; /*counter for color coded aspects for individual atoms*/
-Lallowaspectsin = 1; /*flag for using aspects if present in PDB file*/  
+Lallowaspectsin = 1; /*flag for using aspects if present in PDB file*/
 Lnosubgroupmasters = 1; /*default 011028*/
 Lspeciallistmaster = 0; /*special list master  040902*/
 speciallistmaster[0] = '\0';  /*special list master  040902*/
@@ -990,7 +1000,7 @@ Loldpdb = 0; /*071215 default is new pdb format v3.1 */
   rangestartinitialize(); /*PKINRNGE*/
 
 }
-/*___initialvalues()________________________________________________________*/  
+/*___initialvalues()________________________________________________________*/
 
 /****aboutprekin()***********************************************************/
 void aboutprekin()
@@ -1001,7 +1011,7 @@ void aboutprekin()
          CRLF"       dcr@kinemage.biochem.duke.edu"
          CRLF"Biochemistry Dept., Duke University, NC 27710, USA"
          CRLF"%s"
-             ,version); 
+             ,version);
 }
 /*___aboutprekin()__________________________________________________________*/
 
@@ -1012,11 +1022,11 @@ void    doexplanation()
    sprintf(temps,"program explanations..."CRLF);   /*c*/
    pkintextinsert(temps);  /*PKMCTEXT.C PKPCTEXT.C*/
    adjusttext(0);          /*PKMCTEXT.C PKPCTEXT.C, 0 really resets text*/
-   
+
    sprintf(temps,"first open a PDB format file"CRLF
        "then choose an output .kin file name."CRLF
        "A series of DIALOG boxes allows selection of parameters"CRLF
-       "that will build a kinemage display of the molecule"CRLF 
+       "that will build a kinemage display of the molecule"CRLF
    );
    pkintextinsert(temps);
    adjusttext(4);          /*match CRLFs, quick reset of text*/
@@ -1046,7 +1056,7 @@ void dissectcommandline(char cmdline[256])
     int             i,argc,whitespace,inquotes,j,k;
     char  tempstr[256];
     char*  argv[33]; /* 990331 - used for commandline parsing */
-    
+
     /*dissect the cmdline*/
     argc = 2; /*C commandline 1st argument is at 0 for program name */
     j = 0; /*character counter within an argument starts at 0 */
@@ -1082,7 +1092,7 @@ void dissectcommandline(char cmdline[256])
            else
            {
                inquotes = 0; /*next whitespace will close this arg*/
-           }            
+           }
        }
        else
        {
@@ -1092,7 +1102,7 @@ void dissectcommandline(char cmdline[256])
        }
        if(cmdline[i] == '\0') /*reached end of cmdline*/
        {
-           break; 
+           break;
        }
     }/*scan in whole commandline*/
     argc--; /*was set for another argument, reset for the last one*/
@@ -1131,16 +1141,16 @@ void dissectcommandline(char cmdline[256])
 
 /****parsecommandline()*******************************************************/
 void parsecommandline(int *argc, char** argv)
-{  
+{
    /*NOTE n is a global that is used in this routine!*/
    char *p;
    char valuestr[32];
    int   h,i,j,k,nbegin,ncount,resnumrotate,resnummutate,ncnt,iok;
    int   Lreport = 0;
    int   nnumber = 0,sign = +1,deliniated = 0;
-   int   chainnumber=0; 
+   int   chainnumber=0;
    int   ln=0; /*strlen for ranges of aa   050309*/
-   
+
    Lnogroups = 0; /*flag for NO @group... keyword line */
    Lappend = 0; /*flag for write on end of existing file*/
    Lquiet = 1; /*flag for NO GUI, do commandline quietly, then quit*/
@@ -1153,7 +1163,7 @@ void parsecommandline(int *argc, char** argv)
        /* including resnu1[n] = -999; resnu2[n] = 9999;*/
    n=0; /*global for current range up for input*/
    nbegin = 1; /*local for beginning range of a scope*/
-         
+
    mrange = 0; /*mrange can be set by a command performance==*/
      /*builtin scripts request, so n of a scope has to check this*/
    Lfirstsubunit = 0;
@@ -1194,14 +1204,14 @@ void parsecommandline(int *argc, char** argv)
    LpdbIO = 0;
    Ldid_outfileheader = 0; /*dumps have their own header of fields 040318*/
    Lsingleout = 0; /*some dumps only output once after all chains  040318*/
-   
+
    for(i=1; i<*argc; i++)
    {/*loop over arguments*/
       p = argv[i];
       if(p[0] == '-')
       {/*flag*/
          /*distinguish naked flag and flagged character string*/
- 
+
          if(p[1] == '\0')
          {/*naked flag: stdio request*/
             if(!Lgot_infilename)
@@ -1226,7 +1236,7 @@ void parsecommandline(int *argc, char** argv)
          else if(CompArgStr(p+1,"in", 1))
          {
             i = i+1; /*input file name is next character string*/
-            strcpy(NameStr,argv[i]); 
+            strcpy(NameStr,argv[i]);
                 /*file name copied into prekin input file Name*/
             Lstartfile=1; /*file launched prekin, use it*/
             Lgot_infilename = 1;
@@ -1236,7 +1246,7 @@ void parsecommandline(int *argc, char** argv)
          {
             i = i+1; /*output file name is next character string*/
 
-            strcpy(OutfileStr,argv[i]); 
+            strcpy(OutfileStr,argv[i]);
                 /*file name copied into prekin input file Name*/
             Lgot_outfilename = 1;
             Lnewfile=1;   /*file is known, selectfiles() to open or prepare*/
@@ -1284,7 +1294,7 @@ void parsecommandline(int *argc, char** argv)
             Lnosubgroupmasters = 0;
          }
          else if(CompArgStr(p+1,"listmaster", 10))
-         {/*-listmaster '...name...' */ 
+         {/*-listmaster '...name...' */
             /*  :14 char max: master={name} for all list masters*/
             Lspeciallistmaster = 1;
             i = i+1; /*special list master name is the next character string*/
@@ -1334,7 +1344,7 @@ void parsecommandline(int *argc, char** argv)
               }
               else
               {/*character encountered */
-                 passkeywordstr[k] = p[j]; 
+                 passkeywordstr[k] = p[j];
                  j++;
                  k++; /*past any leading blanks*/
               }
@@ -1539,7 +1549,7 @@ void parsecommandline(int *argc, char** argv)
          }
          else if(CompArgStr(p+1,"also", 4)) /*050731*/
          {/*-also: if ribbons: also do selcted sidechains*/
-            Lribbonalso = 1; 
+            Lribbonalso = 1;
          }
          else if(CompArgStr(p+1,"Aform", 5)) /*040301*/
          {/*-Aform: if ribbons: do nucleics as A-RNA rather than B-DNA*/
@@ -1583,7 +1593,7 @@ void parsecommandline(int *argc, char** argv)
             Lcbstubsrib = 1;
          }
          else if(CompArgStr(p+1,"cacbvec", 7)) /*050403*/
-         {/*cacbvec : CA---CB vector angles to ribbon direction*/ 
+         {/*cacbvec : CA---CB vector angles to ribbon direction*/
             Lcacbvector = 1;
          }
          else if(CompArgStr(p+1,"noblackedge", 11)) /*041106*/
@@ -1755,31 +1765,31 @@ void parsecommandline(int *argc, char** argv)
          else if(CompArgStr(p+1,"halfbonds", 8))
          {/*intermediate point, ca--.--ca, divides Calpha vectors in half*/
             Lhalfbonds = 1;
-         }         
+         }
          else if(CompArgStr(p+1,"noaspects", 8))
          {/*aspects NOT outputted to kinemage even if present in PDB file*/
             Lallowaspectsin = 0;
-         }         
+         }
          else if(CompArgStr(p+1,"aspectnc", 8))
          {/*aspect added for spectral colors from N to C*/
             Laspectnc = 1;
-         }         
+         }
          else if(CompArgStr(p+1,"aspectabc", 9))
          {/*aspect added for coloring by HEADER alpha, beta, coil*/
             Laspectabc = 1;
-         }         
+         }
          else if(CompArgStr(p+1,"emphasis", 8))
          {/*rotatable vectors emphasized as fat lines*/
             Lemphasis = 1;
-         }         
+         }
          else if(CompArgStr(p+1,"noemphasis", 10))
          {/*rotatable vectors NOT emphasized as fat lines*/
             Lemphasis = 0;
-         }         
+         }
          else if(CompArgStr(p+1,"atomradii", 9))
          {/*individual radii on all c,n,o,s,h atoms*/
             Latomradii = 1;
-         }         
+         }
          else if(  (CompArgStr(p+1,"polarHradius",12))
                  ||(CompArgStr(p+1,"polarhradius",12)) )
          {/*polarHradius #.# :radius for polar H atoms, default==1.0*/
@@ -1845,7 +1855,7 @@ void parsecommandline(int *argc, char** argv)
              if(iok != 1){break;}
            }
            if(iok != 1)
-             {fprintf(stderr,"trouble reading %dth matrix element\n",h);} 
+             {fprintf(stderr,"trouble reading %dth matrix element\n",h);}
            else {Lmatrix = 1;}
            iok = 1;
          }
@@ -1860,7 +1870,7 @@ void parsecommandline(int *argc, char** argv)
              if(iok != 1){break;}
            }
            if(iok != 1)
-             {fprintf(stderr,"trouble reading %dth center element\n",h);} 
+             {fprintf(stderr,"trouble reading %dth center element\n",h);}
            else {Lrotcenter = 1;}
            iok = 1;
          }
@@ -1875,7 +1885,7 @@ void parsecommandline(int *argc, char** argv)
              if(iok != 1){break;}
            }
            if(iok != 1)
-             {fprintf(stderr,"trouble reading %dth translate element\n",h);} 
+             {fprintf(stderr,"trouble reading %dth translate element\n",h);}
            else {Ltranslate = 1;} /*050324*/
            iok = 1;
          }
@@ -2047,7 +2057,7 @@ void parsecommandline(int *argc, char** argv)
                   }
                   /*now look for, e.g. mc(red)[off]  */
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offmc[h+1]=p[j+3+k+h];
                       offmc[h+1]='\0';
                       offmc[0] = ' '; /*blank separator needed for parameters*/
@@ -2068,7 +2078,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offsc[h+1]=p[j+3+k+h];
                       offsc[h+1]='\0';
                       offsc[0] = ' '; /*blank separator needed for parameters*/
@@ -2086,7 +2096,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offsc[h+1]=p[j+3+k+h];
                       offsc[h+1]='\0';
                       offsc[0] = ' '; /*blank separator needed for parameters*/
@@ -2103,7 +2113,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offhy[h+1]=p[j+3+k+h];
                       offhy[h+1]='\0';
                       offhy[0] = ' '; /*blank separator needed for parameters*/
@@ -2114,14 +2124,14 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
               else if(CompArgStr(p+j,"hb",2))      /*    hb    */
               {
                   for(ncount=nbegin;ncount<=n;ncount++) hbxl[ncount] = 1;
-                  if(p[j+2]=='(')     /*) balance parens for editor*/ 
+                  if(p[j+2]=='(')     /*) balance parens for editor*/
                   {/*scan for color*/ /*( balance parens for editor*/
                       for(k=0;p[j+3+k]!=')';k++) colorhbvec[k]=p[j+3+k];
                       colorhbvec[k]='\0';
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offhb[h+1]=p[j+3+k+h];
                       offhb[h+1]='\0';
                       offhb[0] = ' '; /*blank separator needed for parameters*/
@@ -2132,14 +2142,14 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
               else if(CompArgStr(p+j,"ca",2))      /*    ca    */
               {
                   for(ncount=nbegin;ncount<=n;ncount++) caxl[ncount] = 1;
-                  if(p[j+2]=='(')      /*) balance parens for editor*/ 
+                  if(p[j+2]=='(')      /*) balance parens for editor*/
                   {/*scan for color*/  /*( balance parens for editor*/
                       for(k=0;p[j+3+k]!=')';k++) colorcavec[k]=p[j+3+k];
                       colorcavec[k]='\0';
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offca[h+1]=p[j+3+k+h];
                       offca[h+1]='\0';
                       offca[0] = ' '; /*blank separator needed for parameters*/
@@ -2150,14 +2160,14 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
               else if(CompArgStr(p+j,"ht",2))      /*    ht    */
               {
                   for(ncount=nbegin;ncount<=n;ncount++) htxl[ncount] = 1;
-                  if(p[j+2]=='(')      /*) balance parens for editor*/  
+                  if(p[j+2]=='(')      /*) balance parens for editor*/
                   {/*scan for color*/  /*( balance parens for editor*/
                       for(k=0;p[j+3+k]!=')';k++) colorhtvec[k]=p[j+3+k];
                       colorhtvec[k]='\0';
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offht[h+1]=p[j+3+k+h];
                       offht[h+1]='\0';
                       offht[0] = ' '; /*blank separator needed for parameters*/
@@ -2167,19 +2177,19 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
               }
               else if(CompArgStr(p+j,"wa",2))      /*    wa    */
               {/*water*/
-                  for(ncount=nbegin;ncount<=n;ncount++) 
+                  for(ncount=nbegin;ncount<=n;ncount++)
                   {
                      waxl[ncount] = 1;
                      waal[ncount] = 1;  /*040902*/
                   }
-                  if(p[j+2]=='(')      /*) balance parens for editor*/  
+                  if(p[j+2]=='(')      /*) balance parens for editor*/
                   {/*scan for color*/  /*( balance parens for editor*/
                       for(k=0;p[j+3+k]!=')';k++) colorwavec[k]=p[j+3+k];
                       colorwavec[k]='\0';
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offwa[h+1]=p[j+3+k+h];
                       offwa[h+1]='\0';
                       offwa[0] = ' '; /*blank separator needed for parameters*/
@@ -2190,14 +2200,14 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
               else if(CompArgStr(p+j,"lb",2))      /*    lb    */
               {
                   for(ncount=nbegin;ncount<=n;ncount++) lbxl[ncount] = 1;
-                  if(p[j+2]=='(')      /*) balance parens for editor*/  
+                  if(p[j+2]=='(')      /*) balance parens for editor*/
                   {/*scan for color*/  /*( balance parens for editor*/
                       for(k=0;p[j+3+k]!=')';k++) colorlbvec[k]=p[j+3+k];
                       colorlbvec[k]='\0';
                       k=k+2; /*so includes count for all chars in (...) */
                   }
                   if(p[j+k+2]=='[')     /*] balance parens for editor*/
-                  {/*scan for off*/ 
+                  {/*scan for off*/
                       for(h=0;p[j+3+k+h]!=']';h++) offlb[h+1]=p[j+3+k+h];
                       offlb[h+1]='\0';
                       offlb[0] = ' '; /*blank separator needed for parameters*/
@@ -2221,17 +2231,17 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             }/*strobe out name(s)*/
             if(atxl[n])
             {
-              if(mcxl[n]) 
+              if(mcxl[n])
                   for(ncount=nbegin;ncount<=n;ncount++) mcal[ncount] = 1;
-              if(scxl[n]) 
+              if(scxl[n])
                   for(ncount=nbegin;ncount<=n;ncount++) scal[ncount] = 1;
-              if(htxl[n]) 
+              if(htxl[n])
                   for(ncount=nbegin;ncount<=n;ncount++) htal[ncount] = 1;
-              if(waxl[n]) 
+              if(waxl[n])
                   for(ncount=nbegin;ncount<=n;ncount++) waal[ncount] = 1;
             }
          }/*show*/
-         else if(   CompArgStr(p+1,"range", 4) 
+         else if(   CompArgStr(p+1,"range", 4)
                  || CompArgStr(p+1,"site",  4) )
          {/*-range "nstart-nend,nstart-nend,...,..." */
           /*-site  "nstart-nend,nstart-nend,...,..." 050731 */
@@ -2245,7 +2255,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
               /*060216 site records need n set to next range number here*/
               if(CompArgStr(p+1,"range", 4))
               {
-                 n = mrange; /*for cmdline ranges, n== current range 060216*/ 
+                 n = mrange; /*for cmdline ranges, n== current range 060216*/
                  mrange++;   /*then increase mrange to be ahead by one 060216*/
               }
               else if(CompArgStr(p+1,"site",4))
@@ -2253,13 +2263,13 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                  mrange++;   /*for SITE recs, augment mrange first 060216*/
                  n = mrange; /*then set n == new mrange*/ /*051213*/
               }
-           } 
+           }
            if(n==0){mrange=n=1;} /*insure that there is a range*/
-           if(CompArgStr(p+1,"site",4)) /*050731*/ 
+           if(CompArgStr(p+1,"site",4)) /*050731*/
            {
               Lsite = 1;    /* site ranges honored*/
               sitel[n] = 1; /*051213*/
-           } 
+           }
            if(!Lcommanded) Lcommanded = 99;
                     /*command performance as specified here*/
 
@@ -2303,7 +2313,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                     deliniated = 1;
                  }
               }
-              if(p[j]==','||p[j]=='\0' ||j==(ln-1) )/*050309 !else, last char*/ 
+              if(p[j]==','||p[j]=='\0' ||j==(ln-1) )/*050309 !else, last char*/
               {/* ',' is logical OR for series of ranges*/
                  /*if(nnumber==2) always takes number just before a , as #2*/
                  {
@@ -2384,8 +2394,8 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                  if(p[j]=='_')
                  {/*request for the chain with NO chain identifier*/
                     /*default is blank spaces  2char chainID 070926*/
-                    focuschaincharcode[0] = ' '; 
-                    focuschaincharcode[1] = ' '; 
+                    focuschaincharcode[0] = ' ';
+                    focuschaincharcode[1] = ' ';
                  }
                  else
                  {/*some character is to be treated as the chain identifier*/
@@ -2439,7 +2449,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
          {/*chainnum choice*/
             i = i+1; /*number is in next character string*/
             p = argv[i];
-            
+
             /*A succession of chain numbers can be accummulated*/
             /*because number choice is done before a pass by entries in gflag[256]*/
             /*Note: chain methods are incompatible: number filters then charcode filters*/
@@ -2456,7 +2466,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                  word[k] = p[j];
                  k++;
                  j++;
-                 
+
               }
               else
               {/*presume whole number is in*/
@@ -2491,9 +2501,9 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             while(p[j]!='\0')
             {/*strobe out chain code character(s)*/
               if(Nchaincharcode == MAXchaincharcode) break;
-              chaincharcode[Nchaincharcode][0] = ' '; 
-              chaincharcode[Nchaincharcode][1] = ' '; 
-              chaincharcode[Nchaincharcode][2] = '\0'; 
+              chaincharcode[Nchaincharcode][0] = ' ';
+              chaincharcode[Nchaincharcode][1] = ' ';
+              chaincharcode[Nchaincharcode][2] = '\0';
               if(p[j]=='\0') break; /*reached end of this substring*/
               else if(p[j]==',') j++; /*comma valid effective AND */
               else if(p[j]==' ' && k==0)
@@ -2505,8 +2515,8 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                  if(p[j]=='_')
                  {/*request for the chain with NO chain identifier*/
                     /*default is blank spaces  2char chainID 070926*/
-                    chaincharcode[Nchaincharcode][0] = ' '; 
-                    chaincharcode[Nchaincharcode][1] = ' '; 
+                    chaincharcode[Nchaincharcode][0] = ' ';
+                    chaincharcode[Nchaincharcode][1] = ' ';
                  }
                  else
                  {/*some character is to be treated as the chain identifier*/
@@ -2563,7 +2573,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                  }/*so OK if no model designation*/
                  else
                  {/*some character is to be treated as the chain identifier*/
-                    modelcharcode[Nmodelcharcode][h] = p[j]; 
+                    modelcharcode[Nmodelcharcode][h] = p[j];
 
                       /*putative model identifier: accum left to right*/
                     h++;
@@ -2608,7 +2618,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                  resid[n][2] = '.';
                  resid[n][3] = '\0';
                  resl[n]=0; /*NOT named so will NOT do a mutation!*/
-                 mutl[n]=0; 
+                 mutl[n]=0;
               }
             }/*strobe out residue number*/
             if(!Lcommanded) Lcommanded = 99;
@@ -2707,7 +2717,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
                }
             }/*strobe out residue name*/
             resid[n][m] = '\0';;
-            Lsuperpos = 1; 
+            Lsuperpos = 1;
             supl[n]=1; /*set option*/
             resl[n]=1; /* named so will do a superposition!*/
             mcxl[n]=1;
@@ -2716,7 +2726,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             if(!Lcommanded) Lcommanded = 99;
                /*command performance as specified here*/
          }/*superpositions all of this aa onto ideal aa in std coords*/
-         
+
          else if(CompArgStr(p+1,"calphataudev", 12))
          {/*- :deviation from ideal tau angle at Calpha*/
             Ltaudev = 1;
@@ -2725,8 +2735,8 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             nbegin = n; /*in case ranges sets up more than one for show set*/
             mrange = n; /*at least*/
             if(!Lcommanded) Lcommanded = 99; /*command performance*/
-         }         
-         
+         }
+
          else if(CompArgStr(p+1,"cbetadev", 8))
          {/*- :deviation and spread of ideal beta from actual beta*/
             Lcbetadev = 1;
@@ -2735,8 +2745,14 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             nbegin = n; /*in case ranges sets up more than one for show set*/
             mrange = n; /*at least*/
             if(!Lcommanded) Lcommanded = 99; /*command performance*/
-         }         
-         
+         }
+
+         else if(CompArgStr(p+1,"segid", 5))
+         {/*- :use segid field instead of chainid field*/
+            UseSEGIDasChain = 1;
+            if(!Lcommanded) Lcommanded = 99; /*command performance*/
+         }
+
          else if(CompArgStr(p+1,"cbdevdump", 9))
          {/*- :deviation of ideal beta as : delineated list*/
             if(CompArgStr(p+1,"cbdevdumpmax", 12)) /*040318*/
@@ -2755,17 +2771,17 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             nbegin = n; /*in case ranges sets up more than one for show set*/
             mrange = n; /*at least*/
             if(!Lcommanded) Lcommanded = 99; /*command performance*/
-         }         
-         
+         }
+
          else if(CompArgStr(p+1,"pperptobase",11 ))
          {/*phosphate perpendiculars to base*/
-            Lpperptobase = 1; 
+            Lpperptobase = 1;
             /*simulate -scope flag so -pperptobase can be used alone*/
             n = mrange+1; /*new range*/
             nbegin = n; /*in case ranges sets up more than one for show set*/
             mrange = n; /*at least*/
             if(!Lcommanded) Lcommanded = 99; /*command performance*/
-         }         
+         }
          else if(CompArgStr(p+1,"pperptoline",11 )) /*050125*/
          {/*phosphate perpendiculars to c1'--nbase line*/
             Lpperptoc1nline = 1; /*050125 additional logical*/
@@ -2802,7 +2818,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
             nbegin = n; /*in case ranges sets up more than one for show set*/
             mrange = n; /*at least*/
             if(!Lcommanded) Lcommanded = 99; /*command performance*/
-         }         
+         }
          else
          {/*unrecognized flag: cannot be quiet about this... 061020*/
             Lquiet = 0;
@@ -2820,7 +2836,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
       }
       else if(Lgot_infilename && !Lgot_outfilename)
       {/*presume unflagged character str is a file name*/
-          strcpy(OutfileStr,argv[i]); 
+          strcpy(OutfileStr,argv[i]);
           /*file name copied into prekin input file Name*/
           Lgot_outfilename = 1;
           Lnewfile=1;   /*file is known, selectfiles() to open or prepare*/
@@ -2850,7 +2866,7 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
    }
    else if( Lcommanded>0 && Lgot_infilename && Lgot_outfilename )
    {
-       Lquiet = 1; /*can run silently with NO  GUI  !!!!  */ 
+       Lquiet = 1; /*can run silently with NO  GUI  !!!!  */
    }
    else if(Lgot_infilename && Lgot_outfilename)
    {
@@ -2876,17 +2892,17 @@ fprintf(stderr,"sidechain range: nbegin== %d, mrange== %d\n",nbegin,n);
          Lout_stdout = 1;
          Lgot_outfilename = 1;
          Lnewfile=1;   /*file is known, selectfiles() to open or prepare*/
-         Lquiet = 1; /*can run silently with NO  GUI  !!!!  */ 
+         Lquiet = 1; /*can run silently with NO  GUI  !!!!  */
          /*040705 ???? are there any commandline cases for which there should*/
          /*NOT be ranges specified? i.e. mrange==0, or would it be safe to */
          /*set mrange++ so things like Bval (i.e. -bval) will be picked up */
          /*in the rangecontrol section of PKINCSUB ????*/
       }
    }
-   
+
 #ifdef UNIX_X11
    if(Lreport != 0)
-   {  
+   {
        fprintf(stderr,"PREKIN %s, called with %d arguments: (Lcommanded==%d)\n"
           ,version,(*argc-1),Lcommanded);
        for(i=1; i<*argc; i++)
@@ -2930,7 +2946,7 @@ void writechangestooutput() /*0400215 re:MAGEINIT/writechangestostdout 031011*/
          temps[j] =  prekinchanges[Nth][j];
          if(temps[j] == '\r')
          {/*ASCII Carraige Return*/
-            temps[j] = '\0'; /*make into a C string*/ 
+            temps[j] = '\0'; /*make into a C string*/
             /*platform specific End-Of-Line character(s) will be added later*/
          }
          if(temps[j] == '\0'){ break;} /*separate end of text piece*/
@@ -2959,7 +2975,7 @@ void writecmdhelptooutput() /*040425 re:writechangestostdout*/
          temps[j] =  prekincmdhelp[Nth][j];
          if(temps[j] == '\r')
          {/*ASCII Carraige Return*/
-            temps[j] = '\0'; /*make into a C string*/ 
+            temps[j] = '\0'; /*make into a C string*/
             /*platform specific End-Of-Line character(s) will be added later*/
          }
          if(temps[j] == '\0'){ break;} /*separate end of text piece*/
@@ -3145,7 +3161,7 @@ void writehelptohtmlfile(int mode) /*040425*/
    fprintf(fphelpout,"</html>\n");
    fclose(fphelpout);
    fphelpout = NULL;
-   Lhelpoutopen = 0; 
+   Lhelpoutopen = 0;
  }
 }
 /*___writehelptohtmlfile()___________________________________________________*/

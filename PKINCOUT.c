@@ -22,7 +22,7 @@ void   writeoutput()
   char  subname[32],allstr[32];
   char  mastername[32]; /*051128*/
   char  domrec1[32],domrec2[32]; /*040406 for dominant or recessiveon*/
-  char  alphcol[16],betacol[16],coilcol[16],nuclcol[16]; /*041029*/ 
+  char  alphcol[16],betacol[16],coilcol[16],nuclcol[16]; /*041029*/
 static char  topnameold[32]={"                               "};
 static char onlynameold[32]={"                               "}; /*050922*/
   int    j,k,Ldoit;
@@ -35,14 +35,14 @@ static char onlyname[32]={"                               "};
   int  numcolsets = 6;   /*060929*/
   int  indexribID = 0;   /*060929*/
 
-  
-   if(   Ldumppperptobase || Lcbdevdump || Lpdbmutout || Ldumpcispeptides 
+
+   if(   Ldumppperptobase || Lcbdevdump || Lpdbmutout || Ldumpcispeptides
       || LdumpVRML || Lconnectresiduesdump)
    {
       Ldump = 1; /*generic control for dump mode not a kin*/
    }
 
-/*Listca,Listmc,Listsc,Listhy,Listhb,Listss,Listlb,Listrot*/  
+/*Listca,Listmc,Listsc,Listhy,Listhb,Listss,Listlb,Listrot*/
 /*mcoutl,scoutl,lboutl,croutl,htoutl,hyoutl,hboutl,cxoutl,caonly,caoutl*/
 /*rotoutl,riboutl,extoutl*/
 
@@ -60,23 +60,23 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
   /*There can be either kinemage format or colon:delineated format output*/
   /*check that some output has been requested, and points have been found*/
   /*as of 030520 do not correlate type of request with type of found points*/
-  if(!Ldump 
-     &&(   Listmc 
-        || Listca 
-        || Listsc 
-        || Listss 
-        || Listhy  
-        || Listht 
-        || Listhb 
-        || Listwa 
-        || Listat 
-        || Listlb 
-        || Listrot 
-        || Listrib 
-        || Listext 
-        || Listtabl 
-        || Listcbdev 
-        || Listtaudev 
+  if(!Ldump
+     &&(   Listmc
+        || Listca
+        || Listsc
+        || Listss
+        || Listhy
+        || Listht
+        || Listhb
+        || Listwa
+        || Listat
+        || Listlb
+        || Listrot
+        || Listrib
+        || Listext
+        || Listtabl
+        || Listcbdev
+        || Listtaudev
         || Listsuppos /*uses typenow*/
        )
      &&(   pointcnt[typenull]
@@ -121,12 +121,12 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
     )
   {/*there is kinemage stuff to output*/
 
-    if(Listsuppos) 
+    if(Listsuppos)
     {/*trumps all other possible output this pass*/
-       Listmc = 0; Listca = 0;  Listsc = 0; Listss = 0; Listhy  = 0; 
-       Listht = 0; Listhb = 0; Listwa = 0; Listat = 0; Listlb = 0; 
-       Listrot = 0; Listrib = 0; Listext = 0; Listtabl = 0; Listcbdev = 0; 
-       Listtaudev = 0; 
+       Listmc = 0; Listca = 0;  Listsc = 0; Listss = 0; Listhy  = 0;
+       Listht = 0; Listhb = 0; Listwa = 0; Listat = 0; Listlb = 0;
+       Listrot = 0; Listrib = 0; Listext = 0; Listtabl = 0; Listcbdev = 0;
+       Listtaudev = 0;
     }
     if(!Ldid_outfiletext && !Ldump) /*set in ____OUTP/prepareoutputfile()*/
     {/*Do kinemage text and caption*/
@@ -138,11 +138,11 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
 #ifdef PCWINDOWS
              fprintf(fpoutput,"@text "EOLO" coordinates from file: %s "EOLO
                    ,dirstrip(NameStr));
-#endif   
+#endif
 #ifndef PCWINDOWS
              fprintf(fpoutput,"@text "EOLO" coordinates from file: %s "EOLO
                    ,NameStr);
-#endif   
+#endif
              if(LIOmage)
              {
 /*fprintf(stderr,"Prekin writing pdbinfostuff under @text\n");*/
@@ -172,13 +172,14 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
 #ifdef PCWINDOWS
            fprintf(fpoutput,"@caption "EOLO" coordinates from file: %s "EOLO
                   ,dirstrip(NameStr));
-#endif   
+#endif
 #ifndef PCWINDOWS
            fprintf(fpoutput,"@caption "EOLO" coordinates from file: %s "EOLO
                   ,NameStr);
-#endif   
+#endif
            /*if(fprintf(fpoutput,"@onewidth "EOLO)<0) Lfpoutput=-1;*/
-           (fprintf(fpoutput,"@onewidth "EOLO)<0);
+           /*(fprintf(fpoutput,"@onewidth "EOLO)<0); fix warning 130507 JJH */
+           fprintf(fpoutput,"@onewidth "EOLO);
         }/*NOT Lappend: presume a whole new kinemage*/
         /*write file name so MAGE could call prekin or probe to read it*/
         fprintf(fpoutput,"@pdbfile {%s} "EOLO,ShortNameStr);
@@ -211,10 +212,10 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
        Lonlygroups = 0;
        Lonegroup = 0;
     }
-    
+
     /*use: mod[maxatm] for actual model number of current piece of molecule */
     /*note nmrmodel changes at transition when next is another model*/
-    /*050121 modelnumber is set to current model being processed*/ 
+    /*050121 modelnumber is set to current model being processed*/
 
 
     if(nmrmodel[0] != '\0') /*nmrmodel set so presumably doing nmrmodels*/
@@ -229,27 +230,27 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
        }
        else /*probably multiple nmr models so set a masters to control them*/
        {
-          sprintf(allstr," animate master= {all}");  
+          sprintf(allstr," animate master= {all}");
        }
     }
     else if(Lnobutton) /*060120*/
     {
        sprintf(allstr," animate nobutton master={ALL}"); /* < 32 char */
-    } 
+    }
     else if(Lanimate)
     {
        sprintf(allstr," animate");
-    } 
-    else 
+    }
+    else
     {
        allstr[0]='\0';
     }
-    
+
     sprintf(hbond," master= {Hbonds}");
     sprintf(hygen," master= {H's}");
     sprintf(atoms," master= {atoms}");
     sprintf(cpks," master= {CPK}");
-    
+
     /*derive names for whole molecule and subunits*/
     /*topID may have both subunit indicator and nmrmodel number*/
     /*050121 actually, topID does NOT seem to ever have nmrmodel number!*/
@@ -257,7 +258,7 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
     /*  null str will have null spaces in %s format conversion*/
     /* historically: Listrot inhibited showing chainID in group name*/
     /*note nmrmodel changes at transition when next is another model*/
-    /*050121 modelnumber is set to current model being processed*/ 
+    /*050121 modelnumber is set to current model being processed*/
     if(MolNameStr[0] == '\0')
     {
         sprintf(chain,"subunit%s",modelnumber); /*050121*/
@@ -282,7 +283,7 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
     }
 /*
 sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainthispass %d",Lthispass,Ngroups,Nchainfirstpass,ichainthispass);
-       pkintextinsert(temps); 
+       pkintextinsert(temps);
        adjusttext(1);
 */
     /*colorcoded aspects for individual atoms have labels*/
@@ -296,16 +297,16 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
           /* which reads: @...%d...aspect : i.e. @0aspect, @1aspect, @2aspect, ...*/
        }
     }
-    
+
     if(Lthispass == 2 &&!Ldump)
     {/*masters layout*/ /*general at 2nd pass 030503*/
 
        /*Prekin dry first pass to discover file structure, subunits, etc.*/
        /*Really needed if(Lonegroup||Lnogroups) when hierarchy hidden*/
        /*nmr MODEL invokes Lonegroup mode*/   /*991210*/
-       if(   !Lnosubgroupmasters 
-          && Ltopout==0 
-          && Ngroups==0 
+       if(   !Lnosubgroupmasters
+          && Ltopout==0
+          && Ngroups==0
           && (Lonegroup||Lnogroups) )
        {/*masters layout: only once, only in 2nd pass, only at first subunit*/
           /*can't do this if specify NO subgroup masters on commandline*/
@@ -313,7 +314,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
 #ifdef OLDMASTERSETUP  /*051128 this is a mess with chains and subunits*/
           if(Nchainfirstpass>1 || Lnogroups)
           {/*set up masters for molecule and subunits*/
-             if(   Nchainfirstpass == 2 
+             if(   Nchainfirstpass == 2
                 && (  typechainfirstpass[2] == 'H'
                     ||typechainfirstpass[2] == 'W')
                )
@@ -347,10 +348,10 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
                       {
                          fprintf(fpoutput,"@master {%s hets}"EOLO,chain);
                       }
-                      else 
+                      else
                       {
-                         fprintf(fpoutput,"@master {%s %s}"EOLO 
-                               ,chain,codechainfirstpass[j]);  
+                         fprintf(fpoutput,"@master {%s %s}"EOLO
+                               ,chain,codechainfirstpass[j]);
                       }
                    }
                 }
@@ -409,7 +410,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
              {
                 fprintf(fpoutput,"@master {water} indent"EOLO);
              }
-          }/*set up masters for components*/   
+          }/*set up masters for components*/
        }/*masters layout: only once, only in 2nd pass, only at first subunit*/
        else if(Lallbases)
        {/*Lallbases presumes mainchain, pseudo_mc, and sidechain at least!*/
@@ -417,7 +418,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
           fprintf(fpoutput,"@master {pseudo_mc}"EOLO);
           fprintf(fpoutput,"@master {sidechain}"EOLO);
           if(Listhy) fprintf(fpoutput,"@master {H's}"EOLO);
-       }  
+       }
        /*041031 no cbetadev pointmasters*/
        if(Listcbdev)
        {/*this should be with the other master controls, */
@@ -492,9 +493,9 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
        }
        Lkinmasters = 0;
     }/*masters layout*/ /*general at 2nd pass 030503*/
-    
+
 /*@group line output***********************************************************/
-    if( Lonlygroups || Lonegroup ) 
+    if( Lonlygroups || Lonegroup )
     {
        /*if(Lallaminoacids||Lallbases)*/
        if(Lallbases)
@@ -523,7 +524,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
        sprintf(domrec2," dominant");
        sprintf(topname,"cbetadev");
     }
-    else 
+    else
     {
        extra[0] = '\0';
        domrec1[0] = '\0'; /*040406*/
@@ -537,12 +538,12 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
          /*group as well as list line done in transferout()*/
          /*
          if(MolNameStr[0] == '\0')
-              fprintf(fpoutput,"@group {ROW %d} table \n",level);   
+              fprintf(fpoutput,"@group {ROW %d} table \n",level);
          else fprintf(fpoutput,"@group {%s %d} table \n",MolNameStr,level);
          */
       }
       else if(    ( (Lallaminoacids||Lallbases) && iresiduecnt == 1)  /*ca-ca*/
-               || (!Lallaminoacids &&!Lallbases && morsub == 1 && level == 1) 
+               || (!Lallaminoacids &&!Lallbases && morsub == 1 && level == 1)
                || (!Lallaminoacids &&!Lallbases && level > 1 )                )
       {/*expect more than one level*/
         if(Lonegroup) /*takes precedence*/
@@ -551,13 +552,13 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
           {/*first group of this pass or MODEL*/
             /*not an nmr MODEL will have nmrmodel[0]=='\0', a null string*/
             /*or just use sub indicator anyway, which inc nmrmodel*/
-            /*if(strcmp(topnameold,topname))*/ 
+            /*if(strcmp(topnameold,topname))*/
             if(strcmp(onlynameold,onlyname))   /*050922*/
             {/*not the same*/
                /*fprintf(fpoutput,"@group {%s}%s%s"EOLO,topname,extra,allstr);*/
                /*BUT group name should not have a chain ID*/
                fprintf(fpoutput,"@group {%s}%s%s"EOLO,onlyname,extra,allstr);
-               /*strcpy(topnameold,topname);*/ 
+               /*strcpy(topnameold,topname);*/
                strcpy(onlynameold,onlyname); /*050922*/
                ichainthispass = 1;
                Ngroups = Ngroups + 1;
@@ -565,14 +566,14 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
           }/*first group of this pass or model*/
           /*write subgroup for this chain*/
           /*for Lonegroup there are masters on all lists*/
-          if(   Nchainfirstpass > 1  
-             && !Lnosubgroupmasters 
-             && !Listrot 
+          if(   Nchainfirstpass > 1
+             && !Lnosubgroupmasters
+             && !Listrot
              && !Lnosubgroups) /*051129*/
           {/*set up subgroups with masters for subunits*/
             /*Listrot writes it's own subgroup line below  050121*/
           /*master subgroup if >1 chain, unless commandline -nosubgroupmasters*/
-            if(   Nchainfirstpass == 2 
+            if(   Nchainfirstpass == 2
                && (  typechainfirstpass[2] == 'H'
                    ||typechainfirstpass[2] == 'W')
               )
@@ -584,12 +585,12 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
                }
                else /*second: hets or water, name accordingly   051201*/
                {
-                  if(typechainfirstpass[2] == 'H') 
+                  if(typechainfirstpass[2] == 'H')
                   {
                      sprintf(subname,"%s hets",chain);
                      sprintf(mastername,"hets");
                   }
-                  else if(typechainfirstpass[2] == 'W') 
+                  else if(typechainfirstpass[2] == 'W')
                   {
                      sprintf(subname,"%s water",chain);
                      sprintf(mastername,"water");
@@ -611,7 +612,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
              if(typechainfirstpass[ichainthispass]=='W') /*051201*/
              {
                 sprintf(subname,"%s water",chain);
-                sprintf(mastername,"water"); 
+                sprintf(mastername,"water");
              }
              else if(  (codechainfirstpass[ichainthispass][0] != ' ') /*070926*/
                      &&(codechainfirstpass[ichainthispass][1] != ' '))/*070926*/
@@ -625,13 +626,13 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
                 sprintf(mastername,"chain %s",ChainID[level]); /*051128*/
              }
             }
-            
+
             /* fprintf(fpoutput,"@subgroup {%s}%s master= {%s}"EOLO */
             /*    ,subname,extra,subname); */
-      
+
             fprintf(fpoutput,"@subgroup {%s}%s master= {%s}"EOLO
                ,subname,extra,mastername); /*051128*/
-            
+
             ichainthispass++;
           }/*set up subgroups with masters for subunits*/
           else if(!Listrot && !Lnosubgroups) /*051129*/
@@ -640,7 +641,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
              fprintf(fpoutput,"@subgroup {%s}%s"EOLO,chain,extra);
           }
         }/*Lonegroup and button for this molecule or model*/
-        else 
+        else
         {/*no restrictions OR Lonlygroups where extra==dominant */
            if( (Lallaminoacids||Lallbases) && iresiduecnt == 1)
            {/*test level, whatever level is highest at this point*/
@@ -667,7 +668,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
            Ngroups = Ngroups + 1;
         }/*no restrictions OR Lonlygroups where extra==dominant */
       }/*expect more than one level*/
-      else if(Lallaminoacids && iresiduecnt == 2 && morsub == 1 && level == 1) 
+      else if(Lallaminoacids && iresiduecnt == 2 && morsub == 1 && level == 1)
       {/*special for sets of sidechain type*/
           fprintf(fpoutput,"@group {sidechains}%s"EOLO,extra);
           Ngroups = Ngroups + 1;
@@ -696,13 +697,13 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
 /*@group line output__________________________________________________________*/
 
     Ltopout = 1; /*now past place for masters layout, etc. */
-    
+
     /*Next section goes through the possible list outputs */
     /*master= {list type} generated and carried in variable called chain*/
     /*when it is appropriate to have a master on an individual list*/
     /*This can be over-ridden by speciallistmaster input from cmdline 040902*/
     /*Presumably only used when only one type of list is generated, but does*/
-    /*provide for a different master button.  e.g. can thus distinguish list 
+    /*provide for a different master button.  e.g. can thus distinguish list*/
     /*of bad rotamer sidechains from the list with all sidechains. */
 
     if(Lonlygroups||Lonegroup||Lallbases)
@@ -731,7 +732,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
          }
          else
          {
-            fprintf(fpoutput,"@subgroup {mainchain}"EOLO); 
+            fprintf(fpoutput,"@subgroup {mainchain}"EOLO);
          }
       }
       if(!Lballs && Listmcv)
@@ -771,7 +772,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         sprintf(extra,"%s%s",chain,offmc);
         transferout(aname,cntl,kol,extra); /*.*/
       }
-      
+
       if(Listmcc)  /*960809*/
       {
         sprintf(cntl,"mcc "); /*4 chars*/
@@ -853,9 +854,9 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         sprintf(extra,"%s%s",chain,offmc);
         transferout(aname,cntl,kol,extra); /*.*/
       }
-      
+
       if(Listmckc)
-      {/*CPK*/ /*960815*/      
+      {/*CPK*/ /*960815*/
         sprintf(cntl,"mckc"); /*4 chars*/
         sprintf(aname,"mc C");
         sprintf(kol,"green");
@@ -865,7 +866,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listmckn)
-      {/*CPK*/ /*960815*/      
+      {/*CPK*/ /*960815*/
         sprintf(cntl,"mckn"); /*4 chars*/
         sprintf(aname,"mc N");
         sprintf(kol,"sky");
@@ -875,7 +876,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listmcko)
-      {/*CPK*/ /*960815*/      
+      {/*CPK*/ /*960815*/
         sprintf(cntl,"mcko"); /*4 chars*/
         sprintf(aname,"mc O");
         sprintf(kol,"red");
@@ -885,7 +886,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listmcks)
-      {/*CPK*/ /*051108 for PO4 of nucleic acids*/      
+      {/*CPK*/ /*051108 for PO4 of nucleic acids*/
         sprintf(cntl,"mcks"); /*4 chars*/
         sprintf(aname,"mc P");
         sprintf(kol,"yellow");
@@ -896,7 +897,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       }
 
       if(Listmckh)
-      {/*CPK*/ /*960815*/      
+      {/*CPK*/ /*960815*/
         sprintf(cntl,"mckh"); /*4 chars*/
         sprintf(aname,"mc H");
         sprintf(kol,"white");
@@ -919,7 +920,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
     }/*mainchain*/
 
     chain[0] = '\0'; /*set default first, then check for alternatives*/
-    if(Lonlygroups || Lonegroup) 
+    if(Lonlygroups || Lonegroup)
     {
        if(LtypeN)
        {
@@ -976,7 +977,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
          sprintf(extra,"%s",chain);
          Lvector = 7; /*wordlist for table*/
          transferout(aname,cntl,kol,extra); /*.*/
-         
+
          if(MolNameStr[0] == '\0')
               {fprintf(fpoutput,"@group {ROW %d} table \n",level);}
          else {fprintf(fpoutput,"@group {%s %d} table \n",MolNameStr,level);}
@@ -993,13 +994,13 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
        else                  {sprintf(chain," master= {mainchain}");}
     }
     else chain[0] = '\0';
-    
+
     if(Listhb)
     {/*h-bonds*/
       /*for Lonegroup there are masters on all lists*/
       if(!Lonegroup && !Lnosubgroups) /*051129*/
       {
-         if(!Listmc && !Listca) 
+         if(!Listmc && !Listca)
          {
             fprintf(fpoutput,"@subgroup {mainchain} "EOLO);
          }
@@ -1011,7 +1012,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       Lvector = 1;
       sprintf(extra," nobutton%s%s%s",chain,hbond,offhb);
       transferout(aname,cntl,kol,extra); /*.*/
-    }/*h-bonds*/ 
+    }/*h-bonds*/
 
     if(Lonlygroups||Lonegroup||Lallbases)
     {
@@ -1023,9 +1024,9 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
     if(Listsc)
     {/*sidechains*/
       sprintf(aname,"sc"); /*default*/
-      if(Lallaminoacids||Lallbases) 
+      if(Lallaminoacids||Lallbases)
       {/*Lallaminoacids||Lallbases: a lot of the name stuff for headers*/
-     
+
         /*so complicated that Lnosubgroups is probably inappropriate 051129*/
 
         aname[0] = resid[1][0];
@@ -1038,7 +1039,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
            aname[1] = toupper(aname[1]);
            aname[2] = toupper(aname[2]);
         }
-        
+
         if( (morsub==1&&level==1) || (level>1 && Lonesubunit == 0) )
         {
           if(!Lonegroup)  /*for Lonegroup there are masters on all lists*/
@@ -1073,7 +1074,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       else
       {/*usual groupings*/
          /*for Lonegroup there are masters on all lists*/
-         if(!Lonegroup && !Lnosubgroups )  /*051129*/ 
+         if(!Lonegroup && !Lnosubgroups )  /*051129*/
          {
            if(Lnosubgroupmasters)
            {
@@ -1087,13 +1088,13 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
          }
       }/*usual groupings*/
       if(!Lballs && Listscv)
-      {/*do sidechain vectors first, so dots or croses will overlay them*/ 
+      {/*do sidechain vectors first, so dots or croses will overlay them*/
          sprintf(cntl,"scv "); /*4 chars*/
         sprintf(aname,"sc");
         if(colorscvec[0] != '\0') sprintf(kol,"%s",colorscvec);
         else sprintf(kol,"cyan");
           /*default sidechain color*/
-        if(Lallaminoacids||Lallbases) 
+        if(Lallaminoacids||Lallbases)
         {
             aname[0] = resid[1][0];
             aname[1] = resid[1][1];
@@ -1110,7 +1111,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
                  kol[j] = kolor[j];
                  if(kolor[j] == '\0') break;
             }
-            sprintf(allstr," master= {all}"); 
+            sprintf(allstr," master= {all}");
         }
          Lvector = 1;
          sprintf(extra,"%s%s",chain,offsc);
@@ -1170,7 +1171,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
 
         sprintf(cntl,"scv "); /*4 chars*/
         sprintf(aname,"sc");
-        if(Lallaminoacids||Lallbases) 
+        if(Lallaminoacids||Lallbases)
         {
             aname[0] = resid[1][0];
             aname[1] = resid[1][1];
@@ -1192,9 +1193,9 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
          sprintf(extra,"%s%s",chain,offsc);
          transferout(aname,cntl,kol,extra); /*.*/
       }/*sidechain vectors after balls*/
-      
+
       if(Listsckc)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"green");
         sprintf(cntl,"sckc"); /*4 chars*/
@@ -1204,7 +1205,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listsckn)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"sky");
         sprintf(cntl,"sckn"); /*4 chars*/
@@ -1214,7 +1215,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listscko)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"red");
         sprintf(cntl,"scko"); /*4 chars*/
@@ -1225,7 +1226,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       }
 
       if(Listscks)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"yellow");
         sprintf(cntl,"scks"); /*4 chars*/
@@ -1235,7 +1236,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listsckh)
-      {/*CPK*/ /*960815*/      
+      {/*CPK*/ /*960815*/
         sprintf(cntl,"sckh"); /*4 chars*/
         sprintf(aname,"sc H");
         sprintf(kol,"white");
@@ -1271,12 +1272,12 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
     {/*disulfide vectors*/
         sprintf(extra,"%s",chain); /*chain==master={sidechain} move here051201*/
         /*for Lonegroup there are masters on all lists*/
-        if(!Lonegroup && !Lnosubgroups )  /*051129*/  
+        if(!Lonegroup && !Lnosubgroups )  /*051129*/
         {
            if(!Listsc) /*so likely no other sidechain except -SS- 051201 */
            {
               sprintf(extra," master= {-SS-}");
-              
+
               if(Lnosubgroupmasters)
               {
                 fprintf(fpoutput,"@subgroup {-SS-}"EOLO);
@@ -1305,9 +1306,9 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
 
     if(Listlb)
     {/*labels*/
-       if(!Listsc && !Listss) 
+       if(!Listsc && !Listss)
        {
-         if(Lallaminoacids||Lallbases) 
+         if(Lallaminoacids||Lallbases)
          {/*Lallaminoacids||Lallbases*/ /*Lnosubgroups not appropriate*/
            if( (morsub==1&&level==1) || (level>1 && Lonesubunit == 0) )
            {
@@ -1340,10 +1341,10 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
              }
            }
          }/*Lallaminoacids||Lallbases*/
-         else 
+         else
          {
             /*for Lonegroup there are masters on all lists*/
-            if(!Lonegroup && !Lnosubgroups ) /*051129*/ 
+            if(!Lonegroup && !Lnosubgroups ) /*051129*/
             {
               if(Lnosubgroupmasters)
               {
@@ -1391,7 +1392,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       {
         sprintf(cntl,"htv "); /*4 chars*/
         sprintf(aname,"het");
-        
+
         if(colorhtvec[0] != '\0') sprintf(kol,"%s",colorhtvec);
         else sprintf(kol,"pink");
 
@@ -1410,7 +1411,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         else Lvector = 1;
         sprintf(extra," nobutton%s%s",chain,atoms);
         transferout(aname,cntl,kol,extra); /*.*/
-      }      
+      }
       if(Listhtn)
       {
         sprintf(cntl,"htn "); /*4 chars*/
@@ -1453,12 +1454,12 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         sprintf(extra," radius= 0.5 nobutton%s",chain);
         transferout(aname,cntl,kol,extra); /*.*/
       }
-      
+
       if(Lballs && Listhtv) /*960815*/
       {
         sprintf(cntl,"htv "); /*4 chars*/
         sprintf(aname,"het");
-        
+
         if(colorhtvec[0] != '\0') sprintf(kol,"%s",colorhtvec);
         else sprintf(kol,"pink");
 
@@ -1468,7 +1469,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       }
 
       if(Listhtkc)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"green");
         sprintf(cntl,"htkc"); /*4 chars*/
@@ -1478,7 +1479,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listhtkn)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"sky");
         sprintf(cntl,"htkn"); /*4 chars*/
@@ -1488,7 +1489,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listhtko)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"red");
         sprintf(cntl,"htko"); /*4 chars*/
@@ -1498,7 +1499,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listhtks)/*969815*/ /*color and radius need specification*/
-      {/*CPK*/     
+      {/*CPK*/
         Lvector = 4;
         sprintf(kol,"yellow");
         sprintf(cntl,"htks"); /*4 chars*/
@@ -1508,7 +1509,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }
       if(Listhtkh)
-      {/*CPK*/ /*960815*/      
+      {/*CPK*/ /*960815*/
         sprintf(cntl,"htkh"); /*4 chars*/
         sprintf(aname,"het H");
         sprintf(kol,"white");
@@ -1541,7 +1542,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       /*for Lonegroup there are masters on all lists*/
       if(!Lonegroup && !Lnosubgroups ) /*051129*/
       {
-         if(!Listht) 
+         if(!Listht)
          {
             if(Lnosubgroupmasters)
             {
@@ -1562,7 +1563,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         /*sprintf(extra," master= {water}");*/ /*set default*/
         sprintf(extra,"%s%s",chain,offwa);/*011024*/
         if(Ldotsonly) Lvector = 0;
-        else if(Lballs) 
+        else if(Lballs)
         {
            Lvector = 6; /*balllist with extra radius specification*/
            /*sprintf(extra," radius= 0.15 master= {water}");*/
@@ -1594,7 +1595,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         transferout(aname,cntl,kol,extra); /*.*/
       }/*wa hydrogens*/
     }/*water*/
-    
+
     if(Listrot > 0)
     {/*something for which MAGE will set up rotations*/
       /*set up for at least one rotatable bond*/
@@ -1614,7 +1615,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
             fprintf(fpoutput,"@subgroup {%s} dominant master= {rotation}"EOLO
                                 ,rotatorname);
          }
-      }  
+      }
       sprintf(cntl,"ro1 "); /*4 chars*/
       sprintf(aname,"%s 1",rotatorname);
       sprintf(kol,"sea");
@@ -1637,7 +1638,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         sprintf(cntl,"ro2 "); /*4 chars*/
         sprintf(aname,"%s 2",rotatorname);
         sprintf(kol,"sea");
-        if(Listrot2==2) 
+        if(Listrot2==2)
                 sprintf(extra,"%cbondrot %.1f",branch,bondangle[2] );
         else            sprintf(extra,"2bondrot %.1f",bondangle[2] );
         Lvector = 1;
@@ -1659,7 +1660,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         sprintf(cntl,"ro3 ");
         sprintf(aname,"%s 3",rotatorname);
         sprintf(kol,"sea");
-        if(Listrot2==3) 
+        if(Listrot2==3)
                 sprintf(extra,"%cbondrot %.1f",branch,bondangle[3] );
         else            sprintf(extra,"3bondrot %.1f",bondangle[3] );
         Lvector = 1;
@@ -1681,7 +1682,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         sprintf(cntl,"ro4 ");
         sprintf(aname,"%s 4",rotatorname);
         sprintf(kol,"sea");
-        if(Listrot2==4) 
+        if(Listrot2==4)
                 sprintf(extra,"%cbondrot %.1f",branch,bondangle[4] );
         else            sprintf(extra,"4bondrot %.1f",bondangle[4] );
         Lvector = 1;
@@ -1729,7 +1730,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
        else                  {sprintf(chain," master= {ribbon}");}
     }
     else chain[0] = '\0';
-    
+
     if(Listrib)
     {/*ribbon*/
       /*for Lonegroup there are masters on all lists*/
@@ -1749,20 +1750,20 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       {/*at least tried to get ribbon arrows from PDB SHEET & HELIX records*/
          /*set up color designators for putative alpha, beta, coil regions*/
          /*on list use:  color= {name}  instead of  color= color  */
-         /*@colorset {name} color    used to use topname==molec+topID*/ 
+         /*@colorset {name} color    used to use topname==molec+topID*/
          /*unique name and standard color as char strings*/
          /*031228: just use topID to keep colorset name <= 14 char for mage*/
          /*041106: colors to distinguish multiple chains, repeat by symmetry*/
          /*seven list color schemes, pointcolors could be colornc or colorBval*/
          /*protein nucleic acid complexes are not sorted out well as of 041106*/
-         
+
          /*050705 use this for RCSB ribnhet option, but it messes up multicrit*/
          /*if(Nproteinchains > 1 || Nnucleicchains > 1)*/ /*041106listcolordom*/
-         if(Llistcolordom &&(Nproteinchains > 1 || Nnucleicchains > 1)) 
+         if(Llistcolordom &&(Nproteinchains > 1 || Nnucleicchains > 1))
          {/*distinguish chains by list colorscheme*/
             fprintf(fpoutput,"@listcolordominant\n");
          }
-         NMOD = 7; /*max and default*/ 
+         NMOD = 7; /*max and default*/
          if(Nproteinchains > 1)  /*041106 distinguish by putative symmetry*/
          {/*distinguish by putative symmetry*/
             if     ( (Nproteinchains % 5) == 0 ) {NMOD = 5;}
@@ -1771,7 +1772,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
          }
          Ncase = (level % NMOD);
          if(Ncase == 0) {Ncase = NMOD;} /*cases start with 1, go up to NMOD*/
-         
+
          /*041106 commandline colormcvec wierd for ribbons, drop its use here*/
          /*if(colormcvec[0]!='\0') {sprintf(alphcol,"%s",colormcvec);}*/
 
@@ -1792,38 +1793,38 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
             case 3:
                sprintf(alphcol,"orange");
                sprintf(betacol,"peach");
-               sprintf(coilcol,"peachtint"); 
-               sprintf(nuclcol,"peachtint"); 
+               sprintf(coilcol,"peachtint");
+               sprintf(nuclcol,"peachtint");
             break;
             case 4:
                sprintf(alphcol,"hotpink");
                sprintf(betacol,"pink");
-               sprintf(coilcol,"pinktint"); 
-               sprintf(nuclcol,"pinktint"); 
+               sprintf(coilcol,"pinktint");
+               sprintf(nuclcol,"pinktint");
             break;
             case 5:
                sprintf(alphcol,"purple");
                sprintf(betacol,"lilac");
-               sprintf(coilcol,"lilactint"); 
-               sprintf(nuclcol,"lilactint"); 
+               sprintf(coilcol,"lilactint");
+               sprintf(nuclcol,"lilactint");
             break;
             case 6:
                sprintf(alphcol,"blue");
                sprintf(betacol,"sky");
-               sprintf(coilcol,"bluetint"); 
-               sprintf(nuclcol,"bluetint"); 
+               sprintf(coilcol,"bluetint");
+               sprintf(nuclcol,"bluetint");
             break;
             case 7:
                sprintf(alphcol,"green");
                sprintf(betacol,"sea");
-               sprintf(coilcol,"greentint"); 
-               sprintf(nuclcol,"greentint"); 
+               sprintf(coilcol,"greentint");
+               sprintf(nuclcol,"greentint");
             break;
             default:
                sprintf(alphcol,"red");
                sprintf(betacol,"lime");
-               sprintf(coilcol,"white"); 
-               sprintf(nuclcol,"white"); 
+               sprintf(coilcol,"white");
+               sprintf(nuclcol,"white");
             break;
          }/*switch on Ncase MOD level*/
 
@@ -1876,7 +1877,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       }
       else
       {/*Lexplicitribbon == 0 && !Lbestribbon*/
-         /*fprintf(fpoutput,"@colorset {coil} gold \n");*/      
+         /*fprintf(fpoutput,"@colorset {coil} gold \n");*/
          fprintf(fpoutput,"@colorset {coil_%s} gold \n",topID); /*040924*/
          if(Lblackedge)  /*040924*/
             {fprintf(fpoutput,"@colorset {edge_%s} deadblack \n",topID);}
@@ -2005,7 +2006,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         ballradius = ballradiushold; /*restore*/
 
         sprintf(cntl,"cbdb"); /*4 chars*/
-        sprintf(aname,"CB b dev Ball");
+        sprintf(aname,"CB bdev Ball"); /*shorten for aname[13] 130508*/
         sprintf(kol,"pink");
         Lvector = 3; /*balls*/
         sprintf(extra," %s",chain);
@@ -2014,7 +2015,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         ballradius = ballradiushold; /*restore*/
 
         sprintf(cntl,"cbdc"); /*4 chars*/
-        sprintf(aname,"CB c dev Ball");
+        sprintf(aname,"CB cdev Ball"); /*shorten for aname[13] 130508*/
         sprintf(kol,"red");
         Lvector = 3; /*balls*/
         sprintf(extra," %s",chain);
@@ -2037,37 +2038,37 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         Lvector = 1; /*vector*/
         sprintf(extra," off%s",chain);
         transferout(aname,cntl,kol,extra); /*.*/
-    
+
         sprintf(cntl,"cbdl"); /*4 chars*/
         sprintf(aname,"CB label");
         sprintf(kol,"gold");
         Lvector = 2;
         sprintf(extra," off%s",chain);
         transferout(aname,cntl,kol,extra); /*.*/
-    
+
         sprintf(cntl,"cbde"); /*4 chars*/
         sprintf(aname,"CA---CB");
         sprintf(kol,"peach");
         Lvector = 1; /*vector*/
         sprintf(extra," %s",chain);
         transferout(aname,cntl,kol,extra); /*.*/
-    
+
         sprintf(cntl,"cbdf"); /*4 chars*/
         sprintf(aname,"CA---CB -b-");
         sprintf(kol,"peach");
         Lvector = 1; /*vector*/
         sprintf(extra," %s",chain);
         transferout(aname,cntl,kol,extra); /*.*/
-    
+
         sprintf(cntl,"cbdg"); /*4 chars*/
         sprintf(aname,"CA---CB -c-");
         sprintf(kol,"peach");
         Lvector = 1; /*vector*/
         sprintf(extra," %s",chain);
         transferout(aname,cntl,kol,extra); /*.*/
-    
+
     }/*C-beta deviation from ideal output*/
-        
+
 /*deviations subgroup section________________________________________________*/
     if(Listsuppos)
     {/*superposition of all type aa onto ideal std aa*/
@@ -2092,7 +2093,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       if(Lpperptobase){sprintf(extra,"master= {base-P perp}");} /*070731*/
       else {sprintf(extra,"master= {extra}");}
       transferout(aname,cntl,kol,extra); /*.*/
-      
+
       sprintf(cntl,"ext2"); /*4 chars*/  /*041102*/
       sprintf(aname,"ext");
       sprintf(kol,"green");
@@ -2106,7 +2107,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       Lvector = 2;/* 2==label, <0 then no @____list line*/
       sprintf(extra,"master= {extraL}");
       transferout(aname,cntl,kol,extra); /*.*/
-      
+
       sprintf(cntl,"extB"); /*4 chars*/
       sprintf(aname,"ext");
       sprintf(kol,"green");
@@ -2115,7 +2116,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       /*ballradius = 4.0; 030519 remove so can use extB for different things*/
       sprintf(extra,"master= {extraB}");
       transferout(aname,cntl,kol,extra); /*.*/
-      
+
       sprintf(cntl,"pdb "); /*4 chars*/
       sprintf(aname,"ext");
       sprintf(kol,"green");
@@ -2123,7 +2124,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
       sprintf(extra,"master= {extrapdb}");
       transferout(aname,cntl,kol,extra); /*.*/
     }/*extra output*/
-  
+
     fprintf(fpoutput,EOLO); /*trailing new line at end of a pass*/
   }/*there is kinemage stuff to output*/
   else if(Ldump && LdumpVRML)
@@ -2144,10 +2145,10 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         LsplineVRMLout=1; LvectorVRMLout=0;LsphereVRMLout=0;/*specific control*/
         for(j=1; j<=nstrnd; j++)
         {
-           fprintf(fpoutput,"Transform {  # splines..."EOLO); 
+           fprintf(fpoutput,"Transform {  # splines..."EOLO);
            fprintf(fpoutput,"translation %.3f %.3f %.3f "EOLO
               ,VRMLx,VRMLy,VRMLz);
-           fprintf(fpoutput,"children [  # of spline"EOLO); 
+           fprintf(fpoutput,"children [  # of spline"EOLO);
 
            sprintf(cntl,"VR%2d",j);
            Lvector = -1; /*no other header sort of thing*/
@@ -2161,10 +2162,10 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
      if(LvectorVRML)
      {/*e.g. sidechain vectors to be drawn*/
         LsplineVRMLout=0; LvectorVRMLout=1;LsphereVRMLout=0;/*specific control*/
-           fprintf(fpoutput,"Transform {  # vectors..."EOLO); 
+           fprintf(fpoutput,"Transform {  # vectors..."EOLO);
            fprintf(fpoutput,"translation %.3f %.3f %.3f "EOLO
               ,VRMLx,VRMLy,VRMLz);
-           fprintf(fpoutput,"children [  # vector children..."EOLO); 
+           fprintf(fpoutput,"children [  # vector children..."EOLO);
 
            sprintf(cntl,"scv ");
            Lvector = -1; /*no other header sort of thing*/
@@ -2177,10 +2178,10 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
      if(LarrowVRML)
      {/*e.g. ribbon arrowhead vectors to be drawn*/
         LsplineVRMLout=0; LvectorVRMLout=1;LsphereVRMLout=0;/*specific control*/
-           fprintf(fpoutput,"Transform {  # arrowhead..."EOLO); 
+           fprintf(fpoutput,"Transform {  # arrowhead..."EOLO);
            fprintf(fpoutput,"translation %.3f %.3f %.3f "EOLO
               ,VRMLx,VRMLy,VRMLz);
-           fprintf(fpoutput,"children [  # arrowhead children..."EOLO); 
+           fprintf(fpoutput,"children [  # arrowhead children..."EOLO);
 
            sprintf(cntl,"VRML");
            Lvector = -1; /*no other header sort of thing*/
@@ -2193,13 +2194,13 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
      if(LsphereVRML)
      {/*e.g. sidechain atom balls to be written piecemeal*/
         LsplineVRMLout=0; LvectorVRMLout=0;LsphereVRMLout=1;/*specific control*/
-           fprintf(fpoutput,"Transform {  # spheres..."EOLO); 
+           fprintf(fpoutput,"Transform {  # spheres..."EOLO);
            fprintf(fpoutput,"translation %.3f %.3f %.3f "EOLO
               ,VRMLx,VRMLy,VRMLz);
-           fprintf(fpoutput,"children [  # sphere children..."EOLO); 
+           fprintf(fpoutput,"children [  # sphere children..."EOLO);
 
            Lvector = -1; /*no other header sort of thing*/
-           aname[0] = '\0'; 
+           aname[0] = '\0';
            extra[0] = '\0';
 
            sprintf(cntl,"scn ");
@@ -2216,7 +2217,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
            fprintf(fpoutput,"}  # end of spheres."EOLO); /* of Transformation*/
      }
      /*possibility of another pass, e.g. to get arrowheads, reset options:*/
-     LsplineVRML=0; 
+     LsplineVRML=0;
      LvectorVRML=0;
      LsphereVRML=0;
      LarrowVRML=0;
@@ -2264,10 +2265,10 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
 
    rewindtextblock(&mainscratch);
    atEOF = 0; /*set up here so can control output later 040318*/
-   
-   if(cntl[2] == '\0') cntl[2] = ' '; 
-   if(cntl[3] == '\0') cntl[3] = ' '; 
-   cntl[4] = '\0'; 
+
+   if(cntl[2] == '\0') cntl[2] = ' ';
+   if(cntl[3] == '\0') cntl[3] = ' ';
+   cntl[4] = '\0';
    /*  cntl: two to four characters */
    last[0] = cntl[0]; /*protection for a change back to orig cntl 050327*/
    last[1] = cntl[1];
@@ -2296,7 +2297,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
    }
 
    iexist = 0; /* see if there is an entry before starting a @---list*/
-   if(Lvector == 1) 
+   if(Lvector == 1)
    {
        sprintf(header,"@vectorlist {%s} color= %s %s%s"EOLO
           ,aname,kol,extra,sizestr);
@@ -2401,19 +2402,19 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
    {/*scan through scratch block*/
       getonetextblockline(&mainscratch,temps); /*PKINSCRT.c*/
       if(temps[0] != '\0')
-      {/*entries still in scratch block*/                                
+      {/*entries still in scratch block*/
 
 /*fprintf(stderr,"temps== %s\n",temps);*/
 
          if(   (temps[0]==last[0])  /*check all characters*/
              &&(temps[1]==last[1])  /*against the last cntl actually used*/
              &&(temps[2]==last[2])  /*use last instead of orig cntl 050327*/
-             &&(temps[3]==last[3])  )        
+             &&(temps[3]==last[3])  )
          {
             LOK = 1;/*this point belongs in this list*/
          }
          else if(     (temps[0]==last[0])  /*check first two characters*/
-                   && (temps[1]==last[1])  
+                   && (temps[1]==last[1])
                    &&((temps[2]!=last[2]) /*if last two characters change*/
                    || (temps[3]!=last[3]))
                 )/*, may need new list*/
@@ -2424,7 +2425,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                 &&(temps[1]=='b')
               )
             {/*is a ribbon*/   /*ribbon, may need new list   Listrib*/
-               /*@colorset {name} color  */ 
+               /*@colorset {name} color  */
                /*unique name and standard color as char strings*/
                /*on list use:  color= {name}  instead of  color= color  */
               /*ribbonlist interruption, needs new header== @ribbonlist line*/
@@ -2434,10 +2435,10 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                  ||(temps[3]=='e')  /*black rearground for single strand worm*/
                  ||(temps[3]==' ')  /*old default*/
                 /*coil edge is now rbce 090704*/
-                )                    
+                )
               {
                  sprintf(keyword,"@vectorlist ");
-              }              
+              }
               else if(temps[3]=='f')  /*face*/
               {
                  if(Lnoface) { sprintf(keyword,"@vectorlist "); } /*040319*/
@@ -2449,7 +2450,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
               }
               else if(temps[2]=='s' || temps[2]=='h') /*splines,Hbonds 060113*/
               {
-                 { sprintf(keyword,"@vectorlist "); } 
+                 { sprintf(keyword,"@vectorlist "); }
               }
               else
               {
@@ -2462,16 +2463,16 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                    if(     temps[2]=='a')  /*alpha*/
                    {  /*topname is name of this group*/
                       /*topID has only chain and subunit info for short name*/
-                      if(temps[3]=='e' && Lblackedge) 
+                      if(temps[3]=='e' && Lblackedge)
                          {sprintf(colorword,"{edge_%s} ",topID);}
                       else { sprintf(colorword,"{alph_%s} ",topID);}
                       if(Lribbonmasters) /*051128*/
                            {sprintf(masterword," master= {alpha}");}
                       else {masterword[0] = '\0';}
-                   }              
+                   }
                    else if(temps[2]=='b')  /*beta*/
                    {
-                      if(temps[3]=='e' && Lblackedge) 
+                      if(temps[3]=='e' && Lblackedge)
                          {sprintf(colorword,"{edge_%s} ",topID);}
                       else { sprintf(colorword,"{beta_%s} ",topID);}
                       if(Lribbonmasters) /*051128*/
@@ -2491,7 +2492,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                    }
                    else if(temps[2]=='n')  /*nucleic acid*/
                    {
-                      if(temps[3]=='e' && Lblackedge) 
+                      if(temps[3]=='e' && Lblackedge)
                          {sprintf(colorword,"{edge_%s} ",topID);}
                       else { sprintf(colorword,"{nucl_%s} ",topID); }
                       if(Lribbonmasters) /*051128*/
@@ -2519,7 +2520,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                 {/*old, sooothed, single ribbon*/
                    masterword[0] = '\0';/*no master here for smoothed ribbon*/
                    if(temps[3]=='e' && Lblackedge)
-                        {sprintf(colorword,"{edge_%s} ",topID);} 
+                        {sprintf(colorword,"{edge_%s} ",topID);}
                    else {sprintf(colorword,"{coil_%s} ",topID);} /*040924*/
                    /*sprintf(colorword,"{coil} ");*/
                 }
@@ -2569,15 +2570,15 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                  last[3] = temps[3];
               }/*finish defining ribbon interruption*/
               else
-              {      
+              {
                  LOK = 0;/*can't use this point in this list*/
               }
-           }/*is a ribbon*/         
+           }/*is a ribbon*/
            else if(   (temps[0]=='s') /*check first 2 characters*/ /*991128*/
                     &&(temps[1]=='c')
                   )
            {/*sidechain something*/
-              if(temps[2]==cntl[2] && cntl[2]=='v') /* 3rd character: vector*/ 
+              if(temps[2]==cntl[2] && cntl[2]=='v') /* 3rd character: vector*/
               {/*sidechain vectors*/ /*check 4th character*/
                 if(temps[3] != xth) /*both== ' ' for single list*/
                 {/*Listscv may need new list*/
@@ -2587,7 +2588,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
                      ,aname,kol,extra);
                 }
                 LOK = 1; /*point belongs in this list*/
-              }/*sidechain vectors*/ 
+              }/*sidechain vectors*/
               else
               {
                  LOK = 0;/*can't use this point in this list*/
@@ -2600,9 +2601,9 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
          }/*last 2 char mismatch*/
          else
          {/*unrecognized mismatch, can't use this point in this list*/
-            LOK = 0; 
+            LOK = 0;
          }
-           
+
 
          if(LOK)
          {/*this point belongs in this list*/
@@ -2616,7 +2617,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
             if(LdumpVRML) /*050208*/
             {
                if(LvectorVRMLout || LsplineVRMLout) /*050208,050211*/
-               {/*scrts already in VRML format by writeVRMLvectortoscratch()*/ 
+               {/*scrts already in VRML format by writeVRMLvectortoscratch()*/
                   fprintf(fpoutput,"%s",scrts);
                }
                else if(LsphereVRMLout) /*050209*/
@@ -2640,7 +2641,7 @@ void   transferout(char aname[13],char cntl[5],char kol[20],char extra[64])
               fprintf(fpoutput,"%s",scrts);
             }
          }/*this point belongs in this list*/
-       
+
      }/*entries still in scratch block*/
      else
      {/*reached end of scratch block*/
@@ -2746,7 +2747,7 @@ void VRMLxSectionCircle(float radius)
       for(j=0; j<SEGMENTS; j++)
       {
          fprintf(fpoutput,"  %.3f %.3f, "EOLO,C[j][0],C[j][2]);
-      }   
+      }
       /*and close the circle: */
          j=0;
          fprintf(fpoutput,"  %.3f %.3f, "EOLO,C[j][0],C[j][2]);
@@ -2793,7 +2794,7 @@ void writeVRMLvectortoscratch(char cntl[5], char color[16], float radius, char w
       "Shape { "EOLO
       ,cntl ,mx,my,mz,cx,cy,cz,VRMLangle);
    putonetextblockline(&mainscratch,temps);
-   
+
    /*sprintf(temps,"%s appearance Appearance { material Material {" */
    /*            " diffuseColor .70 .70 .90 } }"EOLO,cntl);         */
    sprintf(temps,"%s appearance Appearance { material Material {"
@@ -2818,7 +2819,7 @@ void writeVRMLvectortoscratch(char cntl[5], char color[16], float radius, char w
    sprintf(temps,"%s geometry Sphere { radius %.3f } } ] } #%s"EOLO
       ,cntl ,radius,whostr);
    putonetextblockline(&mainscratch,temps);
-  
+
    if(mx > fxmax){fxmax = (float)mx;}
    if(mx < fxmin){fxmin = (float)mx;}
    if(my > fymax){fymax = (float)my;}
@@ -2828,4 +2829,4 @@ void writeVRMLvectortoscratch(char cntl[5], char color[16], float radius, char w
 }
 /*___writeVRMLvectortoscratch________________________________________________*/
 
-    
+

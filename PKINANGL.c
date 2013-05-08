@@ -1,6 +1,6 @@
 #include "PKIN.h"
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
-    
+
 /****idealizedCalphaAngles()**************************************************/
 void idealizedCalphaAngles(char targetresidue[4],float* dist,float* angleCAB,float* dihedralNCAB, float* angleNAB, float* dihedralCNAB, float* angleideal)
 {
@@ -68,7 +68,7 @@ void idealizedCalphaAngles(char targetresidue[4],float* dist,float* angleCAB,flo
 
 /****constructbeta()**********************************************************/
 int constructbeta(float betaideal[3],char targetresidue[4]
-                 ,float altalpha[3], float altnite[3], char* altchoice) 
+                 ,float altalpha[3], float altnite[3], char* altchoice)
 {
    /*compute an idealized Cbeta position from an average of construction*/
    /*of Cbeta from both directions*/
@@ -115,10 +115,10 @@ int constructbeta(float betaideal[3],char targetresidue[4]
    double anmag=0,acmag=0,cosangle=0,disttau=0,tauoffset=0;
    float angle=0,angleideal=(float)109.6, angletaudev=0, dihedralNABB=0;
    int ipad=0,resnum=0;
-   char pdbstr[16],resstr[8],substr[8],resins;         
+   char pdbstr[16],resstr[8],substr[8],resins;
 #ifdef LABELSPSEUDOTAU
    float raddel=0,del=0;
-#endif 
+#endif
    char ptm=' ', altchar=' ', nowaltchar=' ';
 
    if(*altchoice!='a'&&*altchoice!='b'&&*altchoice!='c'&&*altchoice!='1'&&*altchoice!='2')
@@ -141,30 +141,30 @@ int constructbeta(float betaideal[3],char targetresidue[4]
       if     (    (atom[j][1]=='n') && (atom[j][2]==' ') ) {/*N*/ n = N;}
       else if(    (atom[j][1]=='c') && (atom[j][2]=='a') ) {/*Calpha*/ n = A;}
       else if(    (atom[j][1]=='c') && (atom[j][2]==' ') ) {/*Carbonyl*/ n = C;}
-      else if(    (atom[j][1]=='c') && (atom[j][2]=='b') 
+      else if(    (atom[j][1]=='c') && (atom[j][2]=='b')
                && ((atom[j][3]==' ') || (atom[j][3]=='1')) ) /*use 1 of AIB*/
-      {/*Cbeta*/ 
-         n = B; 
-         Lglycine = 0; /*some sort of Cbeta is specified*/ 
+      {/*Cbeta*/
+         n = B;
+         Lglycine = 0; /*some sort of Cbeta is specified*/
          nconf++; /*counter for number of conformers*/
       }
       else {/*ignore*/ n = 0;}
 
       if(n>0)
       {/*atom is grist for Cbeta mill*/
-         if( (atom[j][4]==' ') ) /*alt char in 5th place (index==4) of name*/
+         if(atom[j][4]==' ') /*alt char in 5th place (index==4) of name*/
          {/*alt==' '*/
             /*putatively a primary conformation*/
             if(L[n][1]==0)
             {/*first occurance of putative primary conformer*/
                  charac[1] = atom[j][4];
-                 calt[n][1]=atom[j][4]; L[n][1]=j; 
+                 calt[n][1]=atom[j][4]; L[n][1]=j;
                     X[n][1]=x[j]; Y[n][1]=y[j]; Z[n][1]=z[j]; O[n][1]=o[j];
             }
             else if(calt[n][1]=='a'||calt[n][1]=='1') /*earlier a alt*/
             {/*recategorize primary vs secondary conformer, blank then a*/
              /*possibly scheme uses ' ', 'a' for primary, secondary confs*/
-              if(L[n][2]==0) 
+              if(L[n][2]==0)
               {/*not previously encountered a secondary conf, so...*/
                  k=L[n][1];
                  charac[2] = charac[1];
@@ -174,7 +174,7 @@ int constructbeta(float betaideal[3],char targetresidue[4]
                  calt[n][1]=atom[j][4]; L[n][1]=j; /*assign as primary*/
                     X[n][1]=x[j]; Y[n][1]=y[j]; Z[n][1]=z[j]; O[n][1]=o[j];
               }
-              else if(L[n][3]==0) 
+              else if(L[n][3]==0)
               {/*not previously encountered a tertiary conf, so...*/
                  k=L[n][2];
                  charac[3] = charac[2];
@@ -192,10 +192,10 @@ int constructbeta(float betaideal[3],char targetresidue[4]
             }
             else if(calt[n][1]==' ')
             {/*second occurance of ' ' treated as secondary conf*/
-              if(L[n][2]==0) 
+              if(L[n][2]==0)
               {/*not previously encountered a secondary conf, so...*/
                  charac[2] = atom[j][4];
-                 calt[n][2]=atom[j][4]; L[n][2]=j; 
+                 calt[n][2]=atom[j][4]; L[n][2]=j;
                     X[n][2]=x[j]; Y[n][2]=y[j]; Z[n][2]=z[j]; O[n][2]=o[j];
               }
             }
@@ -207,7 +207,7 @@ int constructbeta(float betaideal[3],char targetresidue[4]
             if(L[n][1]==0)
             {/*first occurance of putative primary conformer*/
                  charac[1] = atom[j][4];
-                 calt[n][1]=atom[j][4]; L[n][1]=j; 
+                 calt[n][1]=atom[j][4]; L[n][1]=j;
                     X[n][1]=x[j]; Y[n][1]=y[j]; Z[n][1]=z[j]; O[n][1]=o[j];
             }
             else if(calt[n][1]==' ') /*can't handle mixed a,b with 1,2*/
@@ -215,7 +215,7 @@ int constructbeta(float betaideal[3],char targetresidue[4]
               if(L[n][2]==0)
               {/*not previously encountered a secondary conf, so...*/
                  charac[2] = atom[j][4];
-                 calt[n][2]=atom[j][4]; L[n][2]=j; 
+                 calt[n][2]=atom[j][4]; L[n][2]=j;
                     X[n][2]=x[j]; Y[n][2]=y[j]; Z[n][2]=z[j]; O[n][2]=o[j];
               }
             }
@@ -228,13 +228,13 @@ int constructbeta(float betaideal[3],char targetresidue[4]
             if(L[n][1]==0)
             {/*first occurance of any conformer*/
                  charac[1] = atom[j][4];
-                 calt[n][1]=atom[j][4]; L[n][1]=j; 
+                 calt[n][1]=atom[j][4]; L[n][1]=j;
                     X[n][1]=x[j]; Y[n][1]=y[j]; Z[n][1]=z[j]; O[n][1]=o[j];
             }
             else if(L[n][2]==0)
             {/*first occurance of putative secondary conformer, normal case*/
                  charac[2] = atom[j][4];
-                 calt[n][2]=atom[j][4]; L[n][2]=j; 
+                 calt[n][2]=atom[j][4]; L[n][2]=j;
                     X[n][2]=x[j]; Y[n][2]=y[j]; Z[n][2]=z[j]; O[n][2]=o[j];
             }
             else if(calt[n][2]=='a'||calt[n][2]=='1') /*presume a,b OR 1,2*/
@@ -243,7 +243,7 @@ int constructbeta(float betaideal[3],char targetresidue[4]
               if(L[n][3]==0)
               {/*not previously encountered a tertiary conf, so...*/
                  charac[3] = atom[j][4];
-                 calt[n][3]=atom[j][4]; L[n][3]=j; 
+                 calt[n][3]=atom[j][4]; L[n][3]=j;
                     X[n][3]=x[j]; Y[n][3]=y[j]; Z[n][3]=z[j]; O[n][3]=o[j];
               }
             }
@@ -256,25 +256,25 @@ int constructbeta(float betaideal[3],char targetresidue[4]
             if(L[n][1]==0)
             {/*first occurance of any conformer*/
                  charac[1] = atom[j][4];
-                 calt[n][1]=atom[j][4]; L[n][1]=j; 
+                 calt[n][1]=atom[j][4]; L[n][1]=j;
                     X[n][1]=x[j]; Y[n][1]=y[j]; Z[n][1]=z[j]; O[n][1]=o[j];
             }
             else if(L[n][2]==0)
             {/*first occurance of putative secondary conformer, normal case*/
                  charac[2] = atom[j][4];
-                 calt[n][2]=atom[j][4]; L[n][2]=j; 
+                 calt[n][2]=atom[j][4]; L[n][2]=j;
                     X[n][2]=x[j]; Y[n][2]=y[j]; Z[n][2]=z[j]; O[n][2]=o[j];
             }
             else if(L[n][3]==0)
             {/*first occurance of putative tertiary conformer, usual case*/
                  charac[3] = atom[j][4];
-                 calt[n][3]=atom[j][4]; L[n][3]=j; 
+                 calt[n][3]=atom[j][4]; L[n][3]=j;
                     X[n][3]=x[j]; Y[n][3]=y[j]; Z[n][3]=z[j]; O[n][3]=o[j];
             }
             else if(L[n][nw]==0) /*nw initialized as 4, next index past 3 a,b,c */
             {/*first occurance of this designated putative conformer*/
                  charac[nw] = atom[j][4];
-                 calt[n][nw]=atom[j][4]; L[n][nw]=j; 
+                 calt[n][nw]=atom[j][4]; L[n][nw]=j;
                     X[n][nw]=x[j]; Y[n][nw]=y[j]; Z[n][nw]=z[j]; O[n][nw]=o[j];
             }
             /*this works if c is the 4th alt, otherwise may mess up */
@@ -286,7 +286,7 @@ int constructbeta(float betaideal[3],char targetresidue[4]
             if(L[n][nw]==0) /*nw initialized as 4, next index past 3 a,b,c */
             {/*first occurance of this designated putative conformer*/
                  charac[nw] = atom[j][4];
-                 calt[n][nw]=atom[j][4]; L[n][nw]=j; 
+                 calt[n][nw]=atom[j][4]; L[n][nw]=j;
                     X[n][nw]=x[j]; Y[n][nw]=y[j]; Z[n][nw]=z[j]; O[n][nw]=o[j];
             }
             else /*see if atom[j][4] matches previous atom's alt char*/
@@ -294,11 +294,11 @@ int constructbeta(float betaideal[3],char targetresidue[4]
                 for(m=4; m<=nw; m++)
                 {
                    if(atom[j][4]==charac[m])
-                   {  
+                   {
                       break; /*carrying m on to next section of code*/
                    }
                 }
-                if(m>nw) 
+                if(m>nw)
                 {/*new wierd alt char*/
                    if(nw < MAXA-1)
                    {
@@ -351,11 +351,11 @@ int constructbeta(float betaideal[3],char targetresidue[4]
           if(L[B][m]==0) { X[B][m]=X[B][1]; Y[B][m]=Y[B][1]; Z[B][m]=Z[B][1]; }
         }
       }
-/*                 
+/*
 Idealizing the Cb:
 Ala, from  C: 1.536 Å, 110.1,  122.9 (i.e., N,C,Ca,Cb)
 Ala, from  N: 1.536 Å, 110.6, -122.6 (i.e., C,N,Ca,Cb)
-Pro, from  C: 1.530 Å, 112.2,  115.1 
+Pro, from  C: 1.530 Å, 112.2,  115.1
 Pro, from  N: 1.530 Å, 103.0, -120.7
 Val, from  C: 1.540 Å, 109.1,  123.4 (Thr, Ile)
 Val, from  N: 1.540 Å, 111.5, -122.0
@@ -365,7 +365,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
     /*only matters what residue it is to be mutated to*/
     /*i.e. always newresidue */
     idealizedCalphaAngles(targetresidue,&dist,&angleCAB,&dihedralNCAB,&angleNAB,&dihedralCNAB,&angleideal);
-    
+
     if(Lcbetadev)
     {
       nam = 1; /*first indexed alt*/
@@ -375,7 +375,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          {/*an ith alt of cbeta exists*/
             ouralt[i] = ournam[nam];
             nam++;
-         } 
+         }
       }
     }
     /*for(i=1; i<=3; i++)*/
@@ -404,7 +404,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
       betaNCAB[0] = fcxyz[3][0];
       betaNCAB[1] = fcxyz[3][1];
       betaNCAB[2] = fcxyz[3][2];
-      
+
       fcxyz[0][0] = X[C][i];
       fcxyz[0][1] = Y[C][i];
       fcxyz[0][2] = Z[C][i];
@@ -418,11 +418,11 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
       betaCNAB[0] = fcxyz[3][0];
       betaCNAB[1] = fcxyz[3][1];
       betaCNAB[2] = fcxyz[3][2];
-      
+
       betaxyz[0] = (betaNCAB[0]+betaCNAB[0])/2;
       betaxyz[1] = (betaNCAB[1]+betaCNAB[1])/2;
       betaxyz[2] = (betaNCAB[2]+betaCNAB[2])/2;
-      
+
       betadist=distan(X[A][i],Y[A][i],Z[A][i],betaxyz[0],betaxyz[1],betaxyz[2]);
       if(betadist != dist)
       {/*recompute distance of averaged beta position*/
@@ -432,7 +432,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          betaxyz[0] = X[A][i] + fcxyz[3][0]*dist/betadist;
          betaxyz[1] = Y[A][i] + fcxyz[3][1]*dist/betadist;
          betaxyz[2] = Z[A][i] + fcxyz[3][2]*dist/betadist;
-      
+
       }
 
       /*for mutation, match altconf character with primary,secondary,tertiary */
@@ -460,7 +460,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
 
       if(Lcbetadev > 0 && !Lglycine)
       {/*output of deviation of C-beta from ideal*/
- 
+
 #ifdef LABELSPSEUDOTAU
          /*compute spread from the N and C directions*/
          /*a measure of non-ideal tau*/
@@ -469,7 +469,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          if(del > .004) {raddel = del/2;}
          else {raddel = (float)0.002;}/*minimal: 0 gets default radius*/
 #endif /*LABELSPSEUDOTAU*/
-         
+
          /*compute the deviation from ideal beta position*/
          if(Lglycine)
          {/*artifact: don't output CB on gly, kept in for bookkeeping*/
@@ -479,7 +479,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          }
          else
          {
-            dev = 
+            dev =
               distan( X[B][i],Y[B][i],Z[B][i],betaxyz[0],betaxyz[1],betaxyz[2]);
             if(dev > .002) {raddev = dev;}
             else {raddev = (float)0.002;}/*minimal: 0 gets default radius*/
@@ -605,7 +605,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
           Ltaudev = 0;
           sprintf(cntl,"dump"); /*colon-delineated-list dump*/
           ipad = 0;
-          for(j=0;j<7;j++) 
+          for(j=0;j<7;j++)
           {/*taking just the first 7 char of the stripped input file name*/
              pdbstr[j] = PDBfileStr[j];
              if(pdbstr[j] == '\0') {ipad = 1;}
@@ -613,16 +613,22 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
           }
           pdbstr[7] = '\0';
           ipad = 0;
-          for(j=0;j<3;j++) 
+          for(j=0;j<3;j++)
           {
              resstr[j] = res[jcbeta][j];
              if(resstr[j] == '\0') {ipad = 1;}
              if(ipad) {resstr[j] = ' ';}
           }
           resstr[3] = '\0';
+          /* chain ID string */
+          /*substr[0] = sub[jcbeta][0];
+          substr[1] = sub[jcbeta][1];
+          substr[2] = '\0';*/
           substr[0] = sub[jcbeta][0];
           substr[1] = sub[jcbeta][1];
-          substr[2] = '\0';
+          substr[2] = sub[jcbeta][2];
+          substr[3] = sub[jcbeta][3];
+          substr[4] = sub[jcbeta][4];
           /*substr[1] = '\0'; go to 2char, 080325*/
           resnum = num[jcbeta];
           resins = (char)rins[jcbeta][0]; /*rins is a C string*/
@@ -632,15 +638,15 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
           /*else if(i==1) altchar='a';*/ /*at least another alt conf*/
           /*else if(i==2) altchar='b';*/ /*Standard ' ' or a,b,c designation*/
           /*else if(i==3) altchar='c';*/
-          else {altchar = ouralt[i];} /*at least another alt conf*/ 
+          else {altchar = ouralt[i];} /*at least another alt conf*/
           /*040504 MAXA==8 so 7 alts, original put on end of line*/
           /*note: charac[i] is actual alt char from pdb file, now put on end*/
           /*cntl stripped in output, insertion code on end of residue number*/
-          sprintf(temps,"%s%s :%c:%s:%s:%4d%c:%7.3f:%7.2f:%7.2f:%c:"EOLO    
+          sprintf(temps,"%s%s :%c:%s:%s:%4d%c:%7.3f:%7.2f:%7.2f:%c:"EOLO
           ,cntl,PDBfileStr,altchar,resstr,substr,resnum,resins,dev,dihedralNABB,O[B][i],charac[i]);
           /*,cntl,pdbstr,altchar,resstr,substr,resnum,resins,dev,dihedralNABB,O[B][i]);*/
           putonetextblockline(&mainscratch,temps);
-       
+
        }/*write scratch for colon delineated dump of deviation*/
 
       }/*output of deviation of C-beta from ideal*/
@@ -687,7 +693,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          ctz = (Z[A][i] +anz +Z[A][i] +acz)/2;
          /*Calpha---ctr tau position*/
          disttau = sqrt((X[A][i]-ctx)*(X[A][i]-ctx)+(Y[A][i]-cty)*(Y[A][i]-cty)+(Z[A][i]-ctz)*(Z[A][i]-ctz));
-         
+
          /*calculate offset based on tau angle deviation*/
          /*Linear*/
          if(angletaudev > 0) {angle = angletaudev/2;}
@@ -695,8 +701,8 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          else {angle = 0;}
          tauoffset = disttau*tan(angle*2*3.14159/360);
          /*vector from tau ctr position to unit vector point along CA---N */
-         vx = X[A][i]+anx - ctx; 
-         vy = Y[A][i]+any - cty; 
+         vx = X[A][i]+anx - ctx;
+         vy = Y[A][i]+any - cty;
          vz = Z[A][i]+anz - ctz;
          /*magnitude (distance) from tau ctr point to that unit vector*/
          disttau = sqrt(vx*vx + vy*vy + vz*vz);
@@ -709,7 +715,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          ccx = ctx - tauoffset*vx/disttau;
          ccy = cty - tauoffset*vy/disttau;
          ccz = ctz - tauoffset*vz/disttau;
-  
+
          if(tauoffset < .002)
          {tauoffset = (float)0.002;}/*minimal: 0 gets default radius*/
 
@@ -735,8 +741,8 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          angle = (angletaudev*angletaudev)/2;
          tauoffset = disttau*tan(angle*2*3.14159/360);
          /*vector from tau ctr position to unit vector point along CA---N */
-         vx = X[A][i]+anx - ctx; 
-         vy = Y[A][i]+any - cty; 
+         vx = X[A][i]+anx - ctx;
+         vy = Y[A][i]+any - cty;
          vz = Z[A][i]+anz - ctz;
          /*magnitude (distance) from tau ctr point to that unit vector*/
          disttau = sqrt(vx*vx + vy*vy + vz*vz);
@@ -749,7 +755,7 @@ Leu, from  N: 1.530 Å, 110.5, -122.6
          ccx = ctx - tauoffset*vx/disttau;
          ccy = cty - tauoffset*vy/disttau;
          ccz = ctz - tauoffset*vz/disttau;
-  
+
          if(tauoffset < .002)
          {tauoffset = (float)0.002;}/*minimal: 0 gets default radius*/
 
@@ -793,10 +799,10 @@ int constructgamma(float gammaxyz[3],char oldresidue,char newresidue)
    float  bmag=0;
    float ax=0,ay=0,az=0,bx=0,by=0,bz=0;
    float fcxyz[4][3] ={{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}};
-   
+
    /*distance and angle identically match ideal aa of library array*/
    /*dihdral is fudged from real gamma atom position, if there is one*/
-   
+
    /*get vectors from ideal sidechain*/ /*do piecemeal for easier proofing*/
    /*CA->CB->CG:  b,a */ /* IDEAL: Y[x,y,z][ca,cb,cg] i.e. the mutant*/
    fcxyz[1][0] = (float)Y[1][1]; /*second atom of 4: CA ideal*/
@@ -812,7 +818,7 @@ int constructgamma(float gammaxyz[3],char oldresidue,char newresidue)
    ax = (fcxyz[3][0]-fcxyz[2][0]); /*ultimate vector CB-->CG*/
    ay = (fcxyz[3][1]-fcxyz[2][1]);
    az = (fcxyz[3][2]-fcxyz[2][2]);
-   
+
    bx = (fcxyz[1][0]-fcxyz[2][0]); /*penultimate vector CB-->CA*/
    by = (fcxyz[1][1]-fcxyz[2][1]);
    bz = (fcxyz[1][2]-fcxyz[2][2]);
@@ -824,7 +830,7 @@ int constructgamma(float gammaxyz[3],char oldresidue,char newresidue)
    bmag = (float)sqrt( bx*bx + by*by + bz*bz );
    bx = bx/bmag;
    by = by/bmag;
-   bz = bz/bmag;   
+   bz = bz/bmag;
    /*get ideal angle from the ideal sidechain normalized vectors*/
    cosangle = dotproduct(ax,ay,az,bx,by,bz);
    angle = (float)(acos(cosangle)*360/(2*3.14159));
@@ -833,22 +839,22 @@ sprintf(alertstr,CRLF"constr CG with dist: %.3f, ang: %.3f, from cosangle: %.3f"
                                ,distance,angle,cosangle);
 pkintextinsert(alertstr);
 adjusttext(1);
-*/      
-   {/*look for the actual mainchain N for dihedral definition*/  
+*/
+   {/*look for the actual mainchain N for dihedral definition*/
       for(j=1; j<=maxatm; j++)
       {/*find the mainchain N*/
-         if(   (atom[j][1]=='n') 
+         if(   (atom[j][1]=='n')
             && (atom[j][2]==' '))
          {
-            Lnn = 1; 
+            Lnn = 1;
             fcxyz[0][0] = x[j]; /*first atom of 4, real mainchain N*/
-            fcxyz[0][1] = y[j]; 
+            fcxyz[0][1] = y[j];
             fcxyz[0][2] = z[j];
             break;
          }
       }/*find the mainchain N*/
       if(Lnn)
-      {/*found old real mainchain N from which to calculate a dihedral*/  
+      {/*found old real mainchain N from which to calculate a dihedral*/
          /*get practical dihedral using new beta but old gamma atom position*/
          /* e.g. --one presumes that the gamma atom was in electron density-- */
          fcxyz[1][0] = (float)X[1][1]; /*second atom of 4: CA real*/
@@ -879,7 +885,7 @@ adjusttext(1);
             Ldihedral = 1;
          }/*use dihedral based on old structure*/
       }/*found old real mainchain N from which to calculate a dihedral*/
-   }/*look for the actual mainchain N for dihedral definition*/  
+   }/*look for the actual mainchain N for dihedral definition*/
 /*
 sprintf(alertstr,CRLF"constr CG with dist: %.3f, ang: %.3f, dih: %.3f"CRLF
                                ,distance,angle,dihedral);
@@ -901,10 +907,10 @@ adjusttext(1);
 
 /****constructfourth()********************************************************/
 void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
-{/*construct at distance,angle,dihedral*/ 
+{/*construct at distance,angle,dihedral*/
    double ax=0,ay=0,az=0,bx=0,by=0,bz=0,cx=0,cy=0,cz=0,dx=0,dy=0,dz=0,cmag=0;
    float angledhdrl=0;
-   
+
    /*calculate the new line from points 1,2,3, */
    /* dist 3-4, angle 2-3-4, dihedral 1-2-3-4 */
    /* cross:  (2->3)X(2->1) ==> (2->5), aXb ==> c at dihedral 90*/
@@ -916,7 +922,7 @@ void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
    bz = fcxyz[0][2] - fcxyz[1][2];
    /* c = a x b */
    docrossproduct(ax,ay,az,bx,by,bz,&cx,&cy,&cz);/*return vector is c*/ /*.*/
-   
+
 /*
         printf("cross product:"
          CRLF"%f = %f x %f - %f x %f"
@@ -946,9 +952,9 @@ void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
    dy = cy;
    dz = cz;
 
-   /*rotate d(xyz) around 2->3 for correct dihedral*/   
+   /*rotate d(xyz) around 2->3 for correct dihedral*/
    angledhdrl = dihedral - 90; /*since is perpendicular to a,b plane*/
-   /*actual dihedral defined from a,b plane*/ 
+   /*actual dihedral defined from a,b plane*/
    ax = fcxyz[1][0];
    ay = fcxyz[1][1];
    az = fcxyz[1][2];
@@ -957,7 +963,7 @@ void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
    bz = fcxyz[2][2];
    doaxisrot(&dx,&dy,&dz,(float)angledhdrl, ax, ay, az, bx, by, bz);
    /*now d(xyz) is at the correct dihedral*/
-   
+
    /*Adjust d(xyz) so it is at the correct angle to 2->3 */
    /*rotate pt 4 around perpendicular to vectors 2->3 and 3->4 */
    /* cross:  (3->4)X(3->2) ==> (3->6), aXb ==> c at 90 to plane*/
@@ -967,10 +973,10 @@ void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
    bx = fcxyz[1][0] - fcxyz[2][0];
    by = fcxyz[1][1] - fcxyz[2][1];
    bz = fcxyz[1][2] - fcxyz[2][2];
-   
+
    /* c = a x b */
    docrossproduct(ax,ay,az,bx,by,bz,&cx,&cy,&cz);/*return vector is c*/ /*.*/
-   
+
    /*normalization factor*/
    cmag = sqrt( (cx)*(cx) + (cy)*(cy) + (cz)*(cz) ); /*c*/
    if(cmag > 0.000001)
@@ -982,7 +988,7 @@ void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
 
    /*rotate around 3->perpendicular for correct angle*/
    angledhdrl = 90 - angle;
-   /*actual angle defined in plane from 0*/ 
+   /*actual angle defined in plane from 0*/
    /*but 4th point was placed at 90 to 3->2 vector*/
    ax = fcxyz[2][0]; /*define a as the 3rd point*/
    ay = fcxyz[2][1];
@@ -1000,16 +1006,16 @@ void   constructfourth(float fcxyz[4][3],float dist,float angle,float dihedral)
    fcxyz[3][0] = (float)dx;
    fcxyz[3][1] = (float)dy;
    fcxyz[3][2] = (float)dz;
- 
-    
+
+
 }/*construct at distance,angle,dihedral*/
 /*___constructfourth()_______________________________________________________*/
-     
+
 /****construct4th()***********************************************************/
 void construct4th(float pt1[4],float pt2[4],float pt3[4],float pt4[4],float dist,float angle,float dihedral)
-{/*construct at distance,angle,dihedral*/ 
+{/*construct at distance,angle,dihedral*/
    /*same as PKINANGL/constructforth except organization of calling params*/
-           
+
    double ax=0,ay=0,az=0,bx=0,by=0,bz=0,cx=0,cy=0,cz=0,dx=0,dy=0,dz=0,cmag=0;
    float  angledhdrl=0;
 
@@ -1051,8 +1057,8 @@ void construct4th(float pt1[4],float pt2[4],float pt3[4],float pt4[4],float dist
    /*rotate around 2->3 for correct dihedral*/
    /*angledhdrl = dihedralconstruct - 90.0;*/
    /* as xproduct, c is at a dihedral of 90 to original vectors*/
-   angledhdrl = dihedral - (float)90.0; 
-        
+   angledhdrl = dihedral - (float)90.0;
+
    ax = (double)pt2[1];
    ay = (double)pt2[2];
    az = (double)pt2[3];
@@ -1096,7 +1102,7 @@ void construct4th(float pt1[4],float pt2[4],float pt3[4],float pt4[4],float dist
    pt4[2] = (float)dy;
    pt4[3] = (float)dz;
 
-}/*construct at distance,angle,dihedral*/ 
+}/*construct at distance,angle,dihedral*/
 /*___construct4th()__________________________________________________________*/
 
 /****perpendicular()**********************************************************/
@@ -1154,8 +1160,8 @@ void    docrossproduct( double ax,double ay,double az
     *dxp = gx;
     *dyp = gy;
     *dzp = gz;
-    if(Ltest>1) 
-    { 
+    if(Ltest>1)
+    {
         sprintf(alertstr,"cross product:"
                          CRLF"%f = %f = %f x %f - %f x %f"
                          CRLF"%f = %f = %f x %f - %f x %f"
@@ -1184,7 +1190,7 @@ void crossproduct(double ax,double ay,double az,double bx,double by,double bz)
     dbly = gy;
     dblz = gz;
         if(Ltestprint)
-        {    
+        {
             sprintf(alertstr,    "cross product routine:"CRLF
                                 "    %f = %f x %f - %f x %f"CRLF
                                 "    %f = %f x %f - %f x %f"CRLF
@@ -1232,7 +1238,7 @@ double    dihedral4pt( double p1x,double p1y,double p1z
         double    dx,dy,dz,ex,ey,ez;
         double    fx,fy,fz;
       /*double    dotproduct(double,double,double,double,double,double);*/
-        
+
         /* a,b,c 3 vectors between 4 points, */
         /* d,e   2 crossproduct vectors referenced as pointers*/
         /* f     a crossproduct vector  referenced as pointer */
@@ -1240,7 +1246,7 @@ double    dihedral4pt( double p1x,double p1y,double p1z
         /* d & e both perpendicular to b */
         /* so d dot e is the dihedral, that is */
         /*   same angle as a to c if a & c were projected on a plane*/
-        
+
         /* angle defined between two vectors with a common base*/
         /* so subtract middle point from the two end points */
         ax = p1x - p2x;
@@ -1249,13 +1255,13 @@ double    dihedral4pt( double p1x,double p1y,double p1z
         bx = p3x - p2x;
         by = p3y - p2y;
         bz = p3z - p2z;
-            
+
         /* d = a x b */
 /*.*/    crossproduct(ax,ay,az,bx,by,bz); /*return vector is dblx,dbly,dblz */
         dx = dblx;
         dy = dbly;
         dz = dblz;
-        
+
         /* angle defined between two vectors with a common base*/
         /* so subtract middle point from the two end points, */
         /* redefining b for cross product around third point (b = -b)*/
@@ -1265,32 +1271,32 @@ double    dihedral4pt( double p1x,double p1y,double p1z
         cx = p4x - p3x;
         cy = p4y - p3y;
         cz = p4z - p3z;
-        
+
         /* e = b x c */
 /*.*/    crossproduct(bx,by,bz,cx,cy,cz); /*return vector is dblx,dbly,dblz */
         ex = dblx;
         ey = dbly;
         ez = dblz;
-        
+
         /*Now for d dot e  pass values to dotproduct()*/
 /*.*/    dot = dotproduct(dx,dy,dz,ex,ey,ez);
         /*normalization factors*/
 /*c*/    dmag = sqrt( (dx)*(dx) + (dy)*(dy) + (dz)*(dz) );
 /*c*/    emag = sqrt( (ex)*(ex) + (ey)*(ey) + (ez)*(ez) );
-        if(dmag*emag <0.0001) 
+        if(dmag*emag <0.0001)
         {
             angle = 0.0;
-        }    
+        }
 /*c*/    else angle = acos( dot/(dmag*emag) );
         angledhdrl = angle*360.0/(2*3.14159);
         if(Ltestprint)
-        {    
+        {
 /*c*/        sprintf(alertstr,    "angle = %f  radians"CRLF"angle = %f  degrees"CRLF
                         ,angle,angledhdrl);
                 pkintextinsert(alertstr); /*PKMCTEXT.C PKPCTEXT.C*/
                 adjusttext(2);
         }
-        
+
         /* Now, need to establish correct handedness */
         /* d x -b is vector pointing in same sort of direction as orig a */
         /* f = d x -b = d x b as b was redefined for e calculation */
@@ -1298,20 +1304,20 @@ double    dihedral4pt( double p1x,double p1y,double p1z
         fx = dblx;
         fy = dbly;
         fz = dblz;
-        
+
         /*Now for f dot e  pass values to dotproduct()*/
 /*.*/    dot = dotproduct(fx,fy,fz,ex,ey,ez);
 
         /*normalization factors*/
 /*c*/    fmag = sqrt( (fx)*(fx) + (fy)*(fy) + (fz)*(fz) );
 
-        if(fmag*emag <0.0001) 
+        if(fmag*emag <0.0001)
         {
             angle = 0.0;
-        }    
+        }
 /*c*/    else angle = acos( dot/(fmag*emag) );
         if(Ltestprint)
-        {    
+        {
 /*c*/        sprintf(alertstr,    "angle = %f  radians"CRLF,angle    );
              pkintextinsert(alertstr);  /*PKMCTEXT.C PKPCTEXT.C*/
              adjusttext(1);              /*PKMCTEXT.C PKPCTEXT.C*/
@@ -1320,7 +1326,7 @@ double    dihedral4pt( double p1x,double p1y,double p1z
         angle = angle*360.0/(2*3.14159);
         if(angle > 90.0) angledhdrl = -angledhdrl;
         if(Ltestprint)
-        {    
+        {
 /*c*/        sprintf(alertstr,    "signed angle = %f  degrees"CRLF
                         ,angledhdrl);
              pkintextinsert(alertstr);  /*PKMCTEXT.C PKPCTEXT.C*/
@@ -1340,7 +1346,7 @@ double    angle3pt( double p1x,double p1y,double p1z,
         double    ax,ay,az,bx,by,bz;
         double    amag,bmag,dot;
         double    angle;
-        
+
             /* angle defined between two vectors with a common base*/
             /* so subtract middle point from the two end points */
             ax = p1x - p2x;
@@ -1349,16 +1355,16 @@ double    angle3pt( double p1x,double p1y,double p1z,
             bx = p3x - p2x;
             by = p3y - p2y;
             bz = p3z - p2z;
-            
+
         /* these have to be normalized by dividing by their magnitudes, */
         /*this can be done either before taking the dot product or after*/
 /*.*/    dot = (double)dotproduct(ax,ay,az,bx,by,bz);
 /*c*/    amag = sqrt(ax*ax + ay*ay + az*az);
 /*c*/    bmag = sqrt(bx*bx + by*by + bz*bz);
-        if(amag*bmag <0.0001) 
+        if(amag*bmag <0.0001)
         {
             angle = 0.0;
-        }    
+        }
 /*c*/    else angle = acos( dot/(amag*bmag) );
         angle = angle*360.0/(2*3.14159);
         return(angle);
@@ -1374,7 +1380,7 @@ void    doaxisrot(double *dxp,double *dyp,double *dzp,float theta
    double fx1,fy1,fz1,fx2,fy2,fz2;
    double a11,a12,a13,a21,a22,a23,a31,a32,a33;
    int    LOK=1;
-    
+
    xx = bx - ax;
    yy = by - ay;
    zz = bz - az;
@@ -1430,22 +1436,22 @@ void    doaxisrot(double *dxp,double *dyp,double *dzp,float theta
       fx2 = (   fx1*a11 + fy1*a21 + fz1*a31 );
       fy2 = (   fx1*a12 + fy1*a22 + fz1*a32 );
       fz2 = (   fx1*a13 + fy1*a23 + fz1*a33 );
-                       
-      *dxp = (float)(fx2 + bx); 
-      *dyp = (float)(fy2 + by); 
-      *dzp = (float)(fz2 + bz); 
+
+      *dxp = (float)(fx2 + bx);
+      *dyp = (float)(fy2 + by);
+      *dzp = (float)(fz2 + bz);
     }/*do matrix operation*/
 }
-/*___doaxisrot()____________________________________________________________*/ 
+/*___doaxisrot()____________________________________________________________*/
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
 
 /****constructcircle()********************************************************/
-constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float radius)
+int constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float radius)
 {
    /*taken from MAGEUTIL/arrowtoscreen() */
 
    /*circle is drawn around second of two points at angle=90 and at the radius*/
-  
+
    int   ierr=0;
    float angle = 0;
    double fx0=0, fy0=0, fz0=0;
@@ -1463,16 +1469,16 @@ constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float rad
 
    if( (fx2 == fx1) && (fy2 == fy1) && (fz2 == fz1) )
    {
-      ierr=1; 
+      ierr=1;
       return(ierr); /*can't do circle*/
    }
-   
+
    /* 1-------------->2   */
    /*Need 3rd point to give a dihedral direction for the circle radii*/
    /*Make off-axis point offset from the two points:*/
    /* use lesser of dimension change as the dimension to offset*/
    /*this stupid routine ignores sign change in any dimension*/
-     
+
    /* 0                   */
    /* |                   */
    /* 1-------------->2   */
@@ -1494,16 +1500,16 @@ constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float rad
    /* 1-------------->2   */
 
    /*calculate a new line from 2 using points 0,1,2 */
-   
+
    docrossproduct( (double)(fx2-fx1),(double)(fy2-fy1),(double)(fz2-fz1)
                   ,(double)(fx1-fx0),(double)(fy1-fy0),(double)(fz1-fz0)
                   ,&dblx,&dbly,&dblz);
-      /*return vector: dblx,dbly,dblz*/   
+      /*return vector: dblx,dbly,dblz*/
    cmag = (float)sqrt( (dblx)*(dblx) + (dbly)*(dbly) + (dblz)*(dblz) );
    /*normalize and make c vector the desired length*/
    if(cmag < 0.000001) /*can't do circle*/
    {
-      ierr=1; 
+      ierr=1;
       return(ierr); /*can't do circle*/
    }
    fx3 = dblx*(double)radius/cmag;
@@ -1520,8 +1526,8 @@ constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float rad
    fx3 = fx3 + fx2;
    fy3 = fy3 + fy2;
    fz3 = fz3 + fz2;
-   
-   /*now have one of the radii of the circle*/ 
+
+   /*now have one of the radii of the circle*/
       Cxyz[0][0] = (float)fx3;
       Cxyz[0][1] = (float)fy3;
       Cxyz[0][2] = (float)fz3;

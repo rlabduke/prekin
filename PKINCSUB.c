@@ -27,12 +27,12 @@ int midanglepoint(float[3],float[3],float[3],float[3]);
 int NA_BaseCategory(char resname[4]) /*resname expected to be uppercase*/
 {/* hacked from Mike's naBaseCategory()*/
    ResidueAndAtomPair *pair;
-   
+
    for (pair = NAbaseGrouping; pair->rlist; pair++)
    {
       /*char *strstr(cs,ct) return pointer to first occurrence of */
       /*string ct in cs, or NULL if not present*/
-      if(strstr(pair->rlist, resname)) 
+      if(strstr(pair->rlist, resname))
       {
          return pair->bits; /* bits contain the atom type */
       }
@@ -47,22 +47,22 @@ void   setsubunitconditions(void)
   int    j;
 
     /*--set conditions for beginning of each subunit loop */
-    
+
     first1 = 1; endsub = 0; endchn = 0; endres = 0;
-    
+
     /*note that stonex may = 1 : valid atom still held in brk buffer (texts)*/
     /*but oldatm stored from last residue is meaningless at subunit start*/
     /*oldatm signels a stored possible atom to connect to next residue */
     /*and 3 possible alternate conformations, mainchain and ca-ca */
     /* j == 0 for mainchain,  j == 1 for ca-ca connection and virtual nucl bb*/
-    
+
     for(j=0 ; j<=1 ; j++)
     {
       oldatm[j] = 0; oldata[j] = 0; oldatb[j] = 0; oldatc[j] = 0;
     }
     /*--logicals for hbond: all set false, no atoms yet encountered */
     tfc1  = 0; tfn2  = 0; tfca2 = 0; tfc2  = 0; tfo2  = 0; tfnh2 = 0;
-    
+
     /*--initialize counters */
     /*counters for number of main chain and side chain vectors, labels, etc.*/
     mccnt = 0; sccnt = 0; sscnt = 0; ssknt = 0;
@@ -76,10 +76,10 @@ void   setsubunitconditions(void)
 
     /*--hbond counters */
     cocnt = 0; nhcnt = 0;
-    
+
     /*--sonofchaos & oup-msb vector counter */
     vccnt = 0;
-    
+
     /*__open scratch "tapes" */
     inittextblock(&mainscratch);
     inittextblock(&hbnscratch);
@@ -90,22 +90,22 @@ void   setsubunitconditions(void)
     }
     /*--rewind scratch "tapes", inplicit with inittextblock() */
     /*--allocation of space automatic when attempting write*/
-        
+
     /*initial conditions for range control runs */
     /*------output control logicals, one for each type of output */
     /* in effect if (mrange > 0), initialized by rangecontrol() */
-    
+
     caonly = 0;  /*ca only*/
     caoutl = 0;  /*ca-ca bonds */
-    
+
     /*output list controls*/
     Listmc = FALSE;Listmcn = FALSE;Listmco = FALSE;Listmcs = FALSE;
     Listsc = FALSE;Listscn = FALSE;Listsco = FALSE;Listscs = FALSE;
-    Listca = FALSE;    
+    Listca = FALSE;
     Listlb = FALSE;Listlbn = FALSE;
     Listhb = FALSE;
     Listhy = FALSE;
-    Listss = FALSE;    
+    Listss = FALSE;
     Listht = FALSE;Listhtn = FALSE;Listhto = FALSE;Listhts = FALSE;
     Listwa = FALSE; Listwao = FALSE;
     Listat = FALSE;
@@ -136,9 +136,9 @@ void   setsubunitconditions(void)
     NDNA = 0; /*counts accum for a subunit*/
     NRNA = 0;
     LRNA = 0; /*flag could be set for each residue*/
-    residuetype = ' '; /*best guess at P vs N, etc. type 061006*/ 
+    residuetype = ' '; /*best guess at P vs N, etc. type 061006*/
     previousresiduetype = ' '; /*061006*/
-    
+
     /*auto ribbon setup moved to after first atom record of this subunit*/
     /*so the actual chain ID character will be known. */
 }
@@ -162,7 +162,7 @@ void   rangecontrol(void)
   int    Lnosidechain;
   static int oldnumber = -999;
   /*static int previousribbontype = 0; to PKINRIBB.h 090219*/
-  int   Lcoilregion = 0; 
+  int   Lcoilregion = 0;
   int   Lcoilend = 0;
   int   LAlpharegion = 0;
   int   LAlphaend = 0;
@@ -177,7 +177,7 @@ void   rangecontrol(void)
        /*but it looks as if sub[][0] can be read in as a space character!*/
        /*2007 preserve pdb format spacing in output,  2char chainID 070926*/
 
-  if(Lnewribbonstart) 
+  if(Lnewribbonstart)
   {previousribbontype=0; explicitribbontype=0; Lnewribbonstart=0;} /*090219*/
   if(mrange == 0)
   {/*no range controls*/
@@ -186,9 +186,9 @@ void   rangecontrol(void)
         htoutl = 1; hyoutl = 1; hboutl = 0; caoutl = 1; waoutl = 1;
         atoutl = 0; mcaoutl = 0; htaoutl = 0; scaoutl = 0; waaoutl = 0;
         ssscoutl = 0; /*all cys sc atoms along with -ss- */
-        rotoutl = 0; mutoutl = 0; 
+        rotoutl = 0; mutoutl = 0;
              /*mutations && rotations not standard things*/
-        riboutl = 0; /*ribbons not quite in CHAOS form*/ 
+        riboutl = 0; /*ribbons not quite in CHAOS form*/
         extoutl = 0; /*   extra stuff*/
         mccoutl = 0; sccoutl = 0; htcoutl = 0; /*960815*/
         mcCPKoutl = 0;scCPKoutl = 0;htCPKoutl = 0; /*960815*/
@@ -215,7 +215,7 @@ void   rangecontrol(void)
    /* finds range by inclusive residue number */
    /* exclusive mode has two sub modes*/
    Lbreak = 0; /*lets exclusion jump out once occurred*/
-   Lcoilregion = 0; 
+   Lcoilregion = 0;
    Lcoilend = 0;
    LAlpharegion = 0;
    LAlphaend = 0;
@@ -287,7 +287,7 @@ void   rangecontrol(void)
        }
      }
    }/*passed model filter, check for chain ID*/
-   
+
    if(Laspectabc) /*search actual ranges 050924*/
    {/*aspect by any inputed ALPHA or BETA HEADER records 010920*/
       /*050924 ???? FLAG NEEDED FOR EXISTANCE OF HELIX,SHEET RECORDS? */
@@ -369,7 +369,7 @@ void   rangecontrol(void)
           Cnc = 'C'; /*gold*/
        else if(icountres[level] < 9*(icountresfirstpass[level]/10))
           Cnc = 'B'; /*orange*/
-       else 
+       else
           Cnc = 'A'; /*red*/
    }/*010920 aspect by N-->C proportion*/
 
@@ -383,7 +383,7 @@ void   rangecontrol(void)
          /*   aspectstr[j][Naspectcode+1]=')';*/  /*for completeness*/
          /*   aspectstr[j][Naspectcode+2]='\0';*/ /*for completeness*/
          /*}*/
-         if(aspectstr[j][0]=='\0') 
+         if(aspectstr[j][0]=='\0')
          {/*need to initialize this string, Naspectcode should==0*/
             aspectstr[j][0]='('; /*necessary starting char*/
             aspectstr[j][1]=')';  /*for completeness*/
@@ -398,7 +398,7 @@ void   rangecontrol(void)
          aspectstr[j][MAXaspectcode+2]='\0'; /*regular str ending*/
       }
    }/*add these new aspects to any inputed on PDB ATOM records*/
-   
+
    if(Lgood)
    {/*acceptable chain: check each range for this residue*/
     for(j=1 ; j<=mrange ; j++)
@@ -417,7 +417,7 @@ void   rangecontrol(void)
         Lgood = 1; /*accepts unless excluded*/
         if(Loverlap) /*lap into ranges, this gives extra at ends*/
         {
-           if( (num[maxatm] > resnu1[j]) && (num[maxatm] < resnu2[j]) ) 
+           if( (num[maxatm] > resnu1[j]) && (num[maxatm] < resnu2[j]) )
            {  /*exclude this residue*/
               Lgood = 0;
               rangel = 0;
@@ -426,7 +426,7 @@ void   rangecontrol(void)
         }
         else /*don't lap into ranges, this gives spaces on ca-ca*/
         {
-           if( (num[maxatm] >= resnu1[j]) && (num[maxatm] <= resnu2[j]) ) 
+           if( (num[maxatm] >= resnu1[j]) && (num[maxatm] <= resnu2[j]) )
            {  /*exclude this residue*/
               Lgood = 0;
               rangel = 0;
@@ -435,8 +435,8 @@ void   rangecontrol(void)
         }
       }
       if(Lbreak) break;
-      
-      if(Lgood) 
+
+      if(Lgood)
       {/*Lgood range*/
         /*Now must see if this residue should have conditions checked*/
 
@@ -444,7 +444,7 @@ void   rangecontrol(void)
 
         /*Now do tests on this residue which can modify this presumption*/
         /*if Ldotlist has set coordinate triples for this range, */
-        /*  an atom of this residue must have this coord to allow output*/ 
+        /*  an atom of this residue must have this coord to allow output*/
         if(xyzl[j])
         {/*using coord to identify residues for output*/
             LresOK = 0; /*not expected to match*/
@@ -477,7 +477,7 @@ void   rangecontrol(void)
         /*   to the given one, then sc rotations set up */
  /*NOT HERE 051213 ???? SITE by number, not name, as well 050917*/
  /*maybe needed for fakesite from GUI ???? */
-        if(resl[j]==0) 
+        if(resl[j]==0)
         {/*unnamed residue*/
            if(rotl[j]==1)
            {/*unnamed residue at this location is to have rotations*/
@@ -490,7 +490,7 @@ void   rangecontrol(void)
               scoutl = 1;  /*set to get sidechain*/
               numrotsc = num[maxatm];
               /*NOT named, do rotations for whatever residue is here*/
-              LresOK = 1; /*rotation can have specifications*/ 
+              LresOK = 1; /*rotation can have specifications*/
               /*modelnumber==this chain's model, nmrmodel== MODEL record*/
               /*[0]=='\0' no modelnumber else: [0]==' ',[1]=='M',[2]=='#'...*/
              if(modelnumber[0] == ' ') /*leading space to print nicely 050121*/
@@ -523,11 +523,11 @@ void   rangecontrol(void)
              resid[j][0] = tolower(resid[j][0]); /*011202*/
              resid[j][1] = tolower(resid[j][1]);
              resid[j][2] = tolower(resid[j][2]);
-            
-             mutoutl = j; 
+
+             mutoutl = j;
              /*Residue named: mutate to this resid[j] residue*/
              /*or rebuild the same one from a library residue*/
-             LresOK = 1; /*rotation can have specifications*/ 
+             LresOK = 1; /*rotation can have specifications*/
               /*modelnumber==this chain's model, nmrmodel== MODEL record*/
               /*[0]=='\0' no modelnumber else: [0]==' ',[1]=='M',[2]=='#'...*/
              if(modelnumber[0] == ' ') /*leading space to print nicely 050121*/
@@ -543,7 +543,7 @@ void   rangecontrol(void)
           }/*mutation and/or rotation*/
           else
           {/*look for residue name match*/
-            if(resl[j]<0) 
+            if(resl[j]<0)
             {
                 m = -resl[j];
             }
@@ -555,8 +555,8 @@ void   rangecontrol(void)
             {/* look for one or more residue name matches*/
               i = 3*(k-1);
               if(      res[maxatm][0] == tolower(resid[j][0+i])
-                    && res[maxatm][1] == tolower(resid[j][1+i]) 
-                    && res[maxatm][2] == tolower(resid[j][2+i])     )/*011202*/ 
+                    && res[maxatm][1] == tolower(resid[j][1+i])
+                    && res[maxatm][2] == tolower(resid[j][2+i])     )/*011202*/
               {
                  LresOK = 1;
                 if(Lsite)
@@ -572,7 +572,7 @@ void   rangecontrol(void)
                   resname[2] = toupper(res[maxatm][2]);
                   resname[3] = '\0';
                   if(strstr(NAList, resname))
-                  {/*recognized as a Nucleic Acid*/ 
+                  {/*recognized as a Nucleic Acid*/
                      if(NA_BaseCategory(resname) == iresiduecnt)
                      {/*name matches cycle counter*/
                         LresOK = 1;
@@ -582,7 +582,7 @@ void   rangecontrol(void)
                         LresOK = 0;
                      }
                   }
-                  else 
+                  else
                   {/*NOT recognized as a Nucleic Acid*/
                      LresOK = 0;
                   }
@@ -608,7 +608,7 @@ void   rangecontrol(void)
           /*set logicals for only what is allowed as output in this range */
           /*these accummulate for this residue for all ranges that have this*/
           /* residue*/
-          /* logicals act at the write-scratch-file place */        
+          /* logicals act at the write-scratch-file place */
           if (mcxl[j]) mcoutl = 1;  /* mainchain */
           if(Lallbases && iresiduecnt>1) mcoutl = 0; /*override*/
           if (scxl[j]) scoutl = 1;  /* sidechain */
@@ -621,11 +621,11 @@ void   rangecontrol(void)
               else       caoutl = 1;  /* ca-ca */
           }
           if (htxl[j]) htoutl = 1;  /* hetatms */
-          
+
           if(  (mcxl[j]) && mcCPKl[j]) mcCPKoutl = 1; /*960815*/
           if(  (scxl[j]) && scCPKl[j]) scCPKoutl = 1; /*960815*/
           if(  (htxl[j]) && htCPKl[j]) htCPKoutl = 1; /*960815*/
-        
+
           if (atxl[j]) atoutl = 1;  /* some atom markers */
           if (mcal[j]) mcaoutl = 1;  /* mainchain atom markers*/
               if(mcal[j] && ctxl[j]) mccoutl = 1; /*carbon atoms also 960815+*/
@@ -633,7 +633,7 @@ void   rangecontrol(void)
               if(scal[j] && ctxl[j]) sccoutl = 1; /*carbon atoms also 960815+*/
           if (htal[j]) htaoutl = 1;  /* het group atom markers*/
               if(htal[j] && ctxl[j]) htcoutl = 1; /*carbon atoms also 960815+*/
-        
+
           if (Bcol[j]) Bcoloutl = 1;  /* color by B-values */ /*971213*/
 
           if (Bval[j]) Bvaloutl = 1;  /* pointID B-values & occupancies*/
@@ -641,12 +641,12 @@ void   rangecontrol(void)
           if (lbxl[j]) lboutl = 1;  /* residue labels */
 
           if (cssl[j]) ssscoutl = 1; /*all cys sc atoms with -ss- */
-        
+
           if (waxl[j]) waoutl = 1;
-           
+
           if(waoutl)  if (waal[j]) waaoutl = 1;  /* water atom markers*/
 
-          if(sitel[j]) /*broken after 050925 to 051212, Nsite not implemented*/ 
+          if(sitel[j]) /*broken after 050925 to 051212, Nsite not implemented*/
           {/*051213 fix the 050731 site residue, e.g. for rib stud*/
              /*char sitechain[MAXR][3],siteinsert[MAXR]; int siteresnum[MAXR];*/
              for(k=1; k <= Nsite; k++) /*check residue against SITE records*/
@@ -662,12 +662,12 @@ void   rangecontrol(void)
              }
           }
           /*050928 ribl[j] is part of general ranges, flags search for */
-          /* Alpha, Beta, Coil in separate ribbon sec str ranges */ 
-          /*if(  (ribl[j] || Coil[j] || Alpha[j] || Beta[j])*/ 
+          /* Alpha, Beta, Coil in separate ribbon sec str ranges */
+          /*if(  (ribl[j] || Coil[j] || Alpha[j] || Beta[j])*/
 
           if( ((ribl[j])||(Best[j])) &&( (char)name[maxatm][0] != 'h') )
           {/*ribbon controls  NOT applied to hets, e.g. HOH of 1BOV.pdb 041106*/
-             riboutl = 1; 
+             riboutl = 1;
              /*090219 this would fail if MSE or other het as last res of atoms*/
              /*  so riboutl should be a set-once per level logical*/
              /*setsubunitconditions() does reset riboutl, */
@@ -676,14 +676,14 @@ void   rangecontrol(void)
               for(k=1; k <= Nribs; k++)
               {/*search in separate ribbon sec str ranges 1--k--Nribs*/
 
-                /*THIS ROUTINE REQUIRES CORRECT FILL OF THESE RANGES*/ 
-                if(   (num[maxatm] >= ribresnu1[k]) 
+                /*THIS ROUTINE REQUIRES CORRECT FILL OF THESE RANGES*/
+                if(   (num[maxatm] >= ribresnu1[k])
                    && (num[maxatm] <= ribresnu2[k])
                    && ((thischain[0] == ribchain[k][0])||(ribchain[k][0]=='+'))
                    && ((thischain[1] == ribchain[k][1])||(ribchain[k][1]=='+')))
                 {/*appropriate range where + is GUI selected range*/
                   /*prekin not dealing with residue insertion codes*/
-                
+
                   /* ribbons: Alpha & Beta can overlap */
                   if((ribAlpha[k])||(ribBeta[k]))
                   {
@@ -790,7 +790,7 @@ void   rangecontrol(void)
           {/*Beta takes precedence over Alpha*/
              if(LBetaend) explicitribbontype = BETAARROW2D;
              else         explicitribbontype = BETA2D;
-          }       
+          }
        }
        else if(LAlpharegion)
        {
@@ -807,7 +807,7 @@ void   rangecontrol(void)
           {
              explicitribbontype = ALPHAARROW2D;
           }
-          else 
+          else
           {
              explicitribbontype = COIL2D;
           }
@@ -848,7 +848,7 @@ int    checkline(char texts[256])
     if(    CompArgStr(texts,"ATOM",4)     /*PUXMINIT*/
         || CompArgStr(texts,"HETATM",6) )
     {
-       if(Lthispass==1 && inputflag == 0 && Nsite > 0 && CompArgStr(texts,"ATOM",4) ) 
+       if(Lthispass==1 && inputflag == 0 && Nsite > 0 && CompArgStr(texts,"ATOM",4) )
        {
 /*
 fprintf(stderr,"checkline finds ATOM record: Nsite== %d\n",Nsite);
@@ -894,7 +894,7 @@ so for robustness, try to find it...     030111
          j = strlen(texts); /*length exclusive of EOL, so EOL is indexed as j*/
          if( j>=14 && isdigit(texts[13]) )
          {/*most likely this is actually standard pdb format*/
-          if(texts[11] != ' ') 
+          if(texts[11] != ' ')
           {/*hundreds*/
              nmrmodel[2] = texts[11];/*possible 100's digit*/
              nmrmodel[3] = texts[12]; /*possible  10's digit*/
@@ -985,7 +985,7 @@ so for robustness, try to find it...     030111
              j = 18; /*position in pdb record*/
              naspect = -1;
              Lnew = 1;
-             while(!getinteger(texts[j],Lnew,&naspect) ) 
+             while(!getinteger(texts[j],Lnew,&naspect) )
              {
                 j++;
                 Lnew = 0;
@@ -996,7 +996,7 @@ so for robustness, try to find it...     030111
                 aspectid[naspect][0] = '\0';
                 aspectcodecol[naspect] = -1;
                 Lnew = 1;
-                while(!getbracketed(texts[j],Lnew,MAXaspectchars,aspectid[naspect]) ) 
+                while(!getbracketed(texts[j],Lnew,MAXaspectchars,aspectid[naspect]) )
                 {
                    j++;
                    Lnew = 0;
@@ -1004,7 +1004,7 @@ so for robustness, try to find it...     030111
                 }
                 j++;
                 Lnew = 1;
-                while(!getinteger(texts[j],Lnew,&aspectcodecol[naspect]) ) 
+                while(!getinteger(texts[j],Lnew,&aspectcodecol[naspect]) )
                 {
                    j++;
                    Lnew = 0;
@@ -1014,7 +1014,7 @@ so for robustness, try to find it...     030111
                 {
                    Naspectcode++;
                 }
-             }       
+             }
 /*
 sprintf(temps,CRLF"aspect: %d, {%s}, col: %d"
         ,naspect,aspectid[naspect],aspectcodecol[naspect]);
@@ -1024,7 +1024,7 @@ adjusttext(2);
           }/*USER  ASPECT CODE # {label} #  */
 
        }/*Lthispass==1*/
-    
+
     if(         CompArgStr(texts,"HEADER",6) /*PUXMINIT*/
              || CompArgStr(texts,"TITLE" ,5)
              || CompArgStr(texts,"KEYWDS",6)
@@ -1060,7 +1060,7 @@ fprintf(stderr,"checkline finds SITE record: Nsite== %d\n",Nsite);
           if(Nusermod < 101) /*100 limit 040318*/
           {
              putonetextblockline(&headerstuff,texts); /*PKINSCRTS*/
-             if(LIOmage && Nusermod<3 ) 
+             if(LIOmage && Nusermod<3 )
                 putonetextblockline(&pdbinfostuff,texts); /*PKINSCRTS*/
                 /*pdbinfostuff only used for LIOmage persistant pipe*/
           }
@@ -1158,7 +1158,7 @@ fprintf(stderr,"checkline finds SITE record: Nsite== %d\n",Nsite);
           ireturn = 0;
        }/*process HELIX record during first pass*/
     }/*HELIX record*/
-/* use    Cccc these 1+3 char as ribidentity, cheat is to also use col 11 
+/* use    Cccc these 1+3 char as ribidentity, cheat is to also use col 11
 SHEET       H2 4     F  10      F  14 -1
 01234567890123456789012345678901234567890123456789012345678901234567890123456789
          1         2         3         4         5         6         7         8
@@ -1195,7 +1195,7 @@ SHEET       H2 4     F  10      F  14 -1
 
                 identity = 0;
                 k=0;
-                for(j=10;j<=13;j++) 
+                for(j=10;j<=13;j++)
                 {
                    if(texts[j] != ' ') {identity = 1;}
                    ribidentity[Nribs][k++] = texts[j]; /*060929*/
@@ -1221,7 +1221,7 @@ SHEET       H2 4     F  10      F  14 -1
 
                 /*BEWARE of strands that are subsets of strands: */
                 ignore = 0;
-                for(j=1; j<Nribs; j++) 
+                for(j=1; j<Nribs; j++)
                 {/*test earlier ranges*/
 
                 /*040323 protect against strands that are subsets of strands*/
@@ -1304,13 +1304,13 @@ SHEET       H2 4     F  10      F  14 -1
              k=0;
              for(j=(6+(5*ith));j<=(6+(5*ith)+5);j++)
              {
-                word[k++] = texts[j]; 
+                word[k++] = texts[j];
              }
              word[k] = '\0';
              ithnum = intfromstr(word);
              if(ith==0)
              {
-                ithnum0 = ithnum; 
+                ithnum0 = ithnum;
                 ithnumr = ithnum; /*remember reference atom number*/
              }
              else if(ith==1)
@@ -1355,7 +1355,7 @@ fprintf(stderr,"no connection for ncon== %3d\n",ncon);
 */
           ncon--; /*reset so can use this slot for a valid CONECT */
        }
-       
+
     }/*CONECT record*/
   }/*firstpass*/
   return(ireturn);
@@ -1367,12 +1367,12 @@ fprintf(stderr,"no connection for ncon== %3d\n",ncon);
 /****evalnonatmrecord()******************************************************/
 void   evalnonatmrecord(void)
 {  /* != ATOM or HETATM record --whatever it is, it isn't an atom */
-  
+
   stonex = 0;
   /*--usually never find anything except TER in atom/hetatm section */
   /*--  but this would allow embedded remarks and "new model" seperators */
   if( inputflag == 2 ) /*inputflag set by checkline()*/
-  {/* TER record */    
+  {/* TER record */
     /*--finish this residue completely, give anything else a fresh start */
     endsub = 1; /*090219 now hets are mixed in with atoms, need new level*/
     endchn = 1; /*chain ends with TER, not with transition atom to hetatm*/
@@ -1429,7 +1429,7 @@ void   convertcase(char texts[256])
     if(texts[0] != 'a' && texts[0] != 'h')
     {  /*--nasty error, should only get atom records to this point! */
 /*c*/    sprintf(alertstr,"input data filters bad, line blows mind:"CRLF"%s"
-                 ,texts); 
+                 ,texts);
 /*Ms*/   DoReportDialog();
 /*c*/    exit(0);
     }
@@ -1450,13 +1450,14 @@ void   readbrkatmrecord(void)
   char   frags[256],numbers[5],alphers[5];
   int    j,inumber,Lnumber,ialpher,Lalpher;
   int    igotit;
+  int    chain_ctr=0, seg_ctr=0;
   static char oldalphers[5];
 
 /*current input line is in global char str: texts[256] */
 /*the \0 is in texts[itext], where itext is also a global */
 /*current line from PKININPT/Getoneinputline(), itext is index of the CR or LF*/
 /* so itext is the column number of the last actual character */
-  
+
 /* where n is the nth atom of the current residue*/
 /*
 name[n],Anum[n],atom[n],res[n],sub[n],&num[n],rins[n]
@@ -1497,10 +1498,10 @@ aaaahh 0-5 name of record (char)
                            ___ 27-29 blank, not read by prekin
                               XXXX.XXX 30-37 x (float)
                                       YYYY.YYY 38-45 y (float)
-                                              ZZZZ.ZZZ 46-53 z (float) 
+                                              ZZZZ.ZZZ 46-53 z (float)
                          o ccupancy (float)           ooo.oo 54-59
-                               B value (float)              BBB.BB 60-65 
-                                     U nusual val ue (float)      ###### 66-71 
+                               B value (float)              BBB.BB 60-65
+                                     U nusual val ue (float)      ###### 66-71
                                      original format              _###__ 66-71
                                73-75 (char) CODE not read by prekin     FFFF
                                76-79 (int) record #, not read by prekin     iiii
@@ -1526,17 +1527,17 @@ aaaahh 0-5 name of record (char)
     /*change to lower case the minimal number of fields 080318*/
 
     /*convertcase(texts);*/     /*PKINCSUB*/
-    
+
     /* do direct transfer since blanks are meaningful */
     igotit = 1;
-  
+
     /*for(j=0 ; j<=5 ; j++) name[n][j] = texts[j]; */
     for(j=0 ; j<=5 ; j++) {name[n][j] = tolower(texts[j]);} /*080318*/
     name[n][6] = '\0';
 
     for(j=0 ; j<=4 ; j++) Anum[n][j] = texts[j+6];
     Anum[n][5] = '\0';
-    
+
     if(Lleftadjatomname)
     {/*whole atomname set one char to left, note 1x field so atom[][0] ok*/
         for(j=0 ; j<=4 ; j++) atom[n][j] = texts[j+11];
@@ -1547,13 +1548,13 @@ aaaahh 0-5 name of record (char)
         for(j=0 ; j<=4 ; j++) atom[n][j] = texts[j+12];
         atom[n][5] = '\0';  /*NB this captures Alt character as 5th atom char*/
     }
-    for(j=0 ; j<=4 ; j++) 
+    for(j=0 ; j<=4 ; j++)
       {atom[n][j] = tolower(atom[n][j]);} /*atom name components 080318*/
 
     /*for(j=0 ; j<=2 ; j++) res[n][j] = texts[j+17];*/
     for(j=0 ; j<=2 ; j++) {res[n][j] = tolower(texts[j+17]);} /*080318*/
     res[n][3] = '\0';
-    
+
     /* readbrkatmrecord()... associate this atom with most recent model # */
     if(nmrmodel[0] != '\0') /*really want the actual characters to rule*/
     {/* nmr model allow for 2 (or 3) char in addition to sub==chainID designator */
@@ -1561,12 +1562,12 @@ aaaahh 0-5 name of record (char)
        /*or this mode set in Kludges, in which case should use the real sub[]*/
        /*load this atom's mod character str with the current nmr model*/
        /*i.e. the most recent input MODEL # is held in nmrmodel*/
-       /*this changes when MODEL # is the delineator for the next model*/ 
+       /*this changes when MODEL # is the delineator for the next model*/
        /*but then the end-of-a-section code should deal with it*/
        /*so nmrmodel is safe for incoming atoms, but not for output of a model*/
 
        for(j=0; j< MAXmodchr; j++)
-       { 
+       {
           mod[n][j] = nmrmodel[j];
        }
        mod[n][MAXmodchr-1] = '\0'; /*safety*/
@@ -1576,11 +1577,11 @@ sprintf(temps,CRLF"INPUT nmrmodel != NULL: mod[%d]==|%s|"CRLF
 pkintextinsert(temps);
 adjusttext(1);
 */
-    }  
+    }
     else
     {
        mod[n][0] = '\0'; /*safety*/
-    }    
+    }
 /*
 for(j=0; j< MAXmodchr; j++)
 {
@@ -1604,7 +1605,7 @@ adjusttext(1);
       Lnumber = 0;
       Lalpher = 0;
     /*NOT here!!!! if(n==1) for(j=0;j<=4;j++) oldalphers[j]='\0';990412*/
-    
+
     for(j=0 ; j<=3 ; j++) /*should be up to 4 place integer*/
     {
         if(texts[j+22]==' ')   ; /*skip any blanks*/
@@ -1615,11 +1616,11 @@ adjusttext(1);
             {
             if(Lalpher)  /*already encountered alphabetic char */
             {
-                if(Lnumber)  
+                if(Lnumber)
                 {   /*doing alpha after number*/
                     alphers[ialpher] = texts[j+22];
                     ialpher++;
-                } 
+                }
                 else  /*!Lnumber*/
                 {   /*doing number after alph*/
                     numbers[inumber] = texts[j+22];
@@ -1632,7 +1633,7 @@ adjusttext(1);
                 numbers[inumber] = texts[j+22];
                 inumber++;
             }
-            
+
         }
         else /* not a number */
         {
@@ -1643,7 +1644,7 @@ adjusttext(1);
     }
     alphers[ialpher] = '\0';
     numbers[inumber] = '\0';
-        
+
 /*c*/  if(inumber > 0) igotit = sscanf(numbers,"%d",&num[n]);
        else  num[n] = 0;
        if(ialpher > 0)
@@ -1652,7 +1653,7 @@ adjusttext(1);
            {/* maybe case where sub indicator part of res num*/
                 sub[n][0] = alphers[0];
            }
-           else 
+           else
            {/* already has sub indicator, */
               /* see if effective residue number has changed*/
               for(j=0;j<ialpher;j++)
@@ -1671,7 +1672,7 @@ adjusttext(1);
        else
        {/*this residue number does NOT have embedded alphabetic characters*/
            for(j=0;j<=4;j++) oldalphers[j]='\0'; /*990412*/
-       } 
+       }
 /*________end of residue number section _____________________________________*/
 
     /*INSERTION CODE*/
@@ -1720,15 +1721,36 @@ adjusttext(1);
     }
     else Uval[n] = (float)0.0;
 
+    if(itext>=76) /*segid in columns 73,74,75,76 (index 72,73,74,75)*/
+    {
+      for(j=0; j<=3 ; j++) {
+        segid[n][j] = texts[j+72];
+      }
+      segid[n][4] = '\0';
+    }
+    else
+    {
+      segid[n][0] = '\0';
+    }
+
+    if(UseSEGIDasChain == 1) /*use segid instead of chainid*/
+    {
+      sub[n][0] = segid[n][0];
+      sub[n][1] = segid[n][1];
+      sub[n][2] = segid[n][2];
+      sub[n][3] = segid[n][3];
+      sub[n][4] = segid[n][4];
+    }
+
     /*itext is the index of CR or LF, so is index of last actual character*/
     if(itext>=78) /*element name in columns 77,78 (index 76,77)  070520*/
     {
        for(j=0; j<=1; j++) {frags[j] = texts[j+76];}
        if(!isdigit(frags[0]) && !isdigit(frags[1]) && frags[1] != ' ')
-       { 
-          element[n][0] = frags[0]; 
-          element[n][1] = frags[1]; 
-          element[n][2] = '\0';    /* NOT = frags[2] 070727*/ 
+       {
+          element[n][0] = frags[0];
+          element[n][1] = frags[1];
+          element[n][2] = '\0';    /* NOT = frags[2] 070727*/
        }
        else {element[n][0] = '\0';}
     }
@@ -1746,13 +1768,13 @@ atom      2  ca  arg a   1      25.497  26.862  -1.573  1.00 17.63      4pti  90
 /*THIS IS STUPID: RECORD NAME IS CALLED NAME !!!!, atom name is called atom*/
 /*  --name*6 record designator: atom or hetatom recognized  */
 /*  --Anum:a5 atom number: moved blindly to output file  */
-/*  --atom*5 includes atomname*4 and alt-conformation-indicator*1,  */ 
+/*  --atom*5 includes atomname*4 and alt-conformation-indicator*1,  */
 /*  --res*3 residue name  */
 /*  --sub*1 chain ID: subunit designator  */
 /*  --num:i4 residue number  */
 /*  --rins*1 inserted residue indicator  */
 /*  --x,y,z coord of the atom  */
-/*  --so pretty std brookhaven except atom name where there is lots of  */ 
+/*  --so pretty std brookhaven except atom name where there is lots of  */
 /*  -- non-standard brookhaven around!  */
 /*  --if this reading has an error inform and abort:  */
 /*  --implies a non-standard format that must be dealt with some other way  */
@@ -1774,8 +1796,8 @@ ATOM     43  P     C A   3      24.155  24.981  19.297  1.00 12.43      2BNA 130
 ATOM     44  O1P   C A   3      23.669  25.875  18.229  1.00 24.85      2BNA 131
 ATOM     45  O2P   C A   3      25.623  24.813  19.359  1.00 25.42      2BNA 132
 ATOM     46  O5*   C A   3      23.454  23.553  19.172  1.00  7.50      2BNA 133
-ATOM   1783  C6    T C   2      32.489  59.119  12.719  1.00 17.52    
-ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62    
+ATOM   1783  C6    T C   2      32.489  59.119  12.719  1.00 17.52
+ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
 */
  if ( !igotit )
  {
@@ -1786,11 +1808,11 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
 
  else
 
- {/*special filter for difficult logic cases*/ 
+ {/*special filter for difficult logic cases*/
      /* CompArgStr() in PUXMINIT is case insensitive*/
      /* re: isawater(): 1atom residue*/
-     /*was: (CompArgStr(name[n],"atom",4)&&... ) */ 
-     if(       CompArgStr(res[n],"hoh",3) 
+     /*was: (CompArgStr(name[n],"atom",4)&&... ) */
+     if(       CompArgStr(res[n],"hoh",3)
             || CompArgStr(res[n],"h2o",3)
             || CompArgStr(res[n],"wat",3)
             || CompArgStr(res[n],"dod",3)
@@ -1812,16 +1834,16 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
         /*unfortunately, prekin processes atoms as they come in, so this */
         /*decision is made atom-by-atom but is a residue thing!  */
 /*
-  sprintf(temps,CRLF"input atom %s res name: %s"CRLF,atom[n],res[n]); 
-  pkintextinsert(temps); 
-  adjusttext(2);   
+  sprintf(temps,CRLF"input atom %s res name: %s"CRLF,atom[n],res[n]);
+  pkintextinsert(temps);
+  adjusttext(2);
 */
         /*011028*/
         /*attempt at smart decision when to change embedded HETATM to ATOM */
         /* no name test, take anything of 050409, is not adequate,*/
         /*  fails miserably e.g. for the GFPs BUT decidemainside not fudged!*/
         /*050705 stay with special list of possibile residues names*/
-        if(typechainfirstpass[level]=='P') 
+        if(typechainfirstpass[level]=='P')
         {/*HETATM within chain identified as Protein */
            if(strstr(aaList, res[n]) )
            {/*recover unusual amino-acids*/
@@ -1837,7 +1859,7 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
         }/*HETATM within chain identified as Nucleic Acid */
 
 /*090223 DIRTY TRICK TO GET AROUND HETATM THAT SHOULD BE ATOM RECORDS 090223*/
-        if(Lribnhet 
+        if(Lribnhet
            &&(typechainfirstpass[level]=='P' || typechainfirstpass[level]=='N'))
         {
            sprintf(name[n],"atom  ");
@@ -1851,12 +1873,12 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
            sprintf(res[n],"cys");
         }
 /*
-  sprintf(temps,"now called %s res name: %s"CRLF,name[n],res[n]); 
-  pkintextinsert(temps); 
-  adjusttext(1);   
+  sprintf(temps,"now called %s res name: %s"CRLF,name[n],res[n]);
+  pkintextinsert(temps);
+  adjusttext(1);
 */
      }/*suspect imbedded HETATM to be cryptic protein or nucleic atom*/
- }/*special filter for difficult logic cases*/ 
+ }/*special filter for difficult logic cases*/
 
  /*track nucleic acid O2prime existance to distinguish DNA vs RNA */
  if( strstr(naList, res[n]) ) /*060113*/
@@ -1867,7 +1889,7 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
          LRNA = 1; /*distinguish RNA vs DNA, later vote for this fragment*/
       }
  }
- 
+
  /*element identification   070520: classic = instead of == caught 070727*/
  if(element[n][0] == '\0') /*not set by element name in cols 77,78 */
  {
@@ -1876,7 +1898,7 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
 /*fprintf(stderr,"whatelement sets record== %s, atom== %s, element== %s\n",name[n],atom[n],element[n]);*/ /*070730*/
  }
 /*else fprintf(stderr,"____element __is record== %s, atom== %s, element== %s\n",name[n],atom[n],element[n]);*/ /*070730*/
- 
+
  /*-------------------ASPECT CODE SPECIAL MODIFIED RECORDS-------------------*/
  if(Naspectcode > 0 && Lallowaspectsin > 0)
  {/*expect aspect color code characters in particular columns*/
@@ -1894,13 +1916,13 @@ ATOM   1784  P     A C   3      33.340  63.593   8.466  1.00 41.62
     /*a null string has no length as a %s field*/
  }
  /*___________________ASPECT CODE SPECIAL MODIFIED RECORDS___________________*/
- 
+
 /*
 sprintf(temps,CRLF"input: n= %d"CRLF"%s"CRLF"interpreted:"
                  CRLF"%s|%s|%s|%s|%s|%d|%s|%f %f %f"CRLF
 ,n,texts,name[n],Anum[n],atom[n],res[n],sub[n],num[n],rins[n],x[n],y[n],z[n]);
-  pkintextinsert(temps); 
-  adjusttext(5);   
+  pkintextinsert(temps);
+  adjusttext(5);
 */
 }
 /*___readbrkatmrecord()_____________________________________________________*/
@@ -1910,25 +1932,25 @@ void   evalatomrecord(void)
 {
   int  j=0;
   int  delmod=0;
-  
+
   /*check for any change indicator that affects processing */
   /*set logicals */
   if (n == 1)
   {/*this may be the first atom of a residue */
     /*define name and subunit idicators of this first atom */
-    for(j=0 ; j<=5 ; j++) oldnam[j] = name[n][j]; 
+    for(j=0 ; j<=5 ; j++) oldnam[j] = name[n][j];
     {
        oldnam[6] = '\0';
     }
     oldsub[0] = sub[n][0];  /*char chainID  070926*/
     oldsub[1] = sub[n][1];  /*char chainID  070926*/
     oldsub[2] = '\0'; /*safety, does not impinge on nmrmodel#*/
-    for(j=0 ; j< MAXmodchr ; j++) oldmod[j] = mod[n][j]; 
-    
+    for(j=0 ; j< MAXmodchr ; j++) oldmod[j] = mod[n][j];
+
 
     delnam = 0;
     delsub = 0;
-    if(first1 == 1) first1 = 0; 
+    if(first1 == 1) first1 = 0;
   }/*this may be the first atom of a residue */
   else
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
@@ -1959,7 +1981,7 @@ void   evalatomrecord(void)
   /*check if subunit code character has changed*/
   if(  (sub[n][0]  != oldsub[0])  /*char chainID  070926*/
      ||(sub[n][1]  != oldsub[1])) /*char chainID  080318*/
-   /*&&(sub[n][1]  != oldsub[1])) /*char chainID  070926*/
+   //&&(sub[n][1]  != oldsub[1])) /*char chainID  070926*/
   {
      delsub = 1 ;
   }
@@ -1980,29 +2002,29 @@ void   evalatomrecord(void)
   /* if an END recoord had been reached just previous to this ATOM then */
   /* presume change to a new subunit of a multi-subunit molecule */
   if (endsub) delsub = 1;
-  if(Lresiduegroups && (delres || delnum) ) /*060120 */ 
+  if(Lresiduegroups && (delres || delnum) ) /*060120 */
   {/*e.g. each ATOM residue in separate group for multi-poses of ligands */
      delsub = 1;
-  } 
+  }
   if (delsub)
   {
     morsub = 1;
-    
+
     nexsub[0] =  sub[n][0];  /*2char chainID 070926*/
     nexsub[1] =  sub[n][1];  /*2char chainID 070926*/
     nexsub[2] = '\0';
-    for(j=0 ; j< MAXmodchr ; j++) nexmod[j] = mod[n][j]; 
-    
+    for(j=0 ; j< MAXmodchr ; j++) nexmod[j] = mod[n][j];
+
     endsub = 1;
     endchn = 1;
     endres = 1;
     resinloop = 1; /* declare at end of a residue */
   }
   if(resinloop == 1) return;/* & break from readinloop: effective goto 160*/
-          
+
   /* if a TER record had been reached just previous to this ATOM then */
   /*-- presume chain break just before here */
-  if (endchn == 1) 
+  if (endchn == 1)
   {
      delnam = 1;
   }
@@ -2033,7 +2055,7 @@ void   evalatomrecord(void)
      for(j=0; j<= 3; j++){resnext[j] = res[n][j];}
      for(j=0; j<= 6; j++){namenext[j] = name[n][j];}
      for(j=0; j<  3; j++){subnext[j] = sub[n][j];} /*2char 070926*/
-     for(j=0; j<= 1; j++){rinsnext[j] = rins[n][j];} 
+     for(j=0; j<= 1; j++){rinsnext[j] = rins[n][j];}
      for(j=0; j< MAXmodchr; j++){modnext[j] = mod[n][j];}
      for(j=0; j< MAXaspectchars+3; j++){aspectstrnext[j] = aspectstr[n][j];}
   }
@@ -2051,7 +2073,7 @@ void   screenaltconf(void)
 /*--define alt residue flag for the current atom */
       if(atmcpy[4] != ' ') {Lalts = 1;} /*at least one alt conf in current res*/
       ica = 0; /*any atom but C-alpha*/  /*930123*/
-      if(   atmcpy[0] == ' ' && atmcpy[1] == 'c'&& atmcpy[2] == 'a' 
+      if(   atmcpy[0] == ' ' && atmcpy[1] == 'c'&& atmcpy[2] == 'a'
          && atmcpy[3] == ' ') ica = 1; /*C-alpha*/
       /*althed[0] = ' ';*/
       althed[0] = atmcpy[4];
@@ -2065,7 +2087,7 @@ void   screenaltconf(void)
       else if( atmcpy[4] != ' ' )
       {
         /*if(atmcpy[1] != 'h')*/  /* sometimes h have # in this field*/
-        if(!isahydrogen(name[natom],atmcpy,element[natom])) /*070520*/ 
+        if(!isahydrogen(name[natom],atmcpy,element[natom])) /*070520*/
         {/*--more than three alternate conformations or something else here:*/
             /*FRODO has wierd name for eta, e.g. arg neh1 instead of nh1*/
             if(atmcpy[2] == 'e'&&atmcpy[3] == 'h')
@@ -2084,7 +2106,7 @@ void   screenaltconf(void)
               /*     ,name[natom],atom[natom],res[natom],num[natom]);*/
               /*pkintextinsert(alertstr);*/  /*PKMCTEXT.C PKPCTEXT.C*/
               /*adjusttext(1);           */  /*PKMCTEXT.C PKPCTEXT.C*/
-                altstd = 1;/*score as standard anyway*/ 
+                altstd = 1;/*score as standard anyway*/
                 /*for hook-up to previous residue anyway since logic for that*/
                 /* hook-up is convoluted enough with 3 possible conformations*/
                 /*However, let it try for matched hook-up within a residue*/
@@ -2105,15 +2127,15 @@ void   checkfocus(void)
 {
   float dist,distatom,distca,distmc,xsum,ysum,zsum;
   int    j;
-  
+
   /*five primary output controls for mc sc ca ht wa */
   /*mc sc ca handled here, ht and wa in separate routines*/
   /*These five control all output except for ribbons*/
   /*ribons are NOT limited to the focus distance*/
-   
+
   /*normally AND with range controls*/
   /*normally expect to do another pass to do OR function*/
-  
+
   if(mrange == 0)
   {
     /*if there is no other range controls in operation*/
@@ -2132,7 +2154,7 @@ void   checkfocus(void)
     /*and the desired dependent secondary outl's*/
     /*none chosen 990627*/
   }
-  if(Lresnumfovea && (name[maxatm][0] == 'a')) 
+  if(Lresnumfovea && (name[maxatm][0] == 'a'))
   {/*lresnumfovea first pass to compute an x,y,z for selected residue*/
       /*check for residue number only for this pass*/
       if(   (resnumfovea == num[maxatm])
@@ -2151,13 +2173,13 @@ void   checkfocus(void)
           /*find average coord of this residue*/
           xsum = 0.0;
           ysum = 0.0;
-          zsum = 0.0;          
+          zsum = 0.0;
           for(j=1 ; j<=maxatm ; j++)
           {
                xsum = xsum + x[j];
                ysum = ysum + y[j];
                zsum = zsum + z[j];
-          }          
+          }
           focus[1] = xsum/maxatm;
           focus[2] = ysum/maxatm;
           focus[3] = zsum/maxatm;
@@ -2167,9 +2189,9 @@ void   checkfocus(void)
   {/*actual fovea run*/
       /*-- use all atoms for distance checks*/
     dist   = 999.0; /*start way out of any range*/
-    distmc = 999.0; 
-    distca = 999.0; 
-    
+    distmc = 999.0;
+    distca = 999.0;
+
     for(j=1 ; j<=maxatm ; j++)
     {/*compute distance to focus point*/
         distatom = (float)distan(x[j],y[j],z[j],focus[1],focus[2],focus[3]);
@@ -2188,13 +2210,13 @@ void   checkfocus(void)
            {/*atom records*/
               if( decidemainside(j) )
               {/*mainchain*/
-                 if(distatom < distmc) 
+                 if(distatom < distmc)
                  {
                     distmc = distatom; /*keep minimum distance*/
                  }
-                 if(atom[j][1] == 'c' && atom[j][2] == 'a') 
-                 {   
-                    distca = distatom; /*keep ca distance*/ 
+                 if(atom[j][1] == 'c' && atom[j][2] == 'a')
+                 {
+                    distca = distatom; /*keep ca distance*/
                  }
               }
               else
@@ -2204,11 +2226,11 @@ void   checkfocus(void)
            }
     }/*compute distance to focus point*/
 
-    if(name[maxatm][0] == 'a') 
+    if(name[maxatm][0] == 'a')
     {/*atom record*/
        if( (distmc <= focusmc) && mcoutl)
        {
-          mcoutl=TRUE; 
+          mcoutl=TRUE;
        }
        else
        {
@@ -2216,15 +2238,15 @@ void   checkfocus(void)
           mcaoutl=FALSE; /*just in case*/
        }
        if( (distca <= focusca) && (caoutl || caonly) ) caoutl=TRUE;
-       else 
+       else
        {
           caoutl=FALSE;
        }
-       if( (dist   <= focussc) && scoutl) 
+       if( (dist   <= focussc) && scoutl)
        {
           scoutl=TRUE;
        }
-       else 
+       else
        {
           scoutl=FALSE;
           scaoutl=FALSE; /*just in case*/
@@ -2244,7 +2266,7 @@ void   checkfocus(void)
        else
        {/*other het group, not a water*/
           if( (dist <= focusht) && htoutl)  htoutl=TRUE;
-          else 
+          else
           {
              htoutl=FALSE;
              htaoutl=FALSE; /*just in case*/
@@ -2268,7 +2290,7 @@ void   connecthydrogen(void)
   /*--start with reference distance longer than willing to count as match */
   hatdst = 2.0;
   match = 0;
-  
+
   if(atom[natom][1] == 'q')
   {
     /*--make dot for NMR pseudo atoms, i.e. original atom name is 'q' */
@@ -2289,12 +2311,12 @@ void   connecthydrogen(void)
 /*s*/     dist = (float)distan(x[natom],y[natom],z[natom]
                               ,x[theatm],y[theatm],z[theatm]);
           if(dist <= hatdst)
-          { 
+          {
             /*--check for alternate conformation designator */
             if(ipass==1)
             {/*try to exactly match alternate conformation*/
               if(atom[theatm][4] == althed[0])
-              { 
+              {
                 base[natom] =  theatm;
                 match = 1;
                 hatdst = dist;
@@ -2304,7 +2326,7 @@ void   connecthydrogen(void)
             else if(ipass==2)
             {/*try to match alternate H to standard heavy atom conformation*/
               if(atom[theatm][4] == ' ')
-              { 
+              {
                 base[natom] =  theatm;
                 match = 1;
                 hatdst = dist;
@@ -2328,7 +2350,7 @@ void   connecthydrogen(void)
     }
   }
 }
-/*___connecthydrogen()______________________________________________________*/      
+/*___connecthydrogen()______________________________________________________*/
 
 /****connectheavyatom()******************************************************/
 void   connectheavyatom(int iscan,int maxcounter)
@@ -2339,10 +2361,10 @@ void   connectheavyatom(int iscan,int maxcounter)
   /*connect a heavy atom*/ /*--(scanning natom=1,maxatm)--*/
   /*only non-hydrogen atoms should get into this section */
   /*already have dealt with hydrogens and pseudo-hydrogens */
-  
+
   /*generic distance based connector */
   /*doing  natom = 1,maxcounter, with atmcpy and althed defined */
-  
+
   /*check if this atom should be connected to a previous residue */
   /*oldatm T only when an atom from previous residue stored in lastat */
   /* of arrays and endchn was not flagged when left that residue */
@@ -2360,10 +2382,10 @@ void   connectheavyatom(int iscan,int maxcounter)
   /*  i.e. used to be else if( ... >0)... : */
   /*-------------------------------------------------------------------------
    * if  (  (icountres[level] >= 0 && iscan == 1 && name[natom][0] == 'a')
-   *      &&(  (    atom[natom][0] == ' ' && atom[natom][1] == 'n' 
+   *      &&(  (    atom[natom][0] == ' ' && atom[natom][1] == 'n'
    *             && atom[natom][2] == ' ' && atom[natom][3] == ' ')
-   *         ||(    atom[natom][0] == ' ' && atom[natom][1] == 'p' 
-   *             && atom[natom][2] == ' ' && atom[natom][3] == ' ') ) ) 
+   *         ||(    atom[natom][0] == ' ' && atom[natom][1] == 'p'
+   *             && atom[natom][2] == ' ' && atom[natom][3] == ' ') ) )
    ------------------------------------------------------------------------*/
   /* 061202 also try to connect hetatm within P or N chains */
   /* 070801 GFPchromophore: try _n1_ ... */
@@ -2372,12 +2394,12 @@ void   connectheavyatom(int iscan,int maxcounter)
          &&(  (name[natom][0] == 'a')
             ||(  (typechainfirstpass[level]=='P')
                ||(typechainfirstpass[level]=='N') ) )
-         &&(  (   atom[natom][0] == ' ' && atom[natom][1] == 'n' 
+         &&(  (   atom[natom][0] == ' ' && atom[natom][1] == 'n'
                && atom[natom][2] == ' ' && atom[natom][3] == ' ')
-            ||(   atom[natom][0] == ' ' && atom[natom][1] == 'p' 
+            ||(   atom[natom][0] == ' ' && atom[natom][1] == 'p'
                && atom[natom][2] == ' ' && atom[natom][3] == ' ')
             ||(   LGFPchromophore
-               && atom[natom][0] == ' ' && atom[natom][1] == 'n' 
+               && atom[natom][0] == ' ' && atom[natom][1] == 'n'
                && atom[natom][2] == '1' && atom[natom][3] == ' ') ) ) /*070801*/
         /*so _n1_ e.g. GFPchromophore only if _n__ not yet encountered  070801*/
   {/*find nominal beginning atom of a residue: n or p */
@@ -2387,7 +2409,7 @@ void   connectheavyatom(int iscan,int maxcounter)
 
        oldcon((int)natom,(float)bondst,(int)ica); /*PKINCSBS.c*/
          /*find base for new atom at natom at <= bondst distance, ica == 0 */
-         /*bondst (distance limit) avoids aa n connection to tRNA o3' */ 
+         /*bondst (distance limit) avoids aa n connection to tRNA o3' */
        /*--base defined or defaulted to dot in oldcon, loop goes to next atom */
     }
   }/*find nominal beginning atom of a residue: n or p */
@@ -2406,14 +2428,14 @@ void   connectheavyatom(int iscan,int maxcounter)
     /*first check against all atoms behind, never looks at self, */
     /*then check against all atoms ahead, refuse connection for out-of-order*/
     /* if there is a preferred order specified */
-    
+
     /*to allow ring closure, have to allow multiple hits, not just make */
     /*connection to minimum distant atom */
     /*------- */
     /*set a distance above which atoms should not be bonded */
     /*a bond will be made to the shortest distance less than that */
     cnodist = 2.0;    /* e.g. for c-c, c-n, c-o */
-       /*hetdist=(float)2.1;*/ 
+       /*hetdist=(float)2.1;*/
     hetdist=(float)2.0;/*often het groups are not as well determined, esp. cho*/
                  /*991203*/
     mixdist = (float)2.2;    /* e.g. for Fe-N */
@@ -2425,7 +2447,7 @@ void   connectheavyatom(int iscan,int maxcounter)
     if(name[natom][0] == 'a')   unkdst = cnodist;  /*atom: residue*/
     else            unkdst = hetdist;  /*hetatm*/
     testdist = unkdst; /*so this is the default for current type of group */
-    
+
     match = 0;
 
     /*first atom where natom=1 is a special case, if it hasn't been given */
@@ -2437,11 +2459,11 @@ void   connectheavyatom(int iscan,int maxcounter)
     {
       base[natom] = natom; /*default to a dot, it might find something later*/
                   /* dot will be overridden if find another connection */
-    }  
-    else 
+    }
+    else
     {/*scan*/
       k = 0;  /* counter for connections made to this atom */
-      if(iscan == 1 && natom > 1) 
+      if(iscan == 1 && natom > 1)
       /* full specification protection from program mutations*/
       {
         jstart = 1;
@@ -2454,12 +2476,12 @@ void   connectheavyatom(int iscan,int maxcounter)
         jend = maxcounter;
         Ltrytoconnect = 1;
       }
-      else 
+      else
       {
         Ltrytoconnect = 0;
         match = 1;  /*fake a match so don't mess with this atom's base */
       }
-      
+
       if(Ltrytoconnect == 1)
       {/*Ltrytoconnect==1*/
        for( j=jstart ; j <= jend ; j++ )
@@ -2474,11 +2496,11 @@ if(Ltestprint)
 #endif
         /*do some name checking to avoid wierd hook-ups */
         /*if the coords are off */
-        
+
         itype = 1; /* OK to proceed */
-        
+
         /*hydrogens have already been screened out for prime atom */
-        
+
         /*hydrogens not allowed to have anything bind TO them so */
         /*if(    atom[j][1] =='h' || atom[j][1] =='d' || atom[j][1] =='q' */
         /*   || (atom[j][0] =='h'&&isdigit(atom[j][2])&&isdigit(atom[j][3])) )*/
@@ -2487,30 +2509,30 @@ if(Ltestprint)
              itype = 0;
         }
         /* presume no O-O peroxide links in a protein, avoids bad carboxyls */
-        if(name[natom][0]=='a' && atom[natom][1]=='o' && atom[j][1]=='o') 
-             itype = 0; 
-             
+        if(name[natom][0]=='a' && atom[natom][1]=='o' && atom[j][1]=='o')
+             itype = 0;
+
         /* until get rational atom radii, ... */
-        if(name[natom][0]=='h' && atom[natom][1]=='o' && atom[j][1]=='o') 
-             itype = 0; 
-        
+        if(name[natom][0]=='h' && atom[natom][1]=='o' && atom[j][1]=='o')
+             itype = 0;
+
         /*mutated prolines get an extra NE at the coord of mc N */
-        if(  name[natom][0]=='a' 
-           && atom[natom][1]=='n' && atom[natom][2]=='e' 
+        if(  name[natom][0]=='a'
+           && atom[natom][1]=='n' && atom[natom][2]=='e'
            && atom[j][1]=='c' && atom[j][2]=='a') { itype = 0; }
-        if(  name[natom][0]=='a' 
-           && atom[natom][1]=='c' && atom[natom][2]=='a' 
+        if(  name[natom][0]=='a'
+           && atom[natom][1]=='c' && atom[natom][2]=='a'
            && atom[j][1]=='n' && atom[j][2]=='e') { itype = 0; }
-        if(  name[natom][0]=='a' 
-           && atom[natom][1]=='n' && atom[natom][2]==' ' 
+        if(  name[natom][0]=='a'
+           && atom[natom][1]=='n' && atom[natom][2]==' '
            && atom[j][1]=='n' && atom[j][2]=='e') { itype = 0; } /*030605*/
-        if(  name[natom][0]=='a' 
-           && atom[natom][1]=='n' && atom[natom][2]=='e' 
+        if(  name[natom][0]=='a'
+           && atom[natom][1]=='n' && atom[natom][2]=='e'
            && atom[j][1]=='n' && atom[j][2]==' ') { itype = 0; } /*030605*/
-        if(  name[natom][0]=='a' 
-           && atom[natom][1]=='n' && atom[natom][2]=='e' 
+        if(  name[natom][0]=='a'
+           && atom[natom][1]=='n' && atom[natom][2]=='e'
            && atom[j][1]=='n' && atom[j][2]=='e') { itype = 0; } /*030605*/
-        if( base[j] == natom )  
+        if( base[j] == natom )
         {
           itype = 0;
           /* non-trivial connection already made in reverse order */
@@ -2518,13 +2540,13 @@ if(Ltestprint)
           /* if a preferred order is defined for this pair */
           match = 1;
         }
-        
+
         if(itype == 1)
         {/*try to connect a heavy atom to a heavy atom */
           /*althed has been defined for the prime atom*/
           /*so only need to check that alt. atom designator of this one same*/
           /*or blank so alt conf atom can bind back to common root atom */
-          
+
           if(  (atom[j][4] == atmcpy[4] || atom[j][4] == ' ' )
              ||(atmcpy[4] == ' ')   /*common connects back to all alts*/
             )
@@ -2536,7 +2558,7 @@ if(Ltestprint)
 
 
             if(  atom[natom][1]!='c'&&atom[j][1]!='c'
-               &&atom[natom][1]!='o'&&atom[j][1]!='o' 
+               &&atom[natom][1]!='o'&&atom[j][1]!='o'
                &&atom[natom][1]!='n'&&atom[j][1]!='n') testdist = hethetdist;
             else if(    (  atom[natom][1]=='c'
                          ||atom[natom][1]=='o'
@@ -2551,8 +2573,8 @@ if(Ltestprint)
                      && (  atom[j][1]=='c'
                          ||atom[j][1]=='o'
                          ||atom[j][1]=='n')
-                   ) testdist = mixdist; 
-            else testdist = unkdst; 
+                   ) testdist = mixdist;
+            else testdist = unkdst;
                 /*either cnodist or hetdist depending on group*/
             if(dist <= testdist)
             {/*dist ok*/
@@ -2568,9 +2590,9 @@ if(Ltestprint)
                                                           /*PKINCSBS.c*/
               if(ipairok == 1)
               {/*ipairok*/
-                match = 1;                  
+                match = 1;
                 k = k + 1;
-                
+
                 if(k == 1 && base[natom] == natom)  base[natom] = 0;
                    /* override a dot*/
                 if(k == 1 && base[natom] > 0)
@@ -2592,7 +2614,7 @@ if(Ltestprint)
                   Lneed = 1; /*presume need this connection*/
                   if(maxatm > maxcounter)
                   {/*there already are additional tacked on atoms*/
-                 
+
                     for(jj=maxcounter+1; jj<=maxatm; jj++)
                     {/*check through the tacked on atoms*/
                       if(  (idupl[jj] == natom && base[jj] == j)
@@ -2622,13 +2644,13 @@ if(Ltestprint)
                     }/*--no more room */
                     else
                     {/* got room */
-                       maxatm = maxatm + 1; 
+                       maxatm = maxatm + 1;
                        tacker(maxatm,natom); /*PKINCSBS.c*/
                        /*     nput   nget   */
                        base[maxatm] = j;
-                       idupl[maxatm] = natom; 
+                       idupl[maxatm] = natom;
                        atstyle[maxatm] = GHOST; /*030920 extra crt Mage output*/
-                       /*keeps track of who this atom really is*/  
+                       /*keeps track of who this atom really is*/
 #ifdef UNIX_X11
 if(Ltestprint)
 {
@@ -2662,9 +2684,9 @@ if(Ltestprint)
        }/*scan over j for base atom*/
       }/*Ltrytoconnect==1*/
     }/*scan*/
-    if(iscan == 2 && Ltrytoconnect ==1 && itype == 1 && match == 0) 
+    if(iscan == 2 && Ltrytoconnect ==1 && itype == 1 && match == 0)
     {
-      if(base[natom] == 0)  base[natom] = natom; 
+      if(base[natom] == 0)  base[natom] = natom;
       {/* nothing found in loop to connect, */
          if(base[natom] == 0)  base[natom] = natom; /*so make a dot*/
       }
@@ -2693,12 +2715,12 @@ ATOM    292  NE2 HIS E  57      11.051  74.132  19.270  1.00 25.18      2PTC 439
 void   storecyssg(int maxcounter)
 {/*store cyssg for possible ssbonds*/
     int    j;
-  
+
     if( (ssknt + 1) < ssmax)
     {
         ssknt = ssknt + 1;
         sstapler(ssknt,natom);
-    
+
         if(ssscoutl)
         {
             ssscall[ssknt] = 1;
@@ -2717,7 +2739,7 @@ void   storecyssg(int maxcounter)
         sscaBval[ssknt] = o[j]; /*occupancy factor,  or PDB field: col 55...60*/
      else
         sscaBval[ssknt] = B[j]; /*temperature factor in PDB field: col 61...66*/
-                } 
+                }
                 else if( (atom[j][1] == 'c' && atom[j][2] == 'b') &&
                          (atom[j][4] == ' ' || atom[j][4] == atom[natom][4]) )
                 {
@@ -2731,7 +2753,7 @@ void   storecyssg(int maxcounter)
         sscbBval[ssknt] = o[j]; /*occupancy factor,  or PDB field: col 55...60*/
      else
         sscbBval[ssknt] = B[j]; /*temperature factor in PDB field: col 61...66*/
-                } 
+                }
             }
         }
         else
@@ -2742,7 +2764,7 @@ void   storecyssg(int maxcounter)
     else
     {
           sprintf(alertstr,"No room in cys sg array for:"
-                        CRLF"%s|%s|%s|%s|%s|%d|%f %f %f"
+                        CRLF"%s|%s|%s|%s|%s|%s|%f %f %f"
                  ,name[natom],Anum[natom],atom[natom],res[natom]
                  ,sub[natom],rins[natom],x[natom],y[natom],z[natom]);
 /*Ms*/    DoReportDialog();
@@ -2753,7 +2775,7 @@ void   storecyssg(int maxcounter)
 
 /****connecthetatms()********************************************************/
 void   connecthetatms(void)
-{     
+{
     int   maxorig,j,hetatEOF;
 /*name[n],Anum[n],atom[n],res[n],sub[n],&num[n],rins[n],&x[n],&y[n],&z[n]*/
 /*residue's atom record*/
@@ -2765,7 +2787,7 @@ void   connecthetatms(void)
  int    thisnum;
  float  thisx,thisy,thisz,thiso,thisB;
 
-    maxorig = maxatm; 
+    maxorig = maxatm;
     for(n=1 ; n <= maxorig ; n++)
     {/*search for connections back to earlier hetatms from each atom*/
        rewindtextblock(&hetscratch);
@@ -2806,58 +2828,58 @@ void   connecthetatms(void)
                    o[maxatm] = thiso;
                    B[maxatm] = thisB;
                    num[maxatm]  = thisnum;
-                   
+
                    /*pad all char strings to full length of PDB format item*/
-                   for(j=0 ; j<= 4 ; j++) 
+                   for(j=0 ; j<= 4 ; j++)
                    {/*0,1,2,3,4,5==\0*/
                       if(thisatom[j]=='_' || thisatom[j]=='\0') thisatom[j]=' ';
                    }
                    thisatom[5]='\0';
                    for(j=0 ; j<= 5 ; j++) atom[maxatm][j] = thisatom[j];
-               /*-----*/ 
-                   for(j=0 ; j<= 4 ; j++) 
+               /*-----*/
+                   for(j=0 ; j<= 4 ; j++)
                    {/*0,1,2,3,4,5==\0*/
                       if(thisAnum[j]=='_' || thisAnum[j]=='\0') thisAnum[j]=' ';
                    }
                    thisAnum[5]='\0'; /*071001*/
                    for(j=0 ; j<= 5 ; j++) Anum[maxatm][j] = thisAnum[j];
-               /*-----*/ 
-                   for(j=0 ; j<= 2 ; j++) 
+               /*-----*/
+                   for(j=0 ; j<= 2 ; j++)
                    {/*0,1,2,3==\0*/
                        if( thisres[j]=='_' || thisres[j]=='\0') thisres[j]=' ';
                    }
                    thisres[3]='\0';
                    for(j=0 ; j<= 3 ; j++) res[maxatm][j] = thisres[j];
-               /*-----*/ 
-                   for(j=0 ; j<= 5 ; j++) 
+               /*-----*/
+                   for(j=0 ; j<= 5 ; j++)
                    {/*0,1,2,3,4,5,6==\0*/
                      if( thisname[j]=='_' || thisname[j]=='\0') thisname[j]=' ';
                    }
                    thisname[6]='\0';
                    for(j=0 ; j<= 6 ; j++) name[maxatm][j] = thisname[j];
-               /*-----*/ 
+               /*-----*/
                    for(j=0 ; j< 2 ; j++) /*2char chainID 070926*/
                    {/*0,1,2==\0*/
                      if( thissub[j]=='_' || thissub[j]=='\0') thissub[j]=' ';
                    }
                    thissub[2]='\0'; /* was 1 071222 */
-                   for(j=0 ; j<= 2 ; j++) sub[maxatm][j] = thissub[j]; 
-               /*-----*/ 
-                   for(j=0 ; j<= 1 ; j++) 
+                   for(j=0 ; j<= 2 ; j++) sub[maxatm][j] = thissub[j];
+               /*-----*/
+                   for(j=0 ; j<= 1 ; j++)
                    {/*0,1==\0*/
                      if( thisrins[j]=='_' || thisrins[j]=='\0') thisrins[j]=' ';
                    }
                    thisrins[1]='\0';
-                   for(j=0 ; j<= 1 ; j++) rins[maxatm][j] = thisrins[j]; 
-               /*-----*/ 
-                   for(j=0 ; j< MAXmodchr ; j++) 
+                   for(j=0 ; j<= 1 ; j++) rins[maxatm][j] = thisrins[j];
+               /*-----*/
+                   for(j=0 ; j< MAXmodchr ; j++)
                    {/*0,1,2,3,4,5,6==\0*/
                        if( thismod[j]=='_' || thismod[j]=='\0') thismod[j]=' ';
                    }
                    thismod[MAXmodchr-1]='\0'; /* 010529 */
-                   for(j=0 ; j< MAXmodchr ; j++) mod[maxatm][j] = thismod[j]; 
+                   for(j=0 ; j< MAXmodchr ; j++) mod[maxatm][j] = thismod[j];
                       /*global limiting number MAXmodchr includes \0 */
-               /*-----*/ 
+               /*-----*/
                    base[maxatm] = n;
                 }/*got room*/
              }
@@ -2869,58 +2891,58 @@ void   connecthetatms(void)
         /*write het atom info, inc putative model# to storage*/
         /*have to protect against blank character fields*/
         /*name has to be either ATOM or HETATM to have gotten here*/
-                      
+
         /*pad all char strings to full length of PDB format item with _ for blanks*/
         for(j=0 ; j<= 5 ; j++)  thisatom[j] = atom[n][j];
-        for(j=0 ; j<= 4 ; j++) 
+        for(j=0 ; j<= 4 ; j++)
         {/*0,1,2,3,4,5==\0*/
             if(thisatom[j]==' ' || thisatom[j]=='\0') thisatom[j]='_';
         }
         thisatom[5]='\0';
-     /*-----*/ 
+     /*-----*/
         for(j=0 ; j<= 5 ; j++)  thisAnum[j] = Anum[n][j];
-        for(j=0 ; j<= 4 ; j++) 
+        for(j=0 ; j<= 4 ; j++)
         {/*0,1,2,3,4,5==\0*/
             if(thisAnum[j]==' ' || thisAnum[j]=='\0') thisAnum[j]='_';
         }
         thisAnum[5]='\0'; /*071001*/
-     /*-----*/ 
+     /*-----*/
         for(j=0 ; j<= 3 ; j++) thisres[j] = res[n][j];
-        for(j=0 ; j<= 2 ; j++) 
+        for(j=0 ; j<= 2 ; j++)
         {/*0,1,2,3==\0*/
            if( thisres[j]==' ' || thisres[j]=='\0') thisres[j]='_';
         }
         thisres[3]='\0';
-     /*-----*/ 
+     /*-----*/
         for(j=0 ; j<= 6 ; j++) thisname[j] = name[n][j];
-        for(j=0 ; j<= 5 ; j++) 
+        for(j=0 ; j<= 5 ; j++)
         {/*0,1,2,3,4,5,6==\0*/
            if( thisname[j]==' ' || thisname[j]=='\0') thisname[j]='_';
         }
         thisname[6]='\0';
-     /*-----*/ 
+     /*-----*/
         for(j=0 ; j< 2 ; j++) thissub[j] = sub[n][j]; /*2char chainID 070926*/
-        for(j=0 ; j< 2 ; j++) 
+        for(j=0 ; j< 2 ; j++)
         {/*0,1,2==\0*/
            if( thissub[j]==' ' || thissub[j]=='\0') thissub[j]='_';
         }
         thissub[2]='\0';
-     /*-----*/ 
-        for(j=0 ; j<= 1 ; j++) thisrins[j] = rins[n][j]; 
-        for(j=0 ; j<= 1 ; j++) 
+     /*-----*/
+        for(j=0 ; j<= 1 ; j++) thisrins[j] = rins[n][j];
+        for(j=0 ; j<= 1 ; j++)
         {/*0,1==\0*/
            if( thisrins[j]==' ' || thisrins[j]=='\0') thisrins[j]='_';
         }
         thisrins[1]='\0';
-     /*-----*/ 
-        for(j=0 ; j< MAXmodchr ; j++) thismod[j] = mod[n][j];   /* 010529 */            
-        for(j=0 ; j< MAXmodchr ; j++) 
+     /*-----*/
+        for(j=0 ; j< MAXmodchr ; j++) thismod[j] = mod[n][j];   /* 010529 */
+        for(j=0 ; j< MAXmodchr ; j++)
         {/*0,1,2,3,4,5,6==\0, where global MAXmodchr==7*/
            if( thismod[j]==' ' || thismod[j]=='\0') thismod[j]='_';
         }
         thismod[MAXmodchr-1]='\0';  /* 010529 */
-     /*-----*/ 
-                       
+     /*-----*/
+
         /*each field must have a non-blank entry, and no internal blanks*/
         /*blank character string doesn't get read in properly*/
         sprintf(temps,"%s %s %s %s %s %d %s %s %f %f %f %f %f"EOLO,
@@ -2963,10 +2985,10 @@ void   connectcaca(void)
 /*s*/       oldcon(maxatm,cadist,1);/*find base for new atom  at maxatm*/
 /*
 fprintf(stderr,"connectcaca(oldconCa): level %d, res %d, atom %d %s <--%d copied to # %d: back connect to %d %s\n",level,icountres[level],natom,atom[natom],base[natom],maxatm,base[maxatm],atom[base[maxatm]]);
-*/       
+*/
                /*at <= cadist distance, ica == 1 */
-               /*ica = 1; is a ca-ca typr pseudobackbone*/ 
-               /*-- cadist here, not bondst ! */          
+               /*ica = 1; is a ca-ca typr pseudobackbone*/
+               /*-- cadist here, not bondst ! */
          }
          else /*allows for GFPchromophore 070801, only specialResidue case now*/
          {
@@ -3002,7 +3024,7 @@ fprintf(stderr,"connectcaca(oldconCa): level %d, res %d, atom %d %s <--%d copied
         maxorig = maxatm; /*930123*/
         for(natom=1 ; natom <= maxorig ; natom++)
         {/*search for p */
-            if(   atom[natom][1] == 'p' 
+            if(   atom[natom][1] == 'p'
                && atom[natom][2] == ' '
                && atom[natom][3] == ' ' )
             {/*found p */
@@ -3028,7 +3050,7 @@ fprintf(stderr,"connectcaca(oldconP): level %d, res %d, atom %d %s <--%d copied 
         /*find this residue's c4' */
         for(j = 1; j<=maxorig; j++)
         {/*search for c4' */
-            if(   atom[j][1] == 'c' 
+            if(   atom[j][1] == 'c'
                  && atom[j][2] == '4'
                  &&(atom[j][3] == '*'||atom[j][3] == '\'') )
             {/*found c4' */
@@ -3037,7 +3059,7 @@ fprintf(stderr,"connectcaca(oldconP): level %d, res %d, atom %d %s <--%d copied 
                    /* create a new atom entry, and hook that one up! */
 /*s*/              creatm(j);  /*makes an identical entry at maxatm=maxatm+1*/
                                /*for j atom == c4' */
-/*s*/              base[maxatm] = natom; /* P */                
+/*s*/              base[maxatm] = natom; /* P */
 /*
 fprintf(stderr,"connectcaca(assignP): level %d, res %d, atom %d %s copied to # %d: back connect to %d\n",level,icountres[level],j,atom[j],maxatm,base[maxatm]);
 */
@@ -3045,18 +3067,18 @@ fprintf(stderr,"connectcaca(assignP): level %d, res %d, atom %d %s copied to # %
                 /*also hook c4' to this residue's c1' */
                 for(k = 1; k<=maxorig; k++)
                 {/*search for c1' */
-                   if(   atom[k][1] == 'c' 
+                   if(   atom[k][1] == 'c'
                       && atom[k][2] == '1'
                       &&(atom[k][3] == '*'||atom[k][3] == '\'') )
                    {/*found c1' */
                      /* create a new atom entry, and hook that one up! */
 /*s*/                creatm(k);  /*makes an identical entry at maxatm=maxatm+1*/
                                /*for k atom == c1' */
-/*s*/                base[maxatm] = j; /* c4' */ 
+/*s*/                base[maxatm] = j; /* c4' */
 /*
 fprintf(stderr,"connectcaca(assignC): level %d, res %d, atom %d %s copied to # %d: back connect to %d\n",level,icountres[level],k,atom[k],maxatm,base[maxatm]);
 */
-                     break; /*only need to find one instance of c1' */               
+                     break; /*only need to find one instance of c1' */
                    }/*found c1' */
                }/*search for c1' */
                Lnucleicacid = 1;
@@ -3098,7 +3120,7 @@ int  storeconnectingatom(int j, int ipass) /*ipass 061001, GFP 070801 */
    /* increase reference string arrays so indexes match those of compared atom*/
    /* 070801 need another char for GFPchromophore */
 static  char  conchr[6]={' ',' ',' ',' ',' ','\0'};
-static  char  nucchr[6]={' ',' ',' ',' ',' ','\0'}; 
+static  char  nucchr[6]={' ',' ',' ',' ',' ','\0'};
 static  int    noldat,k;
   int ireturn=0;
 
@@ -3148,7 +3170,7 @@ static  int    noldat,k;
     conchr[3] = ' '; /*070801 for GFPchromophore*/
     nucchr[1] = 'p';
     nucchr[2] = ' ';
-    nucchr[3] = ' ';  /*070801 V3UNSAFE ?? IS THIS P NAME OK FOR NEW V3.0 PDB*/ 
+    nucchr[3] = ' ';  /*070801 V3UNSAFE ?? IS THIS P NAME OK FOR NEW V3.0 PDB*/
     nucchr[4] = '\'';
 
     if(LGFPchromophore) {conchr[3] = '3';}
@@ -3157,14 +3179,14 @@ static  int    noldat,k;
   }
   for(natom=1 ; natom<=maxatm ; natom++)
   {/*loop over natom */
-    if(  (   atom[natom][1] == conchr[1] && atom[natom][2] == conchr[2]   
-          && atom[natom][3] == conchr[3] ) /*070801*/             
-                      
-       ||(   atom[natom][1] == nucchr[1] && atom[natom][2] == nucchr[2] 
-          &&(atom[natom][3] == nucchr[3] || atom[natom][3] == nucchr[4] ) ) 
+    if(  (   atom[natom][1] == conchr[1] && atom[natom][2] == conchr[2]
+          && atom[natom][3] == conchr[3] ) /*070801*/
+
+       ||(   atom[natom][1] == nucchr[1] && atom[natom][2] == nucchr[2]
+          &&(atom[natom][3] == nucchr[3] || atom[natom][3] == nucchr[4] ) )
       )
     {/*store old atom and set alternate conf flags */
-        
+
       if(atom[natom][4] == ' ')
       {
         noldat = lastat - k;
@@ -3239,23 +3261,23 @@ int  isahydrogen(char record[7], char atmname[6], char elem[3])/*070520,070730*/
 {
   if     (elem[0]==' ' && (elem[1]=='H'||elem[1]=='h')){return(TRUE);}/*080326*/
   else if(elem[0] != '\0')                  {return(FALSE);}
-  else /* elem field NOT present, work from atom name */ 
+  else /* elem field NOT present, work from atom name */
   {
    /*presumably the element name is within the first two non-blank characters*/
    /* avoid false positive at the potential expense of some false negatives*/
    /* for some HETATM record atoms */
 
     if(  ((atmname[0] == ' ')||(isdigit(atmname[0]) ) )         /* HN2,1HH1*/
-       &&(atmname[1]=='h' ||atmname[1]=='d' ||atmname[1]=='q') ) 
+       &&(atmname[1]=='h' ||atmname[1]=='d' ||atmname[1]=='q') )
          {return(TRUE);}
 
-    else if(  (record[0]=='a')    
+    else if(  (record[0]=='a')
        &&( (isdigit(atmname[2]) )&&(isdigit(atmname[3]) ) )  /*old HG12,HH11*/
-       &&(atmname[0]=='h' || atmname[0]=='d' || atmname[0]=='q') ) 
+       &&(atmname[0]=='h' || atmname[0]=='d' || atmname[0]=='q') )
          {return(TRUE);} /*this is an old (v. 2.3)  safe condition*/
 
     else if(  (record[0]=='a')      /*h 1st char of atom record name, new HOP2*/
-       &&(atmname[0]=='h' ||atmname[0]=='d' ||atmname[0]=='q') ) 
+       &&(atmname[0]=='h' ||atmname[0]=='d' ||atmname[0]=='q') )
          {return(TRUE);}  /*general case of previous condition */
                           /*safe, one hopes, for ATOM records anyway*/
 
@@ -3273,7 +3295,7 @@ int  isahydrogenname(char atmname[6])  /*071222*/
         {return(TRUE);}
 
      /*h 1st char of atom record name, old HG12, new HH11*/
-   else if(  (isdigit(atmname[2]) )&&(isdigit(atmname[3]) ) 
+   else if(  (isdigit(atmname[2]) )&&(isdigit(atmname[3]) )
            &&(atmname[0]=='h' || atmname[0]=='d' || atmname[0]=='q') )
         {return(TRUE);} /*this is an old (v. 2.3)  safe condition*/
                         /*and true for some new format hydrogens */
@@ -3317,11 +3339,11 @@ void whatelement(char record[7], char atmname[6], char elem[3])/*070520,070730*/
    {
       elem[0]=' '; elem[1]='H'; /*080326 migrate element to upper case*/
    }
-   else if(atmname[0] != ' ' && atmname[1] != ' ') 
+   else if(atmname[0] != ' ' && atmname[1] != ' ')
    {
       elem[0] = atmname[0]; elem[1] = atmname[1]; /*element lowercase 080326*/
    }
-   else 
+   else
    {
       elem[0] = '\0'; /* redundant setting, equivalent to return(FALSE) */
    }
@@ -3364,7 +3386,7 @@ static  char  sscntl[5]; /* 4 characters */
         LOK=0;
         if(ssatom[j][4]==' '&&ssatom[k][4]==' ')
         {/*not an obvious alt conf case*/
-           LOK=1; 
+           LOK=1;
            altstr[0]='\0'; /*null string, takes no space on output line*/
         }
         else
@@ -3378,7 +3400,7 @@ static  char  sscntl[5]; /* 4 characters */
            if(ssatom[j][4]==' '&&ssatom[k][4]!=' ')
               {LOK=1; altstr[2]=ssatom[k][4];}
            if(  (ssatom[j][4]!=' '&&ssatom[k][4]!=' ')
-              &&(ssatom[j][4]==ssatom[k][4])  )    
+              &&(ssatom[j][4]==ssatom[k][4])  )
               {LOK=1; altstr[2]=ssatom[j][4];}
         }
         if(LOK)
@@ -3409,13 +3431,13 @@ static  char  sscntl[5]; /* 4 characters */
               ++countxyz; /*P point*/
               ++countxyz; /*L point*/
               if(Bcoloutl)
-              { 
+              {
                  Bcoloredoutput(colr1, ssBval[k]);
                  Bcoloredoutput(colr2, ssBval[j]);
               }/*separate routine 050704*/
               else        {colr1[0] = '\0';colr2[0] = '\0';}  /*050704*/
               if(Bvaloutl) /*050704*/
-              { 
+              {
                  sprintf(Bstr1," B%.2f",ssBval[k]);
                  sprintf(Bstr2," B%.2f",ssBval[j]);
               }
@@ -3430,13 +3452,13 @@ static  char  sscntl[5]; /* 4 characters */
               ++countxyz; /*P point*/
               ++countxyz; /*L point*/
               if(Bcoloutl)
-              { 
+              {
                  Bcoloredoutput(colr1, sscbBval[j]);
                  Bcoloredoutput(colr2, sscaBval[j]);
               }/*separate routine 050704*/
               else        {colr1[0] = '\0';colr2[0] = '\0';}  /*050704*/
               if(Bvaloutl) /*050704*/
-              { 
+              {
                  sprintf(Bstr1," B%.2f",sscbBval[j]);
                  sprintf(Bstr2," B%.2f",sscaBval[j]);
               }
@@ -3467,12 +3489,12 @@ static  char  sscntl[5]; /* 4 characters */
                 sscnt = sscnt + 1;
                 Listss = TRUE;
                 if(Bcoloutl)
-                { 
+                {
                    Bcoloredoutput(colr2, ((ssBval[j]+ssBval[k])/2) );
                 }/*separate routine 050704*/
                 else        {colr2[0] = '\0';}  /*050704*/
                 if(Bvaloutl) /*050704*/
-                { 
+                {
                    sprintf(Bstr1," B%.2f",ssBval[k]);
                    sprintf(Bstr2," B%.2f",ssBval[j]);
                 }
@@ -3504,12 +3526,12 @@ void   getresiduename(void)
       iresiduecnt++;
       j = 1; /*931128 used to be just this */
     for(j=1;j<=mrange;j++) /*931128 j over ranges new feature*/
-    {        
+    {
       /* do Calphas or backbone/pseudobackbone for first pass only */
       caxl[j] = 0; /*931128 had been 1 rather than j */
       resl[j] = 1; /* which was set to get here in the first place */
       scxl[j] = 1; /*set for all ranges for later passes */
-      
+
 
       switch (iresiduecnt)
       {
@@ -3551,7 +3573,7 @@ void   getresiduename(void)
           }
           else /*Lallbases*/
           {resid[j][0] = 'g'; resid[j][1] = ' '; resid[j][2] = ' ';
-           kolor[0]='s';kolor[1]='e';kolor[2]='a';kolor[3]='\0';kolor[4]='\0'; 
+           kolor[0]='s';kolor[1]='e';kolor[2]='a';kolor[3]='\0';kolor[4]='\0';
            /*G type: sea*/
           }
         break;
@@ -3578,7 +3600,7 @@ void   getresiduename(void)
            kolor[0]='w';kolor[1]='h';kolor[2]='i';kolor[3]='t';
            kolor[4]='e';kolor[5]='\0';/*misc type: white*/
           }
-        break; 
+        break;
         case  7:
           {resid[j][0] = 't'; resid[j][1] = 'r'; resid[j][2] = 'p';
            kolor[0]='s';kolor[1]='e';kolor[2]='a';kolor[3]='\0';kolor[4]='\0';
@@ -3659,14 +3681,14 @@ void   getresiduename(void)
 }
 /*___getresiduename()_______________________________________________________*/
 
-/*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/   
+/*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
 /****readbrkaalibrecord()****************************************************/
 void   readbrkaalibrecord(char temps[256]) /*neutral to atom name format*/
 {
   char   frags[256],numbers[256],alphers[256];
   int    j,inumber,Lnumber,ialpher,Lalpher;
   int    igotit;
-  
+
 /*name[n],Anum[n],atom[n],res[n],sub[n],&num[n],rins[n],&x[n],&y[n],&z[n]*/
 /*format(a6,a5,1x,a5,a3,a2,i4,a1,3x,3f8.3)*/
 /*  these next lines are 84 char long, they contain 80 char templates */
@@ -3686,21 +3708,21 @@ aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
 /*float mutx[MAXARR],muty[MAXARR],mutz[MAXARR];*/
   /* do direct transfer since blanks are meaningful */
   igotit = 1;
-  
+
     /*for(j=0 ; j<=5 ; j++) mutname[nn][j] = temps[j]; */
     for(j=0 ; j<=5 ; j++) mutname[nn][j] = tolower(temps[j]);  /*080318*/
     mutname[nn][6] = '\0';
     for(j=0 ; j<=4 ; j++) mutAnum[nn][j] = temps[j+6];
     mutAnum[nn][5] = '\0';
-    
+
     /*for(j=0 ; j<=4 ; j++) mutatom[nn][j] = temps[j+12];*/
     for(j=0 ; j<=4 ; j++) mutatom[nn][j] = tolower(temps[j+12]); /*080318*/
     mutatom[nn][5] = '\0';
-      
+
     /*for(j=0 ; j<=2 ; j++) mutres[nn][j] = temps[j+17];*/
     for(j=0 ; j<=2 ; j++) mutres[nn][j] = tolower(temps[j+17]); /*080318*/
     mutres[nn][3] = '\0';
-  
+
     mutsub[nn][0] = temps[20]; /*2char chainID 070926*/
     mutsub[nn][1] = temps[21]; /*2char chainID 070926*/
     mutsub[nn][2] = '\0';
@@ -3711,7 +3733,7 @@ aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
     mutelement[nn][0] = '\0';
     mutelement[nn][1] = '\0';
     mutelement[nn][2] = '\0';
-      
+
     /*residue number sometimes has imbedded subunit indicator*/
     /*either before or after actual number, only accummulate number */
     /* from one contiguous block, but all alphabetics gathered together*/
@@ -3719,7 +3741,7 @@ aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
     ialpher = 0;
     Lnumber = 0;
     Lalpher = 0;
-    for(j=0 ; j<=3 ; j++) 
+    for(j=0 ; j<=3 ; j++)
     {
         if(temps[j+22]==' ')   ; /*skip any blanks*/
         else if(  temps[j+22]=='0'||temps[j+22]=='1'||temps[j+22]=='2'
@@ -3729,11 +3751,11 @@ aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
             {
             if(Lalpher)  /*already encountered alphabetic char */
             {
-                if(Lnumber)  
+                if(Lnumber)
                 {   /*doing alpha after number*/
                     alphers[ialpher] = temps[j+22];
                     ialpher++;
-                } 
+                }
                 else  /*!Lnumber*/
                 {   /*doing number after alph*/
                     numbers[inumber] = temps[j+22];
@@ -3746,7 +3768,7 @@ aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
                 numbers[inumber] = temps[j+22];
                 inumber++;
             }
-            
+
         }
         else /* not a number */
         {
@@ -3757,7 +3779,7 @@ aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
     }
     alphers[ialpher] = '\0';
     numbers[inumber] = '\0';
-        
+
     if(inumber > 0) igotit = sscanf(numbers,"%d",&mutnum[nn]);
     else  mutnum[nn] = 0;
     if(ialpher > 0 && mutsub[nn][0] == ' ')
@@ -3786,34 +3808,34 @@ atom      2  ca  arg a   1      25.497  26.862  -1.573  1.00 17.63      4pti  90
 */
 /*  --name*6 record designator: atom or hetatom recognized  */
 /*  --Anum*5 atom number: moved blindly to output file  */
-/*  --atom*5 includes atomname*4 and alt-conformation-indicator*1,  */ 
+/*  --atom*5 includes atomname*4 and alt-conformation-indicator*1,  */
 /*  --res*3 residue name  */
 /*  --sub*2 chain ID: subunit designator  */
 /*  --num:i4 residue number  */
 /*  --rins*1 inserted residue indicator  */
 /*  --x,y,z coord of the atom  */
-/*  --so pretty std brookhaven except atom name where there is lots of  */ 
+/*  --so pretty std brookhaven except atom name where there is lots of  */
 /*  -- non-standard brookhaven around!  */
 /*  --if this reading has an error inform and abort:  */
 /*  --implies a non-standard format that must be dealt with some other way  */
 /*
 0123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789
 123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_
-ATOM     23  HB2 ARG     1      25.930  13.038 -12.118  1.00 34.80      5PTI H  
-ATOM     24  HB3 ARG     1      27.324  12.549 -11.100  1.00 34.71      5PTI H  
-ATOM     25 HH21 ARG     1      27.786  12.886 -15.076  1.00 33.93      5PTI H  
-ATOM     26 HH22 ARG     1      26.154  13.214 -14.269  1.00 34.53      5PTI H  
-ATOM     27  N   PRO     2      33.738  14.173 -10.126  1.00 22.41      5PTI N  
-ATOM     28  CA  PRO     2      34.897  13.603  -9.390  1.00 19.52      5PTI C  
-ATOM     29  C   PRO     2      34.652  12.135  -9.374  1.00 17.70      5PTI C  
-ATOM     30  O   PRO     2      33.583  11.537  -9.255  1.00 16.41      5PTI O  
+ATOM     23  HB2 ARG     1      25.930  13.038 -12.118  1.00 34.80      5PTI H
+ATOM     24  HB3 ARG     1      27.324  12.549 -11.100  1.00 34.71      5PTI H
+ATOM     25 HH21 ARG     1      27.786  12.886 -15.076  1.00 33.93      5PTI H
+ATOM     26 HH22 ARG     1      26.154  13.214 -14.269  1.00 34.53      5PTI H
+ATOM     27  N   PRO     2      33.738  14.173 -10.126  1.00 22.41      5PTI N
+ATOM     28  CA  PRO     2      34.897  13.603  -9.390  1.00 19.52      5PTI C
+ATOM     29  C   PRO     2      34.652  12.135  -9.374  1.00 17.70      5PTI C
+ATOM     30  O   PRO     2      33.583  11.537  -9.255  1.00 16.41      5PTI O
 aaaahhsssss_nnnnArrr_cjjjjI___XXXX.XXXYYYY.YYYZZZZ.ZZZooo.ooBBB.BB######FFFFccic
                                               76-77 right justified element name
 */
 
   if ( !igotit )
   {
-     sprintf(alertstr,"input data format problem, line:"CRLF" %s",temps); 
+     sprintf(alertstr,"input data format problem, line:"CRLF" %s",temps);
      DoReportDialog();
      exit(0);
   }
@@ -3838,7 +3860,7 @@ sprintf(temps,"aalibrecord: nn= %d"CRLF"%s"CRLF"interpreted:"
 ,mutrins[nn],mutx[nn],muty[nn],mutz[nn]);
 
           pkintextinsert(temps);
-          adjusttext(3); 
+          adjusttext(3);
 */
 }
 /*___readbrkaalibrecord()___________________________________________________*/
@@ -3893,7 +3915,7 @@ void   mutateresidue(void)
       if(inputline > 0)  /* new input may be in buffer */
       {/*checkline for atom record*/
          inputflag = checkline(temps);
-         if( inputflag != 1) 
+         if( inputflag != 1)
          {
             iskip = 1;
             /* return != 1 if not atom, not hetatm: ignore */
@@ -3902,9 +3924,9 @@ void   mutateresidue(void)
          else  /* checkline returned == 1 */
          {/* valid atom or hetatm record */
             atomin = 1;
-            /*convertcase(temps); do only a few fields  080318*/  
+            /*convertcase(temps); do only a few fields  080318*/
             /*for ease and consistency upper case converted to lower*/
-            /*unfortunate decision to work in lower case*/ 
+            /*unfortunate decision to work in lower case*/
             /*keep needing to work around this to recover original PDB form*/
             iskip = 0;
          }
@@ -3914,7 +3936,7 @@ void   mutateresidue(void)
          iskip = 1;  /* no coordinate line to process */
          nn = nn - 1; /*reset atom counter*/
       }/*no current line*/
-      if(loop == 0 && iskip == 0)       
+      if(loop == 0 && iskip == 0)
       {/*valid record*/
          /*now do a formated reread of the line in texts */
          readbrkaalibrecord(temps);/*works on mutant residue arrays */
@@ -3942,17 +3964,17 @@ void   mutateresidue(void)
             if(igotres)
             {/*a matching residue had been found earlier*/
                liblines[1] = inputline - 1;
-               loop = 1; 
+               loop = 1;
             }
          }
       }/*valid record*/
-      if(loop == 1) break; 
+      if(loop == 1) break;
    }/*residue input, while loop == 0  */
    if(!igotres)
    {/*failed to find aa in file*/
-#ifdef UNIX_X11  
+#ifdef UNIX_X11
       printf("Did not find mutant aa in library array\n");
-#endif      
+#endif
       if(!Lcommanded)
       {
          sprintf(alertstr,"Did not find amino acid in library array"
@@ -3965,7 +3987,7 @@ void   mutateresidue(void)
    {/*got a residue that matched target*/
       /*now have nn atoms in mut array, this includes gly*/
       maxmut = nn;
-      if(Ltestprint > 2)  
+      if(Ltestprint > 2)
       {
          for(j=1;j<=maxmut;j++)
          {
@@ -4015,7 +4037,6 @@ void   mutateresidue(void)
       }
 
       Lnewbeta=constructbeta(betaxyz,targetresidue,alphaxyz,nitexyz,&altchoice);
-
       if(Lnewbeta)
       {/*Lnewbeta==1*/
          newresidue = ' ';
@@ -4049,10 +4070,10 @@ void   mutateresidue(void)
                residuecode[2] = resid[mutoutl][2];
                residuecode[3] = '\0';
                /*global rotatorname incl sub 030925*/
-               rotamerhypertext(residuecode); 
+               rotamerhypertext(residuecode);
             }/*add rotamer hypertext lines to text window*/
           }/*superpositioning return seems OK*/
-                  
+
          }/*all real cases except mutation to gly*/
          else if(Lcbetadev==0  &&Ltaudev==0 &&Lsuperpos==0 &&newresidue == 'G')
          {/*mutation to gly*/
@@ -4103,15 +4124,15 @@ void   mutateresidue(void)
             }
             LOK = 1; /*this is also an easy one*/
          }/*C-beta deviation for ideal geometry analysis*/
-      
+
       }/*Lnewbeta==1*/
       if(Lcbetadev==1 && oldresidue=='G')
       {
          maxmut = 0;
       }
-      if(LOK && Lcbetadev==0 && Ltaudev==0 && Lsuperpos==0)       
+      if(LOK && Lcbetadev==0 && Ltaudev==0 && Lsuperpos==0)
       {/*reloadresidue()*********section that could be a separate routine*/
-         n = 1;          
+         n = 1;
          while(n <= maxatm)
          {/*throw away old side chain*/
             if( !decidemainside(n) ) /*works on regular residue arrays*/
@@ -4156,7 +4177,7 @@ void   mutateresidue(void)
          ; /*NOP*/
       }/*Lcbetadev==1*/
 
-      if(Ltestprint > 2) 
+      if(Ltestprint > 2)
       {
          for(j=1;j<=maxatm;j++)
          {
@@ -4164,12 +4185,12 @@ void   mutateresidue(void)
                             ,name[j],Anum[j],atom[j],res[j],sub[j],num[j]
                             ,rins[j],x[j],y[j],z[j]);
             pkintextinsert(alertstr);
-            adjusttext(1); 
+            adjusttext(1);
             DoReportDialog();
          }
          sprintf(alertstr,CRLF"LOK== %d"CRLF,LOK);
          pkintextinsert(alertstr);
-         adjusttext(1); 
+         adjusttext(1);
       }
    }/*got a residue*/
    if(!LOK || Lcbetadev || Ltaudev || Lsuperpos)
@@ -4182,12 +4203,12 @@ void   mutateresidue(void)
 /*___mutateresidue()________________________________________________________*/
 
 /****getbracketed()***********************************************************/
-int    getbracketed(char c,int Lnew,int MAXchar,char bstr[256]) 
+int    getbracketed(char c,int Lnew,int MAXchar,char bstr[256])
 {
    static int Lidn=0; /*remembers if in an identifier*/
    static int ibstr=0;
    int    ireturn;
-    
+
     ireturn = 0;
     if(Lnew)
     {
@@ -4195,7 +4216,7 @@ int    getbracketed(char c,int Lnew,int MAXchar,char bstr[256])
     }
     if(c == '{' /*}*/)  /* start an identifier */
     {  /*balanced brackets keeps source editor happy*/
-        Lidn = 1; 
+        Lidn = 1;
         ibstr = 0;
     }
     else if(/*{*/ c == '}' || ibstr==MAXchar)  /* end an identifier */
@@ -4208,7 +4229,7 @@ int    getbracketed(char c,int Lnew,int MAXchar,char bstr[256])
     {
         bstr[ibstr++] = c;
     }
-    else 
+    else
     {
         ;  /* skip anything not in brackets */
     }
@@ -4216,8 +4237,8 @@ int    getbracketed(char c,int Lnew,int MAXchar,char bstr[256])
 }
 /*___getbracketed()__________________________________________________________*/
 
-/****getinteger()*************************************************************/  
-int getinteger(int c,int Lnew,int* result)  
+/****getinteger()*************************************************************/
+int getinteger(int c,int Lnew,int* result)
 {
     int        ireturn;
     static int iintstr=0;
@@ -4226,10 +4247,10 @@ int getinteger(int c,int Lnew,int* result)
     ireturn = 0;
     if(Lnew)
     {
-        iintstr = 0; 
+        iintstr = 0;
         /* Lnew local, must reset in calling routine */
 		memset(intstr,' ',256);   /* optimized */
-        /*for(j=0 ; j<256 ; j++) intstr[j] = ' '; */ 
+        /*for(j=0 ; j<256 ; j++) intstr[j] = ' '; */
     }
 
     if(iintstr==0 && (c==' '||c==',') )
@@ -4263,7 +4284,7 @@ int getinteger(int c,int Lnew,int* result)
 /***threepointimpose()********************************************************/
 int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char altchoice)
 {
-   /*superimpose target residue sidechain mutation onto original residue*/  
+   /*superimpose target residue sidechain mutation onto original residue*/
    /*use old N, old CA, calc CB as three-point place to put mutated residue*/
    /*logic: put mutCA onto oldCA, aim mutCB at calcCB, turn mutN toward oldN*/
    /*original residue arrays of atom info are in common*/
@@ -4276,7 +4297,7 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
    double ax=0,ay=0,az=0,bx=0,by=0,bz=0,cx=0,cy=0,cz=0,cmag=0,dist=0;
    double axisbetas[3],xyz[3],dot=0,dmag=0,emag=0;
    double angle1=0,angle2=0;
-      
+
    LgotN=0; LgotCA=0; LgotCB=0;
    /*mutateresidue() has already used */
    /*getonelibraryline(), one == old || new, and readbrkaalibrecord() */
@@ -4284,19 +4305,19 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
    for(j=1; j<=maxmut; j++)
    {/*search for atoms in new ideal library residue, which should have H's*/
                /*gly should never get here (ala may need to do H's)*/
-         if(   (mutatom[j][1]=='n') 
+         if(   (mutatom[j][1]=='n')
             && (mutatom[j][2]==' '))
          {
                LgotN = 1;
                jofmutN = j;
          }
-         else if(   (mutatom[j][1]=='c') 
+         else if(   (mutatom[j][1]=='c')
                  && (mutatom[j][2]=='a'))
          {
                LgotCA = 1;
                jofmutCA = j;
          }
-         else if(   (mutatom[j][1]=='c') 
+         else if(   (mutatom[j][1]=='c')
                  && (mutatom[j][2]=='b'))
          {
                LgotCB = 1;
@@ -4312,12 +4333,12 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
       /*(CBmut-CAmut) dot (CBcalc-CAold)  ==> cos(angle1) */
       /*doaxisrot(mutxyz, angle1, origin, axisbetas) , where origin is 0,0,0 */
       /*==> newmutxyz */
-      
+
       /*dihedral4pt(newNmut,CAmut,newCBmut,Nold-CAold) ==> angle2*/
       /*doaxisrot(newmutxyz, angle2, origin, CBcalc-CAold) ==>newermutxyz */
-      
+
       /*translate all newermutxyz points to origin at CAold*/
-      
+
 
 
       /*(CBmut-CAmut) X (CBcalc-CAold) ==> axisbetas */
@@ -4349,10 +4370,10 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
       /*normalization factors*/
       dmag = sqrt( (ax)*(ax) + (ay)*(ay) + (az)*(az) );
       emag = sqrt( (bx)*(bx) + (by)*(by) + (bz)*(bz) );
-      if(dmag*emag <0.0001) 
+      if(dmag*emag <0.0001)
       {
           angle1 = 0.0;
-      }    
+      }
       else angle1 = acos( dot/(dmag*emag) );
       angle1 = angle1*360.0/(2*3.14159);
 
@@ -4394,7 +4415,7 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
       bz = betaxyz[2] - alphaxyz[2];
 
 
-      /*doaxisrot(newmutxyz, angle2, origin, CBcalc-CAold) ==>newermutxyz */      
+      /*doaxisrot(newmutxyz, angle2, origin, CBcalc-CAold) ==>newermutxyz */
       /*and translate all newermutxyz points to origin at CAold*/
       for(j=1; j<=maxmut; j++)
       {
@@ -4424,7 +4445,7 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
       caxyz[0] = alphaxyz[0];
       caxyz[1] = alphaxyz[1];
       caxyz[2] = alphaxyz[2];
-      
+
       ireturn = 1;
    }/*both orig and mut residue seem OK*/
    return(ireturn);
@@ -4435,7 +4456,7 @@ int threepointimpose(float alphaxyz[3],float betaxyz[3],float nitexyz[3],char al
 /***imposeontoideal()*********************************************************/
 int imposeontoideal(float betaxyz[3])
 {
-   /*position original residue using ideal Cbeta into std orientation*/  
+   /*position original residue using ideal Cbeta into std orientation*/
    /*use old N, old CA of actual residue*/
    /*to calculate best compromise tauball for orienting residue*/
    /*superimpose old CA onto ideal CA, place CA--CB, then tauball direction*/
@@ -4451,7 +4472,7 @@ int imposeontoideal(float betaxyz[3])
 
    for(j=1; j<=maxatm; j++)
    {/*search for atoms in orig real structure residue */
-       if(   (atom[j][1]=='n') 
+       if(   (atom[j][1]=='n')
           && (atom[j][2]==' '))
        {
              LgotN = 1;
@@ -4459,7 +4480,7 @@ int imposeontoideal(float betaxyz[3])
              npt[1] = y[j];
              npt[2] = z[j];
        }
-       else if(   (atom[j][1]=='c') 
+       else if(   (atom[j][1]=='c')
                && (atom[j][2]=='a'))
        {
              LgotCA = 1;
@@ -4467,12 +4488,12 @@ int imposeontoideal(float betaxyz[3])
              apt[1] = y[j];
              apt[2] = z[j];
        }
-       else if(   (atom[j][1]=='c') 
+       else if(   (atom[j][1]=='c')
                && (atom[j][2]=='b'))
        {
              LgotCB = 1;
        }
-       else if(   (atom[j][1]=='c') 
+       else if(   (atom[j][1]=='c')
                && (atom[j][2]==' '))
        {
              LgotC = 1;
@@ -4480,7 +4501,7 @@ int imposeontoideal(float betaxyz[3])
              cpt[1] = y[j];
              cpt[2] = z[j];
        }
-       if(LgotN==1 && LgotCA==1 && LgotCB==1 && LgotC) 
+       if(LgotN==1 && LgotCA==1 && LgotCB==1 && LgotC)
        {
           LOK = 1;
           break;
@@ -4496,10 +4517,10 @@ int imposeontoideal(float betaxyz[3])
       /*(CBideal-CA) dot (CBstd-CAstd)  ==> cos(angle1) */
       /*doaxisrot(xyz, angle1, origin, axisbetas) , where origin is 0,0,0 */
       /*==> newxyz for all orig atoms of residue plus pseudo-tau atom*/
-      
+
       /*dihedral4pt(newT,CAstd,CBstd,Tstd) ==> angle2*/
       /*doaxisrot(newxyz, angle2, origin, CBstd-CAstd) ==>newermutxyz */
-      
+
       /*results in translation of all newxyz points to origin at CA*/
 
       /*(CBideal-CA) X (CBstd-CAstd) ==> axisbetas */
@@ -4531,17 +4552,17 @@ int imposeontoideal(float betaxyz[3])
       /*normalization factors*/
       dmag = sqrt( (ax)*(ax) + (ay)*(ay) + (az)*(az) );
       emag = sqrt( (bx)*(bx) + (by)*(by) + (bz)*(bz) );
-      if(dmag*emag <0.0001) 
+      if(dmag*emag <0.0001)
       {
           angle1 = 0.0;
-      }    
+      }
       else angle1 = acos( dot/(dmag*emag) );
       angle1 = angle1*360.0/(2*3.14159);
 
       /*doaxisrot(xyz, angle1, origin, axisbetas) , where origin is 0,0,0 */
       /*and xyz == orig xyz - orig CA*/
       /*==> newxyz */
-     
+
       for(j=1; j<=maxatm; j++)
       {
          xyz[0] = (double)(x[j]-apt[0]);
@@ -4628,7 +4649,7 @@ int midanglepoint(float npt[3],float apt[3],float cpt[3],float tpt[3])
    /*normalize vectors*/
    anmag = sqrt( an[0]*an[0] + an[1]*an[1] + an[2]*an[2] );
    acmag = sqrt( ac[0]*ac[0] + ac[1]*ac[1] + ac[2]*ac[2] );
-   if(anmag > 0.0001 && acmag > 0.0001) 
+   if(anmag > 0.0001 && acmag > 0.0001)
    {
       an[0] = an[0]/anmag;
       an[1] = an[1]/anmag;
@@ -4668,7 +4689,7 @@ SITE     2 ZN1  5  ZN A 375
 0123456789012345678901234567890123456789012345678901234567890
 */
       /*each site becomes a range, limit Nsite now, limit mrange later*/
-      if(   (strlen(texts) >= 27) && (texts[26] != ' ') 
+      if(   (strlen(texts) >= 27) && (texts[26] != ' ')
          && (Nsite < (MAXR-1) ) )
       {
         rstr[0]=texts[23];rstr[1]=texts[24];rstr[2]=texts[25];rstr[3]=texts[26];
@@ -4678,7 +4699,7 @@ SITE     2 ZN1  5  ZN A 375
           sitechain[Nsite][1] = (texts[22]); /*case, 2char 070926*/
           if( strlen(texts) >= 28) {siteinsert[Nsite]=tolower(texts[27]);}
       }
-      if(   (strlen(texts) >= 38) && (texts[37] != ' ') 
+      if(   (strlen(texts) >= 38) && (texts[37] != ' ')
          && (Nsite < (MAXR-1) ) )
       {
         rstr[0]=texts[34];rstr[1]=texts[35];rstr[2]=texts[36];rstr[3]=texts[37];
@@ -4688,7 +4709,7 @@ SITE     2 ZN1  5  ZN A 375
           sitechain[Nsite][1] = (texts[33]); /*case, 2char 070926*/
           if( strlen(texts) >= 39) {siteinsert[Nsite]=tolower(texts[38]);}
       }
-      if(   (strlen(texts) >= 49) && (texts[48] != ' ') 
+      if(   (strlen(texts) >= 49) && (texts[48] != ' ')
          && (Nsite < (MAXR-1) ) )
       {
         rstr[0]=texts[45];rstr[1]=texts[46];rstr[2]=texts[47];rstr[3]=texts[48];
@@ -4698,7 +4719,7 @@ SITE     2 ZN1  5  ZN A 375
           sitechain[Nsite][1] = (texts[44]); /*case, 2char 070926*/
           if( strlen(texts) >= 40) {siteinsert[Nsite]=tolower(texts[39]);}
       }
-      if(   (strlen(texts) >= 60) && (texts[59] != ' ') 
+      if(   (strlen(texts) >= 60) && (texts[59] != ' ')
          && (Nsite < (MAXR-1) ) )
       {
         rstr[0]=texts[56];rstr[1]=texts[57];rstr[2]=texts[58];rstr[3]=texts[59];
@@ -4716,13 +4737,13 @@ SITE     2 ZN1  5  ZN A 375
 void computesiteranges() /*050731 reaches here with Nsite > 0 */
 {/*compute ranges from SITE records when checkline() finds first ATOM record*/
    int    k=0,n=0;
-   
+
    for(k=1; k <= Nsite; k++)
    {
       if(mrange < (MAXR-2) )
       {
          n = ++mrange;
-         resnu1[n] = resnu2[n] = siteresnum[k]; 
+         resnu1[n] = resnu2[n] = siteresnum[k];
          /*chainID and insertion code NOT commandline inputable for ranges*/
          sitel[n] = 1;
          scxl[n] = 1;
