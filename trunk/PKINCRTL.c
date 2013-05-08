@@ -7,7 +7,7 @@
 #undef    PKINCRTL
 #include "PKINDLOG.h"
 #include "PKINRIBB.h"
- 
+
 int  queercompare(const void * astr, const void * bstr); /*050925*/
 
 /***flowControl()**********************************************************/
@@ -38,8 +38,8 @@ accumticks[0] = 0;
 accumticks[1] = 0;
 accumticks[2] = 0;
 accumticks[3] = 0;
-accumticks[4] = 0; 
-accumticks[5] = 0; 
+accumticks[4] = 0;
+accumticks[5] = 0;
 accumticks[6] = 0;
 accumticks[7] = 0;
 accumticks[8] = 0;
@@ -56,7 +56,7 @@ OldTickCounts[7] = 0;
 OldTickCounts[8] = 0;
 OldTickCounts[9] = 0;
 OldTickCounts[10] = 0;
-OldTickCounts[0] = TickCount(); 
+OldTickCounts[0] = TickCount();
 
 /*#define PRINTINFORMATION*/   /*080915*/
 #ifdef PRINTINFORMATION
@@ -112,7 +112,7 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   for(j=0;j<256;j++){realresiduereport[j]=0;}
   iteststring = 0;
   Lperiod = 0; /*allows keyboard . interrupt*/
-  countxyz = 0;  /* number of xyz written to .kin */  
+  countxyz = 0;  /* number of xyz written to .kin */
   oldmaxatmnamechar = 'a'; /*presume start with ATOM records*/
   /*--define constants: array sizes and distance checks */
   lastat = (MAXARR - 1);
@@ -125,9 +125,9 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   /*--mainchain allowed sloppy for poorly determined structures  */
   /*ca-ca distance allowance: */
   cadist = 5.0;
-   
+
   iresiduecnt = 0; /* for special cycles through all aminoacids */
-    
+
   /*------define starting values of control flags */
   /*-- endfil: signels end of input file */
   endfil = 0;
@@ -156,7 +156,7 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   {/*initialize residue counter, values will NOT be recreated in later passes*/
      for(j=0;j<MAXlevels;j++)
      {
-        icountresfirstpass[j] = 0; 
+        icountresfirstpass[j] = 0;
      }
      LtypeP = 0;  /*051201*/
      LtypeN = 0;
@@ -172,7 +172,7 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   ksave = 0;
 /*   -- levmsg if 0 when morsub .true. will print message about other levels*/
   levmsg = 0;
-/*    -- morsub: signels that there may be multiple subunits, */ 
+/*    -- morsub: signels that there may be multiple subunits, */
   morsub = 1;  /* set 0 when done last or only subunit*/
 /*    -- Ngroups: counts Number of groups outputed this PASS or this MODEL */
   Ngroups = 0;
@@ -187,7 +187,7 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   Nmodels = 0;
 /*    -- Nresiduesin: counts number of residues in each chain as they come in*/
   Nresiduesin = 0;
-  
+
   stonex = 0;
   /*stonex signels that the 'texts' buffer has stored a possible next atom */
   icount = 0;  /*icount is total of individual residue sidechains read out */
@@ -204,9 +204,9 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   oldmod[0] = '\0';
   nexmod[0] = '\0';
 
-  atomin = 0;  
+  atomin = 0;
   /*atomin set by a valid atom/hetatm read, so if 0: still in headers */
-  
+
   atpdbEOF = FALSE;
   Lfoundresnum = 0; /*for fovea by residue number */
   ihitend = 0; /*stores EOF info, used if EOF ends valid line*/
@@ -219,20 +219,20 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
   Lpointmasteralta = 0; /*030503*/
   Lpointmasteraltb = 0;
   Lpointmasteraltc = 0;
-  
+
   Lribidentity = 0; /*default, no colorsets defined yet  060929*/
   if(Lthispass==1)
   {/*initialize ribidentity's, values will NOT be recreated in later passes*/
      for(j=0; j<MAXR; j++) {ribidentity[j][0] = '\0';} /*060929*/
   }
- 
+
   /*------------------------------------------------------------------------*/
   sprintf(temps,CRLF CRLF"...program running... this pass == %d",Lthispass);
   pkintextinsert(temps);  /*____TEXT.C*/
   adjusttext(0);          /* 0: force text liines onto screen ____TEXT.C*/
   /*------------------------------------------------------------------------*/
 
-  inputflag = 0; 
+  inputflag = 0;
   while(inputflag !=1)/*eventually inputflag==1 when 1st ATOM record reached*/
   {/*read HEADER */
      inputline = Getoneinputline(); /*PKININPT*/
@@ -283,7 +283,7 @@ printf("waal  %d  %d  %d  %d  %d  %d  %d  %d  %d\n"
      Lallrescycle = 0; /*no further work for LpdbIO processing of pdb file*/
   }
   else
-  { 
+  {
      Lallrescycle = 1; /*need at least one cycle for pre-kinemage work*/
   }
   if(Lallaminoacids) Numberresiduetypes = 21;
@@ -304,9 +304,9 @@ OldTickCounts[1] = TickCount();
     nlevel = 0;
     atomin = 0; /*040406*/
     /*atomin set by a valid atom/hetatm read, so if 0: still in headers */
-       
-    if(   (Lallaminoacids||Lallbases) 
-       && (iresiduecnt < Numberresiduetypes) 
+
+    if(   (Lallaminoacids||Lallbases)
+       && (iresiduecnt < Numberresiduetypes)
        && (Lthispass>1)                    )  /*040406 Lthispass criterion*/
     {
         /*find special residue name for this cycle*/
@@ -355,7 +355,7 @@ OldTickCounts[2] = TickCount();
     icountres[level] = 0;
     Nresiduesin = 0;
     /* this defines level == subunit or molecule number */
-  
+
     if(Lthispass>1)
     {
        Loutput = TRUE;
@@ -437,7 +437,7 @@ fprintf(stderr,"PKINCRTL level:%d, ribl[%d]==%d  alloc thisribfragptr == %ld\n",
              Ledgedribbon = 1;
              Lcrosstie = 0;
              Lskeinedribbon = 0;
-             ribwidcoil = 1.0; 
+             ribwidcoil = 1.0;
           }
        }
     }
@@ -454,9 +454,9 @@ fprintf(stderr,"PKINCRTL level:%d, ribl[%d]==%d  alloc thisribfragptr == %ld\n",
        Loutput = FALSE;
     }
 /*
-sprintf(temps,CRLF"PKINCRTL Lthispass %d, Nmodels %d, Nchainfirstpass %d, ichainthispass %d" 
+sprintf(temps,CRLF"PKINCRTL Lthispass %d, Nmodels %d, Nchainfirstpass %d, ichainthispass %d"
           ,Lthispass,Nmodels,Nchainfirstpass,ichainthispass);
-pkintextinsert(temps); 
+pkintextinsert(temps);
 adjusttext(1);
 */
 
@@ -495,7 +495,7 @@ adjusttext(1);
     Lfirstrecordinlevel = 1; /*lurks for that first atom record*/
 
 /*--------------------WORKING ON CHAIN PRINT STATEMENT-----------------------*/
-       sprintf(temps,CRLF"working on coordinates for coordinate block %d  %s  " 
+       sprintf(temps,CRLF"working on coordinates for coordinate block %d  %s  "
        ,level,nmrmodel);
        pkintextinsert(temps);  /*____TEXT.C*/
        adjusttext(0);          /* 0: force text lines onto screen ____TEXT.C*/
@@ -513,9 +513,9 @@ OldTickCounts[4] = TickCount();
 
       Latomnext = 0; /*030515*/
       endres = 0;
-      discon = 0;  
+      discon = 0;
       /* discon...nected residue, default is 0, connected to previous */
-      if (endchn == 1)  
+      if (endchn == 1)
       /*this residue flagged as discontinuous with previous one */
       {
         discon = 1;
@@ -526,12 +526,12 @@ OldTickCounts[4] = TickCount();
       atarraymax = 0; /* limited number of atoms in a residue */
       resinloop = 0; /*separate loop control so can look ahead in input file*/
       /*read through until hit a valid atom/hetatm or EOF past each residue*/
-      
+
       /*set the vector tail(==base) to each atom to be itself*/
       /*avoid past historical values for the atom base[] if not set currently*/
       for(j=0; j<= lastat-8; j++) {base[j] = j;}  /*061001*/
- 
-      /*logicals concerned with ca-ca only */  
+
+      /*logicals concerned with ca-ca only */
       catrue = 0; /*set catrue = TRUE when encounter a ca (or c4',or p 061001)*/
       if(LpdbCACOpdb) {caonly = 0;} /*doing Calphas--> all mainchain 030202*/
       else {caonly = 1;}
@@ -550,18 +550,18 @@ OldTickCounts[4] = TickCount();
         /* lastat-4,lastat-5,lastat-6 lastat-7 for ca - ca connections */
         if(n == (lastat-8) )  atarraymax = 1;
         /*array size limit to match expected max residue/group size ; */
-        
+
         nnow = n;  /*nnow keeps value of n for use after do loop finished */
-        
+
         delnum = 0;  /* residue ends at residue number change */
           /*delnum flagged normally by evalatomrecord(), */
           /*non-PDB char in number flagged by readbrkatmrecord()*/
-        
+
         delres = 0;  /* residue ends at residue name change BUT */
         /*011208 sequence heterogeneity sc res change but same num*/
         /*so delres NOT robust*/
         /* not really needed anyway if number or insertion indicator changes*/
-        
+
         /*check if texts buffer holds the next atom, i.e. the to be n==1 atom */
         /*when starting a new residue. */
 
@@ -575,7 +575,7 @@ OldTickCounts[4] = TickCount();
           /*this is the only place where the input file is read! */
 
           inputline = Getoneinputline(); /*PKININPT*/
-          if(atpdbEOF)  
+          if(atpdbEOF)
           {/*EOF*/
               endfil = 1; /*end of the file*/
               morsub = 0; /*no more subunits expected*/
@@ -604,7 +604,7 @@ OldTickCounts[4] = TickCount();
             {/* valid atom or hetatm record */
                atomin = 1;
                iskip = 0;
-              
+
               /*for ease and consistency upper case converted to lower*/
               /*convertcase(texts);*/   /*PKINCSUB*/
               /*do this inside of readbrkatmrecord()*/
@@ -623,27 +623,27 @@ OldTickCounts[4] = TickCount();
 ncountticks = TickCount();
 accumticks[7] = accumticks[7] + (ncountticks - OldTickCounts[7]);
 
-OldTickCounts[8] =  ncountticks;   /*valid record*/       
+OldTickCounts[8] =  ncountticks;   /*valid record*/
 
-        if(resinloop == 0 && iskip == 0)       
+        if(resinloop == 0 && iskip == 0)
         {/* valid record */
 
           /*now do a formated reread of the line in texts */
           readbrkatmrecord();  /*PKINCSUB.c*/
-          
+
           /*valid read now means inside a chain, */
           /*with this atom also held in texts */
           stonex = 1;  /*so stonex is indeed true */
           evalatomrecord();  /*PKINCSUB.c*/
 
-          if(resinloop == 1) break; /* break from readinloop */      
-  
+          if(resinloop == 1) break; /* break from readinloop */
+
           /*within a residue or block of atoms, */
           /* PREKIN: treat hetatm sets as residues */
           /* waters are individual residues */
           /* Metals(?): hetatm residue with one atom that is not a water */
           /* is given a 3-D Unpickable cross as well as a center dot */
-          
+
           /*ca logicals */ /*munged in honor of GFPchromophore 070801*/
           if(   atom[n][1] =='c'&&atom[n][2] =='a'
              &&(atom[n][3] ==' '||isdigit(atom[n][3]))) catrue = 1; /*070801*/
@@ -652,11 +652,11 @@ OldTickCounts[8] =  ncountticks;   /*valid record*/
              &&(atom[n][3] =='*'||atom[n][3] =='\''))   catrue = 1;
           if(   atom[n][1] =='p'&&atom[n][2] ==' '
              &&(atom[n][3] ==' '||atom[n][3] =='\''))   catrue = 1; /*061001*/
-             
+
         }/* valid record*/ /* n  is atom counter: */
         if (iskip == 1 && atpdbEOF == 0 )
         {
-            resinloop = 0;  
+            resinloop = 0;
             /* skip useless record, e.g. HEADER */
         }
 ncountticks = TickCount();
@@ -676,10 +676,10 @@ OldTickCounts[9] = ncountticks;
         /*only get in here if at limit of atoms/residue, */
         /*and not hit an end to the residue */
 /*c*/      sprintf(alertstr," %s %s %d has at least %d atoms, the array limit"
-                ,res[n],sub[n],num[n],n); 
+                ,res[n],sub[n],num[n],n);
 /*m*/      DoReportDialog();
 /*c*/      sprintf(alertstr," processing will continue, "
-                            "but results may be wierd"); 
+                            "but results may be wierd");
 /*m*/      DoReportDialog();
       }
       /*--------------------------------------------------------------------*/
@@ -693,21 +693,21 @@ OldTickCounts[9] = ncountticks;
       /*nnow holds the last value of n of the above loop, last atom inputed */
       /*or 1 past last atom if hit a 'ter', and */
       /* 'texts' holds last record as char string */
-      
+
       /*NB 070801 if NOT at end of chain, evalatomrecord() stored nnow th */
       /* as atomnext, xnext, ynext, znext, etcnext... */
 
-      finishres = 0; 
+      finishres = 0;
       /* set flag to process residue, reset later when finish this residue */
 
       /*maxatm = 0 means passing through here with no stored residue so */
       /*   skip any attempt to connect atoms in the stored residue! */
 
       if(maxatm == 0) finishres = 1;
-      
+
 /*----------------------------------------------------------------------------*/
       residuetype = ' '; /*not even a guess */
-      if(maxatm > 0) /*guess residuetype /*P,N,H,W,U, , 061006*/
+      if(maxatm > 0) /*guess residuetype P,N,H,W,U, , 061006*/
       {
 
 #ifdef GFPchromophore  /*070801*/ /*Perhaps do this as Lspecialresidue ???? */
@@ -718,13 +718,13 @@ OldTickCounts[9] = ncountticks;
 
          nP = 0;
          nN = 0;
-         if(maxatm == 1) 
-         { 
-            if(isawater()) {residuetype = 'W';} 
+         if(maxatm == 1)
+         {
+            if(isawater()) {residuetype = 'W';}
             else if(   atom[1][1] == 'o'  && atom[1][2] == '3'
                     &&(atom[1][3] == '*' ||  atom[1][3] == '\'') )
                  {residuetype = 'N';} /*lone previous nucl O3*  070512*/
-            else {residuetype = 'H';} 
+            else {residuetype = 'H';}
          }
          else
          {
@@ -806,7 +806,7 @@ OldTickCounts[9] = ncountticks;
          }
       }
 
-      if(Nresiduesin == 1)  
+      if(Nresiduesin == 1)
       {/*first residue of chain: invent chain name*/
         /*sub[]: blank or 1 char chain identifier and/or nmrmodel(#) <=5 char*/
 
@@ -847,14 +847,14 @@ OldTickCounts[9] = ncountticks;
         else if(sub[maxatm][0] != ' ')
         {/*there is only a chain identifier, topID == chain identifier*/
            topID[0] = sub[maxatm][1]; /*top group indicator for output*/
-           topID[1] = '\0'; 
+           topID[1] = '\0';
            modelnumber[0] = '\0'; /*050121 model associated with this chain*/
         }/*there is only a chain identifier, topID == chain identifier*/
-        
+
 /*-----------ADD ON TO WORKING ON CHAIN PRINT STATEMENT-----------------------*/
           sprintf(temps," ,chain code|%s|%s| ",sub[maxatm],mod[maxatm]);
           pkintextinsert(temps);
-          adjusttext(1); 
+          adjusttext(1);
 /*----------------------------------------------------------------------------*/
 
       }/*first residue of chain: invent chain name*/
@@ -863,7 +863,7 @@ OldTickCounts[9] = ncountticks;
       {/*Loutput*/
        while(finishres == 0)
        {/*working on a residue: finishres == 0 */
-        
+
         /*in a residue: see if we want it if we are in range control */
 
 /*fprintf(stderr,"PKINCRTL level==%d calls   rangecontrol() riboutl==%d, %s %s %s\n",level,riboutl,atom[maxatm],res[maxatm],sub[maxatm]); */ /*KEEP STDERR*/
@@ -873,22 +873,22 @@ OldTickCounts[9] = ncountticks;
 fprintf(stderr,"PKINCRTL level==%d return  rangecontrol() riboutl==%d\n",level,riboutl);
 */
         if(  (mutoutl != 0 || supoutl != 0)
-           ||(  (Lcbetadev||Ltaudev)&&typechainfirstpass[level]=='P' 
-               && CompArgStr(name[maxatm],"atom",4) 
+           ||(  (Lcbetadev||Ltaudev)&&typechainfirstpass[level]=='P'
+               && CompArgStr(name[maxatm],"atom",4)
              ) /*011029 check for P & atom*/
              /* NB maxatm last of current residue, n is first of next residue*/
-          ) 
+          )
         {/*011029 check for P protein*/
            mutateresidue(); /*PKINCSUB*/
         }
         /* FOVEA adds to rangecontrols, sets rangel and other logicals */
         if(FOVEA) checkfocus(); /*PKINCSUB*/
-        
-        if( rangel == 0 ) finishres = 1;  
+
+        if( rangel == 0 ) finishres = 1;
         if(finishres == 1) break;  /*----skip this residue*/
 
         /*PREKIN uses distances within a residue for connectivity, */
-        /* not library connections */    
+        /* not library connections */
         /*continuing with this residue---*/
         /*keep track of encounters of all ribbon guide atoms in this residue*/
         o3snew = 0; /*040229 for nucleic ribbon extention*/
@@ -898,10 +898,10 @@ fprintf(stderr,"PKINCRTL level==%d return  rangecontrol() riboutl==%d\n",level,r
         canew = 0;
         cbnew = 0; /*041205*/
         onew = 0;
-        
+
         Lalts = 0; /*flag for alt conf in this residue*/
-        altstd = 0;  /*standard conformation flag*/ 
-        /*reset alternate conformation flags */ 
+        altstd = 0;  /*standard conformation flag*/
+        /*reset alternate conformation flags */
         /* these are only used to connect back to a previous residue*/
         altcfa[0] = 0;
         altcfb[0] = 0;
@@ -909,10 +909,10 @@ fprintf(stderr,"PKINCRTL level==%d return  rangecontrol() riboutl==%d\n",level,r
         altcfa[1] = 0;
         altcfb[1] = 0;
         altcfc[1] = 0;
-           
+
            /* reset mc h-bond flags for this residue */
            tfn2 = FALSE;tfca2 = FALSE;tfc2 = FALSE;tfo2 = FALSE;tfnh2 = FALSE;
-        
+
         /* if h-bonds not being done, carbonyl not stored for next either*/
         if( !hboutl) tfc1 = FALSE;
 
@@ -930,14 +930,14 @@ accumticks[9] = accumticks[9] + (ncountticks - OldTickCounts[9]);
 
 OldTickCounts[6] = ncountticks;
 
-/*putative slow step**********************************************************/            
+/*putative slow step**********************************************************/
 /*
 fprintf(stderr,"putative: mcoutl %d, scoutl %d, waoutl %d, (htoutl %d, %c),(ssscoutl %d, %c%c%c)\n"
 ,mcoutl,scoutl,waoutl,htoutl,name[maxatm][0]
 ,ssscoutl,res[maxatm][0],res[maxatm][1],res[maxatm][2]);
 */
-      if(    mcoutl 
-         ||  scoutl 
+      if(    mcoutl
+         ||  scoutl
          ||  waoutl                                  /*971031*/
          || (htoutl   && (name[maxatm][0]=='h' || residuetype=='H')) /*070801*/
          || (ssscoutl &&
@@ -969,7 +969,7 @@ printf(" %f %f %f\n" ,x[natom] ,y[natom] ,z[natom]);
 */
           for(natom=1 ; natom <= maxcounter ; natom++)
           {/*current atom: sequentially looked at in this residue */
-            if(iscan == 1) {base[natom] = 0;}  
+            if(iscan == 1) {base[natom] = 0;}
             /* initially set as NO vector drawn to this atom */
 
             /*make atmcpy, so can rearrange and */
@@ -988,17 +988,17 @@ printf(" %f %f %f\n" ,x[natom] ,y[natom] ,z[natom]);
 
             /*screen for alternate conformation letters at end of atoms: */
 /*s*/       screenaltconf();
-             
+
             /*residue-by-residue storage of mc h-bond calculating info */
-/*H*/       if( hboutl )  
+/*H*/       if( hboutl )
             {
-              if(iscan == 1) 
+              if(iscan == 1)
               {
                 if( name[natom][0] == 'a' )
                 {
 /*ss*/             if( decidemainside(natom) )
                    {
-/*H*/                 getmchbatoms();  
+/*H*/                 getmchbatoms();
                       /* subroutine checks for atom type itself */
                    }
                 }
@@ -1009,12 +1009,12 @@ printf(" %f %f %f\n" ,x[natom] ,y[natom] ,z[natom]);
             /*||(atmcpy[0] == 'h' &&isdigit(atmcpy[2])&&isdigit(atmcpy[3]) ) )*/
             if(isahydrogen(name[natom],atmcpy,element[natom]) ) /*070520*/
             {/*connecthydrogen for h and h_nn cns hydrogen names  030920*/
-               if(iscan == 1) 
+               if(iscan == 1)
                {
                   connecthydrogen(); /*PKINCSUB*/ /*do this on first pass only*/
                }
             }
-            else /*if(!caonly)*/ /*930123*/ /* not a hydrogen atom so: */  
+            else /*if(!caonly)*/ /*930123*/ /* not a hydrogen atom so: */
             {/* not a hydrogen atom so make connections */
                 /*if(mcoutl || scoutl || htoutl)*/ /*to limit working time*/
                 {/*this may be needed no matter what is specified*/
@@ -1026,9 +1026,9 @@ printf(" %f %f %f\n" ,x[natom] ,y[natom] ,z[natom]);
                 if(iscan == 1) /*only need to do this once */
                 {/*first scan of atom list, store cys cg for possible -ss-*/
                     if( (scoutl || ssscoutl)  &&
-                       res[natom][0]=='c' &&  res[natom][1]=='y' && 
+                       res[natom][0]=='c' &&  res[natom][1]=='y' &&
                        res[natom][2]=='s' && atom[natom][1]=='s' &&
-                       atom[natom][2]=='g' ) 
+                       atom[natom][2]=='g' )
                     {/*cys cg*/
     if(Laltcontrol!=0)
     {/*see if this atom meets alternate conformation specification(s)*/
@@ -1058,9 +1058,9 @@ printf(" %f %f %f\n" ,x[natom] ,y[natom] ,z[natom]);
             }/* not a hydrogen atom so make connections */
           }/*current atom sequentially looked at in this residue */
         }/*make connections for this residue, 2 passes*/
-      
+
         iteststring++;
-      
+
       }/*speed filter*/
 
 /*putative slow step_________________________________________________________*/
@@ -1074,7 +1074,7 @@ if(Ltestprint > 1)
         pkintextinsert(temps);  /*PKMCTEXT.C PKPCTEXT.C*/
         adjusttext(1);          /*PKMCTEXT.C PKPCTEXT.C*/
   for(natom=1 ; natom <= maxatm ; natom++)
-  {  
+  {
         j = base[natom];
         sprintf(temps,"base for %s %s %d is: %s %s %d"CRLF
            ,atom[natom],res[natom],num[natom],atom[j],res[j],num[j]);
@@ -1082,9 +1082,9 @@ if(Ltestprint > 1)
         adjusttext(1);          /*PKMCTEXT.C PKPCTEXT.C*/
   }
 }/*Ltestprint*/
-        
+
         /* check if "ca-ca" by choice or input for ATOM records*/
-        if(name[maxatm][0]=='a' && ((caonly&&mcoutl) || caoutl || tabloutl)) 
+        if(name[maxatm][0]=='a' && ((caonly&&mcoutl) || caoutl || tabloutl))
         {   /*call even for first res of a chain to connect nucleic p-c4'-...*/
 /*
 fprintf(stderr,"icountres[%d]:%d: about to connectcaca, res[maxatm]%s, num[maxatm]%d, n==%d, endchn==%d, caonly:%d, mcoutl:%d, caoutl:%d, tabloutl:%d\n",level,icountres[level],res[maxatm],num[maxatm],n,endchn,caonly,mcoutl,caoutl,tabloutl);
@@ -1100,7 +1100,7 @@ fprintf(stderr,"icountres[%d]:%d: about to connectcaca, res[maxatm]%s, num[maxat
         /*now have vectors, or dots, for each atom */
         /*working on a residue: finishres == 0 */
 
-        if(maxatm == 1 && base[1] == 1 && htoutl) 
+        if(maxatm == 1 && base[1] == 1 && htoutl)
         /* lone hetatm, Make first character Cap, so calcium = Ca, not ca*/
         {
            if( notawater() ) atom[1][0] = lctouc(atom[1][0]);
@@ -1113,10 +1113,10 @@ fprintf(stderr,"icountres[%d]:%d: about to connectcaca, res[maxatm]%s, num[maxat
 
         if(atoutl || waaoutl) {writeatomscratch(maxcounter);}
 
-        if(maxatm == 1 && base[1] == 1 && htoutl) 
+        if(maxatm == 1 && base[1] == 1 && htoutl)
         /* dot had been made for lone atom which is likely a hetatm 070512*/
         {
-           if(   notawater()  
+           if(   notawater()
               && !(   atom[1][1] == 'o'  && atom[1][2] == '3' /*lone O3* nucl*/
                    &&(atom[1][3] == '*' ||  atom[1][3] == '\'') ) )
            {
@@ -1127,11 +1127,11 @@ fprintf(stderr,"icountres[%d]:%d: about to connectcaca, res[maxatm]%s, num[maxat
 
         /*Put mc h-bond atoms onto hbond scratch file */
         /*try to calculate nh atom coord for mc h-bonds for this residue */
-        if( hboutl)  
+        if( hboutl)
         {
            storemchbatoms(); /*PKINHBND.c*/
         }
-        finishres = 1;  
+        finishres = 1;
         /*if expect continuity to next residue, then find and store */
         /*carbonyl carbon or ribose o3* of this current residue */
 /*
@@ -1145,10 +1145,10 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
           /*and store ca incase doing ca-ca hookup, or p-c4*-p hookup*/
             IOK = storeconnectingatom(1,1); /*j==1,ipass==1*/
             if(!IOK) /*try ca---ca or p---p hookup 061001*/
-            { 
+            {
                IOK = storeconnectingatom(1,2); /*j==1,ipass=2*/
             }
-        }      
+        }
         if(Lribbon && name[maxatm][0] == 'a')/*riboutl*/
         {/*look for atoms in ATOM records that produce ribbon guide points */
 
@@ -1158,7 +1158,7 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
              /*090219 LOK from loadribbonatoms() does not seem to be used*/
              /* so neither a problem with atoms in the residue */
              /* - which is attempted to punt around in the ribbon code */
-             /* nor a problem allocating storage, are rrecognized out here.*/ 
+             /* nor a problem allocating storage, are rrecognized out here.*/
           }
         }/*ribbon stuff*/
        }/*working on a residue: finishres == 0 */
@@ -1168,7 +1168,7 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
        }
       }/*Loutput*/
 /*---------------------------------------------------------------------*/
-      
+
       /*961117 modify to store residue count info and report at end*/
       /*declare residuereport[3][128], indexed by iresiduereport*/
       /*seems to drop through to here on first atom, presumably because*/
@@ -1221,7 +1221,7 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
             else     {NDNA++;}
             /*reset LRNA below...*/
          }
-         else 
+         else
          {
             Nprotein++;
          }
@@ -1249,12 +1249,12 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
          pkintextinsert(temps); /*resets current position for textreplace*/
          adjusttext(1);
       }
-    if(Ltestprint)      
+    if(Ltestprint)
     {sprintf(temps,CRLF"%d residues of type %s",icountres[level],name[maxatm]);}
     else if(Lthispass==1)
     {
          sprintf(temps,"first pass: %d residues of type %s, in seqment %d"
-            ,icountres[level],name[maxatm],iresiduereport); 
+            ,icountres[level],name[maxatm],iresiduereport);
          /*typechainfirstpass[level] = name[maxatm][0];NOT DONE HERE 040406*/
 
          /*only honor chainID for ATOM records ... vote on this ????070926*/
@@ -1272,9 +1272,9 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
     }
     else
     {
-         sprintf(temps,"%d residues of type %s",icountres[level],name[maxatm]); 
+         sprintf(temps,"%d residues of type %s",icountres[level],name[maxatm]);
     }
-      if(Ltestprint)        pkintextinsert(temps); /*____TEXT*/  
+      if(Ltestprint)        pkintextinsert(temps); /*____TEXT*/
 /*020514 don't really need to see this stuff flash by for every pass*/
     /*  else if(Lthispass>1)  pkintextreplace(temps); */  /*____TEXT.C*/
 
@@ -1288,7 +1288,7 @@ fprintf(stderr,"icountres[%d]:%d: about to storeconnectingatom, n==%d, endchn==%
           adjusttext(2);          /*PKMCTEXT.C PKPCTEXT.C*/
       }
       if(Lperiod) goto loopend; /*bailout if keyboard interrupt*/
-      
+
 /*------------------------------------------------------------------------*/
 
 
@@ -1298,9 +1298,9 @@ accumticks[10] = accumticks[10] + (ncountticks - OldTickCounts[10]);
 
       previousresiduetype = residuetype;  /*P,N,H,W,U, , 061006*/
       /*loop back for another residue */
-      /*if not the end of a subunit or end of file */      
+      /*if not the end of a subunit or end of file */
 
-    }/* within a subunit: endsub == 0 */ 
+    }/* within a subunit: endsub == 0 */
     /*if ( .not.endfil .and. .not.endsub) goto 130 */
     /*_________________ while(endsub == 0) ______________________*/
 
@@ -1312,7 +1312,7 @@ accumticks[3] = accumticks[3] + (ncountticks - OldTickCounts[3]);
      for(j=0;j<=iresiduereport;j++)
      {
 
-         sprintf(temps,"%s"CRLF,residuereport[j]); 
+         sprintf(temps,"%s"CRLF,residuereport[j]);
          /*need carriage return after atom count*/
          pkintextinsert(temps);  /*PKMCTEXT.C PKPCTEXT.C*/
          adjusttext(1);          /*PKMCTEXT.C PKPCTEXT.C*/
@@ -1322,7 +1322,7 @@ accumticks[3] = accumticks[3] + (ncountticks - OldTickCounts[3]);
 #endif /*RESIDUEREPORT*/
 
 #ifdef REPORTSLOWSTEP
-sprintf(temps,"entered putative slow step %d times"CRLF,iteststring); 
+sprintf(temps,"entered putative slow step %d times"CRLF,iteststring);
 pkintextinsert(temps);  /*PKMCTEXT.C PKPCTEXT.C*/
 adjusttext(1);          /*PKMCTEXT.C PKPCTEXT.C*/
 #endif
@@ -1330,17 +1330,17 @@ iteststring = 0;
 
 
     /*check for possible -ss- bonds and write them to scratch file */
-    if(Lthispass>1 && Loutput && ssknt > 1)  
+    if(Lthispass>1 && Loutput && ssknt > 1)
     {
        sprintf(temps,CRLF" scanning for -SS- bonds"CRLF);
        pkintextinsert(temps);  /*____TEXT*/
        adjusttext(1);          /*____TEXT*/
-       
+
        connectssbonds();
 
     }
     /*check for possible h-bonds and write them to scratch file */
-    if(Lthispass>1 && Loutput && cocnt != 0 && nhcnt != 0) 
+    if(Lthispass>1 && Loutput && cocnt != 0 && nhcnt != 0)
     {
 /*c*/  sprintf(temps," scanning for possible mc h-bonds"CRLF);
        pkintextinsert(temps);  /*PKMCTEXT.C PKPCTEXT.C*/
@@ -1357,12 +1357,12 @@ iteststring = 0;
           /*construct ribbon section by section as these are inputed*/
           /*kinemage output per chain then stays in sync with ribbons */
           /*PKINRIBB 051214 also rebuildribbonguides(), etc.*/
-          buildsectionguides(thisribsectionptr); 
+          buildsectionguides(thisribsectionptr);
 /*
 fprintf(stderr,"PKINCRTL level==%d about to call expandsectionguides, riboutl==%d\n",level,riboutl);
 */
           expandsectionguides(thisribsectionptr);
-          calculatesectionsplines(thisribsectionptr); 
+          calculatesectionsplines(thisribsectionptr);
           constructsectionribbons(thisribsectionptr);  /*PKINRIBB*/
           if(Lribbonhbonds){makesectionpseudoHbonds(thisribsectionptr);}
 
@@ -1376,7 +1376,7 @@ fprintf(stderr,"PKINCRTL level==%d about to call expandsectionguides, riboutl==%
       else if(Nprotein>Nnucleic+Nwater+Nhetgroup) typechainfirstpass[level]='P';
       else if(Nwater>0 && Nhetgroup==0) typechainfirstpass[level] = 'W';
       else if(Nhetgroup > 0 ) typechainfirstpass[level] = 'H';
-      else typechainfirstpass[level] = 'U';      
+      else typechainfirstpass[level] = 'U';
 #endif /*OLDCODE*/
       /*protein and nucleic completely dominant over hets and water 011105*/
       /*and hets dominant over water*/
@@ -1401,7 +1401,7 @@ fprintf(stderr,"PKINCRTL level==%d about to call expandsectionguides, riboutl==%
              /*otherwise a blank space character*/
           }
        }
-       else if(Nhetgroup > 0)                  
+       else if(Nhetgroup > 0)
        {
           typechainfirstpass[level]='H';
           LtypeH = 1;
@@ -1427,18 +1427,18 @@ fprintf(stderr,"PKINCRTL level==%d about to call expandsectionguides, riboutl==%
        if(Nwater > 0) sprintf(word,"%s, %d Water",word,Nwater);
        sprintf(temps,CRLF"processed molecule or subunit %d, %s"
                  ,level,word);
- 
+
        /*sprintf(temps,CRLF"processed molecule or subunit %d"CRLF,level);*/
- 
-       pkintextinsert(temps); 
-       adjusttext(1); 
+
+       pkintextinsert(temps);
+       adjusttext(1);
     }/*Lthispass==1: just do this chain type assignment once*/ /*040406*/
 
-    if(level == 1 && npass == 1 && newkinemage) 
+    if(level == 1 && npass == 1 && newkinemage)
     {   /* needs this even if not doing output for this level */
          newkinemage = 0;  /*resets newkinemage */
     }
-    
+
     if(Loutput && !Lresnumfovea && Lthispass>1)
     {/*output a section of molecule, e.g. chain, subunit, model...*/
 /*#define PRINTOUTL*/
@@ -1451,15 +1451,15 @@ sprintf(temps,"rangel %d, mcoutl %d, scoutl %d, lboutl %d, croutl %d, htoutl %d,
     mccoutl, sccoutl, htcoutl,
     mcCPKoutl,scCPKoutl,htCPKoutl,
     Bcoloutl, Bvaloutl);
-pkintextinsert(temps); 
-adjusttext(1); 
+pkintextinsert(temps);
+adjusttext(1);
 #endif /*PRINTOUTL*/
          if(Lsingleout) /*040318*/
          {/*no output until all chains processed*/
             LLfpoutput = 0;
          }
          else
-         {/*output for each chain...*/ 
+         {/*output for each chain...*/
             LLfpoutput = 1; /*local flag to handle write loop*/
          }
          while(LLfpoutput>0)
@@ -1481,9 +1481,9 @@ adjusttext(1);
          }
     }/*output a section of molecule, e.g. chain, subunit, model...*/
 
-    
-    loopend:  ;    
-    
+
+    loopend:  ;
+
     disposetextblock(&mainscratch);
     disposetextblock(&hbnscratch);
     disposetextblock(&hboscratch);
@@ -1494,7 +1494,7 @@ adjusttext(1);
 
         if(Lperiod) goto newpassplace; /*bailout if keyboard interrupt*/
         if(Lfpoutput<0) goto newpassplace; /*bailout if output file fails*/
-        
+
   }/*within molecular coordinates: morsub == 1 && endfil == 0 */
 /*-----------------------------END OF PASS------------------------------------*/
 
@@ -1505,14 +1505,14 @@ adjusttext(1);
      Nproteinchains=0; Nnucleicchains=0; /*041031*/
      for(j=1; j<=Nchainfirstpass; j++)
      {/*check through count of all chains recognized by prekin*/
-        if     (typechainfirstpass[j]=='N') 
+        if     (typechainfirstpass[j]=='N')
         {
-           sprintf(word,"Nucleic Acid"); 
+           sprintf(word,"Nucleic Acid");
            Nnucleicchains++;
         }
-        else if(typechainfirstpass[j]=='P') 
+        else if(typechainfirstpass[j]=='P')
         {
-           sprintf(word,"Protein"); 
+           sprintf(word,"Protein");
            Nproteinchains++;
         }
         else if(typechainfirstpass[j]=='W') {sprintf(word,"Water");}
@@ -1572,7 +1572,7 @@ adjusttext(1);
         sprintf(chainreport,"%d protein chains, %d nucleic acid chains"
            ,Nproteinchains,Nnucleicchains);
      }
-     else {chainreport[0] = '\0';} 
+     else {chainreport[0] = '\0';}
 
   }/*first pass report*/
 /*----------------------------------------------------------------------------*/
@@ -1585,23 +1585,23 @@ accumticks[2] = accumticks[2] + (ncountticks - OldTickCounts[2]);
      {
          morsub = 1;
          endfil = 0;
-         atpdbEOF = 0;    
+         atpdbEOF = 0;
          ihitend = 0;
-         endsub = 0; 
+         endsub = 0;
          endchn = 1;
-         stonex = 0;    
+         stonex = 0;
      }
      if( Lresnumfovea && Lthispass>1)
      {
        if(Lfoundresnum)
-       { 
+       {
          morsub = 1;
          endfil = 0;
-         atpdbEOF = 0;    
+         atpdbEOF = 0;
          ihitend = 0;
-         endsub = 0; 
+         endsub = 0;
          endchn = 1;
-         stonex = 0;    
+         stonex = 0;
          /*Lresnumfovea = 0;*/ /*go back to PKINRNGE.C to get focus distances*/
          Lresnumfovea = 0; /* PKINRNGE.C originally got focus distances 951208*/
          /*FOVEA stays set, so will check distance from found residue coords*/
@@ -1617,7 +1617,7 @@ accumticks[2] = accumticks[2] + (ncountticks - OldTickCounts[2]);
            Lerr = 1;
        }
      }
-     else if (Lresnumfovea && Lthispass==1 && Lquiet) 
+     else if (Lresnumfovea && Lthispass==1 && Lquiet)
      {
         Lallrescycle = 0; /*break from this cycle, do another pass*/
      }
@@ -1671,7 +1671,7 @@ accumticks[1] = accumticks[1] + (ncountticks - OldTickCounts[1]);
       {
          if(Lbrowsedefault)
          {/*automatic MAGE launch*/
-             if(fpinput!=0) 
+             if(fpinput!=0)
              {
                  fclose(fpinput);
              }
@@ -1684,7 +1684,7 @@ accumticks[1] = accumticks[1] + (ncountticks - OldTickCounts[1]);
          else
          {/*MAGE launch optional*/
              /*now have a current kinemage that could be launched*/
-             Lmadekin = 1;  
+             Lmadekin = 1;
              sprintf(temps,
              CRLF"After reading these messages, go to the File menu and either"
              CRLF" select Quit, or New Pass, or Open a new file, "
@@ -1698,13 +1698,13 @@ accumticks[1] = accumticks[1] + (ncountticks - OldTickCounts[1]);
             CRLF"After reading these messages, go to the File menu and either"
             CRLF" select Quit, or New Pass, or Open a new file. ");
       }
-      
+
        pkintextinsert(temps);  /*____TEXT.c*/
        adjusttext(0);          /* 0: force text lines onto screen ____TEXT.c*/
        AdjustMenus();          /*____MENU.c*/
 
-       
-       
+
+
 accumticks[0] = TickCount() - OldTickCounts[0];
 #ifdef TIMINGRUN
 sprintf(temps,CRLF"TotalTicks %ld inc 1stTicks %ld inc 2ndTicks %ld"
@@ -1720,7 +1720,7 @@ sprintf(temps,CRLF"Total 4 Ticks %ld == "
 
        pkintextinsert(temps);  /*____TEXT.c*/
        adjusttext(1);          /*____TEXT.c*/
-sprintf(temps,CRLF" 5 Ticks %ld ==( 9th %ld + slow 6th %ld + 10th %ld)" 
+sprintf(temps,CRLF" 5 Ticks %ld ==( 9th %ld + slow 6th %ld + 10th %ld)"
 ,accumticks[5],accumticks[9],accumticks[6],accumticks[10]);
 
        pkintextinsert(temps);  /*____TEXT.c*/
@@ -1758,7 +1758,7 @@ fprintf(stderr,"CONECT %3d: %5ld  %5ld\n",j,iconect[j]/100000,iconect[j] - ( 100
           k = 0;
           for(j=0; j<=ncon; j++)
           {/*j loop*/
-             if(iconect[j] == 0) 
+             if(iconect[j] == 0)
              {
                 /*look ahead for the next non-zero entry*/
                 for(i=j+1;i<=ncon;i++)
@@ -1799,10 +1799,10 @@ fprintf(stderr,"CONECT %3d: %5ld  %5ld\n",j,iconect[j]/100000,iconect[j] - ( 100
        {
            Lnewpass = 1;
        }
-   } 
-   Lthispass++;    
+   }
+   Lthispass++;
 }
-/*___flowControl()__________________________________________________________*/  
+/*___flowControl()__________________________________________________________*/
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
 /****queercompare()***********************************************************/
 int  queercompare(const void * astr, const void * bstr)

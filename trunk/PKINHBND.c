@@ -1,7 +1,6 @@
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
 #include "PKIN.h"
 
-
 /****getmchbatoms()**********************************************************/
 void   getmchbatoms(void)
 {
@@ -59,7 +58,7 @@ void   getmchbatoms(void)
 }
 /*___getmchbatoms()_________________________________________________________*/
 
-/****storemchbatoms()********************************************************/          
+/****storemchbatoms()********************************************************/
 void   storemchbatoms(void)
 {
 
@@ -69,7 +68,7 @@ void   storemchbatoms(void)
 sprintf(alertstr,"top of storemchbatoms:");
 DoReportDialog();
 */
-  
+
   /*try to calculate nh atom coord for mc h-bonds for this residue */
   /*using previous residue's c and current n & ca */
   if( !tfnh2 )  /*tfnh2 TRUE means already have nh so just put it in storage*/
@@ -109,7 +108,7 @@ DoReportDialog();
   {
     /*nh atoms store to scratch file*/
     flag3[0] = atom[inumn2][4];  /* alternate conformation flag */
-    if(flag3[0] == ' ') flag3[0] = '_'; 
+    if(flag3[0] == ' ') flag3[0] = '_';
       /*must be a connected set of characters */
     flag3[1] =  sub[inumn2][0];  /* alternate subunit flag */
     if(flag3[1] == ' ') flag3[1] = '_';
@@ -135,7 +134,7 @@ DoReportDialog();
   if(tfo2)
   {
     flag3[0] = atom[inumo2][4];  /* alternate conformation flag */
-    if(flag3[0] == ' ') flag3[0] = '_';  
+    if(flag3[0] == ' ') flag3[0] = '_';
       /*must be a connected set of characters */
     flag3[1] =  sub[inumo2][0];  /* alternate subunit flag */
     if(flag3[1] == ' ') flag3[1] = '_';
@@ -158,7 +157,7 @@ DoReportDialog();
   /*transfer c coordinate back if expect continuity to next residue */
   if( !endchn)
   {
-    tfc1 = tfc2;  
+    tfc1 = tfc2;
     /* so if current residue didn't have a carbonyl c, would be FALSE */
     c1xyz[1] = c2xyz[1];
     c1xyz[2] = c2xyz[2];
@@ -183,7 +182,7 @@ void   connecthbonds(void)
   char  flag3[4];
   int    numnh,numco;
   float  nxyz[4],nhxyz[4],oxyz[4];
-  
+
 
   /*mc hbonds calculation and output */
   /*find all mc hbonds that fit distance and angle criteria */
@@ -193,18 +192,18 @@ void   connecthbonds(void)
   Lmore = TRUE;
   Lscan = TRUE;
   icountrewinds = 0;
- 
+
   rewindtextblock(&hbnscratch);
   while( Lmore )
   {/*Lmore loop over all nh's*/
     getonetextblockline(&hbnscratch,temps);
-    if(temps[0]=='\0') 
+    if(temps[0]=='\0')
     {
-       Lmore = 0;     
+       Lmore = 0;
        break;
     }
 
-            /*sscanf for nh stuff */        
+            /*sscanf for nh stuff */
     sscanf(temps,"%s %s %d %s %f %f %f %f %f %f",a,resnh,&numnh,nhflag
            ,&nxyz[1],&nxyz[2],&nxyz[3],&nhxyz[1],&nhxyz[2],&nhxyz[3]);
 /*
@@ -217,7 +216,7 @@ DoReportDialog();
 /*---------------------------------------------------------------------*/
       icountrewinds++;
 
-      if(icountrewinds == 1 && IMAC) getmactextselect(); 
+      if(icountrewinds == 1 && IMAC) getmactextselect();
            /*PKMCTEXT.C PKPCTEXT.C*/
           /*macintosh TE variable used in pkintextreplace(temps)*/
                          /*PC dummies and ignores this */
@@ -233,7 +232,7 @@ DoReportDialog();
     while(Lscan)
     {/*Lscan loop over all co's*/
       getonetextblockline(&hboscratch,temps);
-      if(temps[0]=='\0') 
+      if(temps[0]=='\0')
       {
          Lscan = 0;
          break;
@@ -257,28 +256,28 @@ DoReportDialog();
               +   (nhxyz[2] - nxyz[2])*(oxyz[2] - nhxyz[2])/disthb
               +   (nhxyz[3] - nxyz[3])*(oxyz[3] - nhxyz[3])/disthb ;
          dimhb = dlimhb - angfac + angfac*cosnho;
-            
+
 /*
 sprintf(alertstr,"disthb= %f  <=  dimhb= %f",disthb,dimhb);
-DoReportDialog(); 
+DoReportDialog();
 */
           if(disthb <= dimhb)
           {/*H-BOND*/
               /*shorten ends of displayed vectors slightly for clarity */
-            
+
               oxyz[1] = (float)(oxyz[1] + 0.3*(nhxyz[1] - oxyz[1]));
               oxyz[2] = (float)(oxyz[2] + 0.3*(nhxyz[2] - oxyz[2]));
               oxyz[3] = (float)(oxyz[3] + 0.3*(nhxyz[3] - oxyz[3]));
               /*mxyz[1] = (float)(nxyz[1] + 0.3*(nhxyz[1] - nxyz[1]));*/
               /*mxyz[2] = (float)(nxyz[2] + 0.3*(nhxyz[2] - nxyz[2]));*/
               /*mxyz[3] = (float)(nxyz[3] + 0.3*(nhxyz[3] - nxyz[3]));*/
-            
+
               /*write to regular scratch file*/
               typenow=typehb;
-              
+
               /* distance as author comment */
               /*  U = Unpickable points */
-            
+
               /*--write from hn to shortened-end o */
               /* note 4 char id: hb__  920302*/
               sprintf(temps,"hb  {%s %d hn} <%4.3f> P U %.3f, %.3f, %.3f "

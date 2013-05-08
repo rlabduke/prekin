@@ -1,15 +1,15 @@
 #
-CFLAGS = -I/usr/X11R6/include  
+CFLAGS = -I/opt/local/include 
 
 ifeq ($(MAKECMDGOALS),debug)
-CFLAGS = -g -I/usr/X11R6/include  
+CFLAGS = -g -I/opt/local/include  
 endif
 
-LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXm -lXt -lSM -lICE -lXext -lX11
+LIBS = -L/usr/lib -L/opt/local/lib -lXmu -lXm -lXt -lSM -lICE -lXext -lX11
 
 ifeq ($(MAKECMDGOALS),nogui)
-CFLAGS = -D NOGUI -I/usr/X11R6/include
-LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXt -lSM -lICE -lXext -lX11
+CFLAGS = -D NOGUI -I/opt/local/include
+LIBS = -L/usr/lib -L/opt/local/lib -lXmu -lXt -lSM -lICE -lXext -lX11
 endif
 
 FIN =  -lm -pthread #for RH9.0, ok for RH7.3 & RH8.0
@@ -26,13 +26,13 @@ OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o PKINMENU.o PKINROT
 # Commands specific to clients created by this Makefile 
 
 prekin: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/opt/local/lib $(LIBS) -ldl $(FIN)
 
 debug: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/opt/local/lib $(LIBS) -ldl $(FIN)
 
 nogui: $(OBJS)
-	cc -o prekin $(CFLAGS) $(OBJS) -L/usr/X11R6/lib $(LIBS) -ldl $(FIN)
+	cc -o prekin $(CFLAGS) $(OBJS) -L/opt/local/lib $(LIBS) -ldl $(FIN)
 
 clean:
 	rm *.o

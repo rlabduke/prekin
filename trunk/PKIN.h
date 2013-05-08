@@ -39,17 +39,17 @@
 #undef PCWINDOWS
 #define screenBits qd.screenBits
 #include <math.h>
-#include <Palettes.h> 
+#include <Palettes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <Balloons.h> 
+#include <Balloons.h>
 
-#include <Dialogs.h> 
-#include <Controls.h> 
+#include <Dialogs.h>
+#include <Controls.h>
 #include <MacMemory.h>
-#include <Menus.h>  
-#include <MacTypes.h> 
+#include <Menus.h>
+#include <MacTypes.h>
 #endif /*__MWERKS__*/
 
 #ifdef OLD__MWERKS__         /*__MWERKS__ compiler specific*/
@@ -167,7 +167,7 @@ typedef HWND WindowPtr;
 typedef HMENU MenuHandle;
 typedef HCURSOR CursHandle;
 #endif /*PCWINDOWS*/
-                            
+
 #define  MAXARR   411  /*array limits number of atoms in a residue 990416*/
                         /*Lipid A with Hydrogens... arrays reused each residue*/
 #define  MAXR     901 /*050309 array limits number of ranges, 101, 61, 101,...*/
@@ -176,7 +176,7 @@ typedef HCURSOR CursHandle;
 /*MAXC up from 36 040324, up from 256 060120 match MAXlevels*/
 #define  MAXANGLES  9  /*limit of ratatable bonds*/
 #define  MAXmodchr  7  /*number of characters for an atoms mod indicator field*/
-#define NMATRIX     9 
+#define NMATRIX     9
                             /*mod field added to sub field  000418*/
 #define  MAXchaincharcode  256  /*limit to number of chain ID's in one commandline run*/
 #define  MAXmodelcharcode  256  /*limit to number of model ID's in one commandline run*/
@@ -203,13 +203,13 @@ typedef HCURSOR CursHandle;
 #define NCON      10000 /*number of CONECT atom pairs */ /*050409*/
   /*this should be a dynamically managed array...*/
 EXTERN long iconect[NCON+1]; /*CONECT atom pairs as combined long integer*/
-EXTERN int  ncon; 
+EXTERN int  ncon;
 EXTERN int  Lconect; /*try to use CONECT records*/
 
 /* external variables, all defined here so can find them.*/
 EXTERN float PREKINVERSION;
 EXTERN char  PREKINDATE[32];
-EXTERN int IDEMO; /* IDEMO == 1 for big type, terse comments,*/ 
+EXTERN int IDEMO; /* IDEMO == 1 for big type, terse comments,*/
                   /* IDEMO == 0 for regular use prekin, set in main*/
 EXTERN int IPC, IMAC, Lexplanation,Llaunched,Lbegin,Lbrowsedefault,Lindicator;
 EXTERN double A[NMATRIX+1][NMATRIX+1];
@@ -244,11 +244,11 @@ EXTERN int    mcxl[MAXR],scxl[MAXR],hbxl[MAXR],hyxl[MAXR],caxl[MAXR];
 EXTERN int    htxl[MAXR],waxl[MAXR],atxl[MAXR],lbxl[MAXR],mcal[MAXR];
 EXTERN int    scal[MAXR],htal[MAXR],waal[MAXR],resl[MAXR],ribl[MAXR];
 
-EXTERN int    ctxl[MAXR],mccl[MAXR],sccl[MAXR],htcl[MAXR]; 
+EXTERN int    ctxl[MAXR],mccl[MAXR],sccl[MAXR],htcl[MAXR];
     /*carbons as well as other atom markers*/
-EXTERN int    mcCPKl[MAXR],scCPKl[MAXR],htCPKl[MAXR]; 
+EXTERN int    mcCPKl[MAXR],scCPKl[MAXR],htCPKl[MAXR];
     /*CPK instead of vectors*/
-EXTERN int    Bcol[MAXR],Bval[MAXR];  
+EXTERN int    Bcol[MAXR],Bval[MAXR];
 EXTERN int    Best[MAXR]; /*bestribbon for these general ranges 041103*/
 
 EXTERN int    cisl[MAXR]; /*cis peptides Ca--Ca uses ribbon routines 041102*/
@@ -276,7 +276,7 @@ EXTERN int    Lribs,Nribs; /*050928 honor rib ranges, num of rib ranges*/
 /*SHEET & HELIX record: cols 12 - 14  LString(3)  identifier. 060929*/
 /* nothing defined for col 11, as of PDB format version 2.2 1996 */
 EXTERN char   ribidentity[MAXR][5]; /*060929*/
-EXTERN int    Lribidentity; /*SHEET (HELIX) identities, need colorsets/*060929*/
+EXTERN int    Lribidentity; /*SHEET (HELIX) identities, need colorsets 060929*/
 
 EXTERN int    Lhylens;
 EXTERN int    FOVEA,Latmark,Lresnumfovea,resnumfovea,Lfoundresnum;
@@ -310,20 +310,20 @@ EXTERN    int   nnew,canew,cnew,onew,oold,azimuthnew; /*041106 oold*/
 EXTERN    int   cbnew,Lcbrib[5],Lcbstubsrib; /*041205*/
 EXTERN    int   Lstub[5]; /*050731 ribbon residue can have cbstub */
 EXTERN    int   Lcacbvector; /*050403*/
-EXTERN    int   numrib[5],ribcnt,Lendribbon,Lautoribbon;  
+EXTERN    int   numrib[5],ribcnt,Lendribbon,Lautoribbon;
 EXTERN    int   nstrnd,ichord,nrib,npept,nchord,nfrag,Lribbon,Lfudgedwidth;
 EXTERN    int   Lribbonalso; /*050206 e.g. for sidechains on a ribbon*/
 EXTERN    int   Lsmoothtwist,LNtermBetaFudge; /*LNtermBetaFudge 030706*/
 EXTERN    float ribwidcoil,ribwidalpha,ribwidbeta,ribwidnucleic,ribwidVRML;
 EXTERN    float npeprib[5][4],cpeprib[5][4],azimuth[5]; /*030127*/
                 /*030127 NOTE carib[6] to hold one calc Calpha beyond end*/
-EXTERN    float carib[6][4],orib[5][4],c3srib[5][4],c1srib[5][4],nuprib[5][4]; 
+EXTERN    float carib[6][4],orib[5][4],c3srib[5][4],c1srib[5][4],nuprib[5][4];
 EXTERN    float o3srib[5][4]; /*040229*/
 EXTERN    float c4srib[5][4]; /*040419*/
 EXTERN    float cbrib[5][4]; /*041205*/
-EXTERN    char  resrib[5][4],subrib[5][2],rinsrib[5][2],ribnam[10][13]; 
+EXTERN    char  resrib[5][4],subrib[5][2],rinsrib[5][2],ribnam[10][13];
 EXTERN    float Bvalrib[5]; /*021213*/
-EXTERN    int LvectorCO,LazimuthCO,LphipsiCO,LpsiphiCO,LvectCOpdb,LpdbCACOpdb; 
+EXTERN    int LvectorCO,LazimuthCO,LphipsiCO,LpsiphiCO,LvectCOpdb,LpdbCACOpdb;
 EXTERN    int   LvectorCOlabels,Ldumpcispeptides,Lcispeptides; /*041023,041102*/
 EXTERN    int   LdumpVRML,LsplineVRML,LheaderVRML,LvectorVRML; /*050204,08*/
 EXTERN    int   LsphereVRML,LarrowVRML; /*050208,12*/
@@ -354,7 +354,7 @@ EXTERN    int   Lcurvednucleics; /*040420 curvature offset ribbons*/
 EXTERN    int   Lc4primenucleics; /*040420 curvature offset ribbons to c4prime*/
 EXTERN    int   Lribbonnew;  /*051102*/
 EXTERN    int   Lribbonhbonds;  /*051212*/
-#define ALPHA2D    1  
+#define ALPHA2D    1
 #define BETA2D     2
 #define COIL2D     4
 #define NUCLEIC2D  8
@@ -465,7 +465,7 @@ typetau,typetaub,typetaus,
 typero
 };
 /* typero...digit,blank AND typero...digit,h  PKINROTL.c*/
-/* typerib ... rb  , rbae, rbbe, rbne, rbce, rbaf, rbbf, rbnf  PKINRIBN.c*/ 
+/* typerib ... rb  , rbae, rbbe, rbne, rbce, rbaf, rbbf, rbnf  PKINRIBN.c*/
 /* typehy... scv1, scv2, hysc, */
 /* typesc... sc 1, sc 2, scv1, scv2, sckh, scks, */
 /* typeht... htv , htkc, htko, htkn, htkh, htks, */
@@ -479,7 +479,7 @@ EXTERN char   cntp[MAXTYPES][5];      /*011202*/
 
 EXTERN float  ps300saturation;
 EXTERN float  ssdist,bondst,cadist;
-EXTERN char  oldsub[3],nexsub[3],oldnam[7],althed[2]; /*sub[3] 070926*/
+EXTERN char  oldsub[5],nexsub[5],oldnam[7],althed[2]; /*sub[3] 070926*/
 EXTERN char  oldmod[MAXmodchr],nexmod[MAXmodchr];
 EXTERN char  topID[MAXmodchr+2];
 EXTERN char  ChainID[MAXlevels][3]; /*051128, 2char 070926*/
@@ -490,7 +490,8 @@ EXTERN char  atmcpy[6],name[MAXARR][7];
              /*070731 fix format 1st 15 char of pointID==PDB %5s%3s %1s%4d%1s*/
              /* atom, res, sub, num, rins : NB atom incl alt as 5th character*/
              /* %5s%3s%2s%4d%1s sub[][3] 070926*/
-EXTERN char  atom[MAXARR][6],res[MAXARR][4],sub[MAXARR][3],rins[MAXARR][2]; 
+EXTERN char  atom[MAXARR][6],res[MAXARR][4],sub[MAXARR][5],rins[MAXARR][2];
+EXTERN char  segid[MAXARR][5]; /*130507 JJH*/
 EXTERN char  Anum[MAXARR][6]; /*Hybrid36 071001, replace int ncnt[MAXARR]*/
 EXTERN int   num[MAXARR],base[MAXARR],idupl[MAXARR],isc[MAXARR];
 EXTERN int   nextatm[MAXARR],atstyle[MAXARR]; /*atstyle, e.g. ghost 030920*/
@@ -501,7 +502,7 @@ EXTERN char  aspectstr[MAXARR][MAXaspects+3]; /*in parens: (XXXX)*/
 /*mutant library residue's atom records*/
 EXTERN char  mutmod[MAXARR][MAXmodchr]; /*000418*/
 EXTERN char  mutatmcpy[6],mutname[MAXARR][7],rescode,mutrins[MAXARR][2];
-EXTERN char  mutatom[MAXARR][6],mutres[MAXARR][4],mutsub[MAXARR][3]; /*070926*/
+EXTERN char  mutatom[MAXARR][6],mutres[MAXARR][4],mutsub[MAXARR][5]; /*070926*/
 EXTERN char  mutAnum[MAXARR][6];/*Hybrid36 071001, replace int mutncnt[MAXARR]*/
 EXTERN int   mutnum[MAXARR],mutbase[MAXARR];
 EXTERN int   maxmut,nn;
@@ -517,16 +518,16 @@ EXTERN double dblx,dbly,dblz;
 EXTERN char  ssaspectstr[MAXARR][MAXaspects+3]; /*in parens: (XXXX)*/
 EXTERN char  ssmod[MAXARR][MAXmodchr]; /*000418*/
 EXTERN char  ssname[MAXARR][7],ssatom[MAXARR][6];
-EXTERN char  ssres[MAXARR][4],sssub[MAXARR][3],ssrins[MAXARR][2]; /*070926*/
+EXTERN char  ssres[MAXARR][4],sssub[MAXARR][5],ssrins[MAXARR][2]; /*070926*/
 EXTERN char  ssAnum[MAXARR][6];/*Hybrid36 071001, replace int ssncnt[MAXARR]*/
 EXTERN int   ssnum[MAXARR],ssscall[MAXARR];
 EXTERN float ssx[MAXARR],ssy[MAXARR],ssz[MAXARR],ssBval[MAXARR];/*Bval 050704*/
 EXTERN float sscax[MAXARR],sscay[MAXARR],sscaz[MAXARR],sscaBval[MAXARR];
 EXTERN float sscbx[MAXARR],sscby[MAXARR],sscbz[MAXARR],sscbBval[MAXARR];
 /*connecting atom at beginning of next residue 030515*/
-EXTERN char  modnext[MAXmodchr]; 
+EXTERN char  modnext[MAXmodchr];
 EXTERN char  namenext[7];
-EXTERN char  atomnext[6],resnext[4],subnext[2],rinsnext[2]; 
+EXTERN char  atomnext[6],resnext[4],subnext[2],rinsnext[2];
 EXTERN char  Anumnext[6];/*Hybrid36 071001, replace int ncntnext*/
 EXTERN int   numnext,Latomnext;
 EXTERN float xnext,ynext,znext,onext,Bnext,Uvalnext;
@@ -550,7 +551,7 @@ EXTERN FILE  *fphelpout; /*040425*/
 EXTERN int  Lhelpoutopen; /*040425*/
 EXTERN int  atEOF,itext,itemp,ihitend,ihitaalibend,ataalibEOF,Laalibopen;
 EXTERN int    thenLines,theviewLines,thenoldLines,thendiff;
-EXTERN int   Lfpoutput; /*931128 flag for failure to write fpoutput*/  
+EXTERN int   Lfpoutput; /*931128 flag for failure to write fpoutput*/
 /*--hbond residue-by-residue variables*/
 EXTERN int    tfc1,tfn2,tfca2,tfc2,tfo2,tfnh2;
 EXTERN float  c1xyz[4],xyz[4],n2xyz[4],ca2xyz[4],c2xyz[4],o2xyz[4];
@@ -583,7 +584,7 @@ EXTERN int   Lopenscriptout,Lscriptfileopen,LRCDialogInput;
 EXTERN int   Lopenscriptin;
 EXTERN int   Ltest, Limittext;
 EXTERN long  maxtextchar;
-EXTERN int  Lgetranges,Lrangecontrols,Lfinishranges; 
+EXTERN int  Lgetranges,Lrangecontrols,Lfinishranges;
 EXTERN int  Ldetails;
 EXTERN int  Lgetatommarker;
 EXTERN int  Lgetribbonparam;
@@ -624,6 +625,8 @@ EXTERN double CRIT;
 EXTERN double R[4][4], U[4], THETA, E, XBAR[4], YBAR[4];
 EXTERN int    NCYCLE, ISTAT;
 EXTERN float P[5][5];
+
+EXTERN int UseSEGIDasChain; //jjh 130507
 
 /*UNIX_X11  does typedef Cursor CursHandle */
 /*PCWINDOWS does typedef Handle CursHandle */
@@ -792,7 +795,7 @@ typedef struct{
     char* next;
     char* cursor;
 } textblock;
- 
+
 EXTERN textblock mainscratch, hbnscratch, hboscratch, hetscratch;
 EXTERN textblock headerstuff,hypertextstuff,pdbinfostuff;
 EXTERN int Lhypertextstuff;
@@ -806,5 +809,5 @@ typedef struct{
 
 EXTERN colorscalestruct colorscale[11];
 
-#include "PKINhdr.h"   /*many prototypes are at beginning of src files*/  
+#include "PKINhdr.h"   /*many prototypes are at beginning of src files*/
 

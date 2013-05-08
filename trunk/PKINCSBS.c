@@ -5,15 +5,15 @@
 #include "PKINCRTL.h" /*070829 for LGFPchromophore*/
 
   typedef struct resatomstruct {
-     char subc[2];
+     char subc[3];
      char resc[4];
      char numc[5];
      char rinsc[2];
      char atomc[6];
   }resatomstruct;
-static  struct resatomstruct* resatomptr;  
-static  struct resatomstruct* resAtomOLDptr;  
-static  struct resatomstruct* resAtomNEWptr;  
+static  struct resatomstruct* resatomptr;
+static  struct resatomstruct* resAtomOLDptr;
+static  struct resatomstruct* resAtomNEWptr;
 
 /*prototypes used entirely within this source file*/
 void writesctoscratch(int,char*);
@@ -26,7 +26,7 @@ float  distan(double xa,double ya,double za,double x1,double y1,double z1)
 {
     double  x2,y2,z2;
     float   freturn;
-    
+
     x2 = ( xa - x1 )*( xa - x1 );
     y2 = ( ya - y1 )*( ya - y1 );
     z2 = ( za - z1 )*( za - z1 );
@@ -42,13 +42,13 @@ float  distanfa4(float xyza[4], float xyz1[4])
     double  xa=0,ya=0,za=0,x1=0,y1=0,z1=0,x2=0,y2=0,z2=0;
     float   freturn;
 
-    xa = (double)xyza[1];    
-    ya = (double)xyza[2];    
-    za = (double)xyza[3];    
-    x1 = (double)xyz1[1];    
-    y1 = (double)xyz1[2];    
-    z1 = (double)xyz1[3];    
-    
+    xa = (double)xyza[1];
+    ya = (double)xyza[2];
+    za = (double)xyza[3];
+    x1 = (double)xyz1[1];
+    y1 = (double)xyz1[2];
+    z1 = (double)xyz1[3];
+
     x2 = ( xa - x1 )*( xa - x1 );
     y2 = ( ya - y1 )*( ya - y1 );
     z2 = ( za - z1 )*( za - z1 );
@@ -64,7 +64,7 @@ void  uctolctexts(char texts[256])
   int  j,k,match;
 static  char  uc[] = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static  char  lc[] = " abcdefghijklmnopqrstuvwxyz";
-  
+
   /*converts upper case alphabetic char to lower case */
   for(k=0 ; k<80 ; k++)  /*test everything for alphabetic character */
   {
@@ -78,7 +78,7 @@ static  char  lc[] = " abcdefghijklmnopqrstuvwxyz";
       }
       if(match==1) break;
     }
-  }  
+  }
   return;
 }
 /*__uctolctexts()___________________________________________________________*/
@@ -89,7 +89,7 @@ char lctouc(char charic)
   int  j,match;
 static  char  uc[] = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static  char  lc[] = " abcdefghijklmnopqrstuvwxyz";
-  
+
   /*converts lower case alphabetic char to upper case */
     match = 0;
     for(j=1 ; j<= 26 ; j++)
@@ -111,7 +111,7 @@ char uctolc(char charic)
   int  j,match;
 static  char  uc[] = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static  char  lc[] = " abcdefghijklmnopqrstuvwxyz";
-  
+
   /*converts upper case alphabetic char to lower case */
     match = 0;
     for(j=1 ; j<= 26 ; j++)
@@ -146,8 +146,8 @@ struct resatomstruct* allocresatomstruct(void)
       thereturnptr->numc[2]   = ' ';
       thereturnptr->numc[3]   = ' ';
       thereturnptr->numc[4]   = '\0';
-      thereturnptr->rinsc[0]  = ' '; 
-      thereturnptr->rinsc[1]  = '\0'; 
+      thereturnptr->rinsc[0]  = ' ';
+      thereturnptr->rinsc[1]  = '\0';
       thereturnptr->atomc[0]  = ' ';
       thereturnptr->atomc[1]  = ' ';
       thereturnptr->atomc[2]  = ' ';
@@ -167,33 +167,33 @@ void decoderesatom(resatomstruct* resatomptr, char sub[3],char res[4],int num,ch
  if(resatomptr != NULL)
  {
   /*convert to 2char subunit==chainID   071222*/
-  if(  (sub[0] == '\0' || sub[0] == ' ') 
+  if(  (sub[0] == '\0' || sub[0] == ' ')
      &&(sub[1] == '\0' || sub[1] == ' ') )
   {
-      resatomptr->subc[0] = ' '; 
-      resatomptr->subc[1] = '_'; 
+      resatomptr->subc[0] = ' ';
+      resatomptr->subc[1] = '_';
       resatomptr->subc[2] = '\0';
   }
-  else 
+  else
   {
-      resatomptr->subc[0] = lctouc(sub[0]); 
-      resatomptr->subc[1] = lctouc(sub[1]); 
+      resatomptr->subc[0] = lctouc(sub[0]);
+      resatomptr->subc[1] = lctouc(sub[1]);
       resatomptr->subc[2] = '\0';
   }
 
   sprintf(resatomptr->resc,"%s",res);
   for(j=0; j<3; j++){if(resatomptr->resc[j] == ' '){resatomptr->resc[j] = '_';}
                      else{resatomptr->resc[j] = lctouc(resatomptr->resc[j]);} }
-  resatomptr->resc[4] = '\0';
+  resatomptr->resc[3] = '\0';
 
   sprintf(resatomptr->numc,"%4d",num);
   for(j=0; j<4; j++){if(resatomptr->numc[j] ==' '){resatomptr->numc[j] ='_';} }
   resatomptr->numc[4] = '\0';
 
-  if(rins[0] == '\0' || rins[0] == ' ') 
+  if(rins[0] == '\0' || rins[0] == ' ')
        {resatomptr->rinsc[0] = '_'; resatomptr->rinsc[1] = '\0';}
   else {resatomptr->rinsc[0] = lctouc(rins[0]); resatomptr->rinsc[1] = '\0';}
-  
+
   sprintf(resatomptr->atomc,"%s",atom);
   for(j=0; j<5; j++) {if(resatomptr->atomc[j] ==' '){resatomptr->atomc[j] ='_';}
                    else{resatomptr->atomc[j] = lctouc(resatomptr->atomc[j]);} }
@@ -214,7 +214,7 @@ void  oldcon(int jatom, float setdst, int ica)
   int     Lstderr = 0;
   int     jconn = 0; /*atom for which base[jconn] = noldat*/
   static int Lneedconnectheader=1; /*need header even when first residue wierd*/
-  
+
   /* set offset for mainchain or ca-ca connection */
   k = 0;                   /*mainchain*/
   if( ica != 0 ) {k = 4;}  /*ca-ca*/
@@ -366,7 +366,7 @@ void  oldcon(int jatom, float setdst, int ica)
   /*--defaults had been set so: base(jatom) = jatom & discon = TRUE */
   if(base[jatom] != jatom) discon = FALSE;
   /*--i.e., something got connected! */
-  
+
   if(Lconnectresiduesdump) /* 061202 in oldcon() */
   {/*Lconnectresiduesdump*/
      if(icountres[level] == 0 || Lneedconnectheader)
@@ -404,11 +404,11 @@ fprintf(stderr,"typechainfirstpass[level]== %c\n",typechainfirstpass[level]);
         }
      }
      else
-     {/*in chain...*/ 
-        if(dist >= 0) 
+     {/*in chain...*/
+        if(dist >= 0)
         {/*distance was calculated, so noldat exists for this residue and atom*/
            if(base[jconn] == noldat) {ny = 1;} else {ny = 0;}
-         
+
            if(resAtomOLDptr == NULL) {resAtomOLDptr = allocresatomstruct();}
            if(resAtomOLDptr != NULL)
            {
@@ -419,7 +419,7 @@ fprintf(stderr,"typechainfirstpass[level]== %c\n",typechainfirstpass[level]);
            {
               decoderesatom(resAtomNEWptr,sub[jconn],res[jconn],num[jconn],rins[jconn],atom[jconn]);
            }
-        
+
            if(resAtomNEWptr != NULL && resAtomOLDptr != NULL )
            {
              if(Lstderr)
@@ -434,7 +434,7 @@ fprintf(stderr,"typechainfirstpass[level]== %c\n",typechainfirstpass[level]);
                  ,resAtomNEWptr->subc,resAtomNEWptr->resc,resAtomNEWptr->numc
                  ,resAtomNEWptr->rinsc,resAtomNEWptr->atomc
               );
-        
+
               fprintf(stderr,"%2d # %5d back :%s:%s:%s%s:%s:<%s-:%.3f"
                  ,level, icountres[level]
                  ,resAtomNEWptr->subc,resAtomNEWptr->resc,resAtomNEWptr->numc
@@ -497,7 +497,7 @@ fprintf(stderr,"typechainfirstpass[level]== %c\n",typechainfirstpass[level]);
              putonetextblockline(&mainscratch,temps);
            }
         }/*nothing known about connecting this residue*/
-         
+
         if(endchn)
         {
            if(resAtomNEWptr == NULL) {resAtomNEWptr = allocresatomstruct();}
@@ -519,7 +519,7 @@ fprintf(stderr,"typechainfirstpass[level]== %c\n",typechainfirstpass[level]);
               putonetextblockline(&mainscratch,temps);
            }
         }
-     }/*in chain...*/ 
+     }/*in chain...*/
   }/*Lconnectresiduesdump*/
 return;
 }
@@ -542,7 +542,7 @@ void   tacker(int nput,int nget)
   for(j=0; j<= 3; j++){res[nput][j] = res[nget][j];}
   for(j=0; j<= 6; j++){name[nput][j] = name[nget][j];}
   for(j=0; j<= 2; j++){sub[nput][j] = sub[nget][j];} /*2char 071222*/
-  for(j=0; j<= 1; j++){rins[nput][j] = rins[nget][j];} 
+  for(j=0; j<= 1; j++){rins[nput][j] = rins[nget][j];}
   for(j=0; j<= 2; j++){element[nput][j] = element[nget][j];} /*070520*/
   for(j=0; j< MAXmodchr; j++){mod[nput][j] = mod[nget][j];}
   /*residue's atom records inc mod[][MAXmodchr] for nmrmodel number str 0-99 */
@@ -566,7 +566,7 @@ void   muttacker(int nput,int nget)
   for(j=0; j<= 3; j++){mutres[nput][j] = mutres[nget][j];}
   for(j=0; j<= 6; j++){mutname[nput][j] = mutname[nget][j];}
   for(j=0; j<= 2; j++){mutsub[nput][j] = mutsub[nget][j];}  /*2char 071222*/
-  for(j=0; j<= 1; j++){mutrins[nput][j] = mutrins[nget][j];} 
+  for(j=0; j<= 1; j++){mutrins[nput][j] = mutrins[nget][j];}
   for(j=0; j< MAXmodchr; j++){mutmod[nput][j] = mutmod[nget][j];}
   return;
 }
@@ -597,7 +597,7 @@ void   sstapler(int nput,int nget)
   else
      ssBval[nput] = B[nget]; /*temperature factor in PDB field: col 61...66*/
   return;
-} 
+}
 /*__sstapler()______________________________________________________________*/
 
 /****creatm()****************************************************************/
@@ -647,12 +647,12 @@ void   mutadder(int nput,int nget)
   strcpy(Anum[nput],mutAnum[nget]); /*hybrid36 071001 ncnt[nput]=mutncnt[nget]*/
   for(j=0 ; j<= 5 ; j++) atom[nput][j] = mutatom[nget][j];
   for(j=0 ; j<= 3 ; j++) res[nput][j] = mutres[nget][j];
-  
+
   /*record name, residue number, subunit indicator, insertion indicator  kept*/
   for(j=0 ; j<= 6 ; j++) name[nput][j] = name[maxatm][j];
   for(j=0 ; j<= 2 ; j++) sub[nput][j] = sub[maxatm][j]; /*2char 071222*/
   num[nput]  = num[maxatm];
-  for(j=0 ; j<= 1 ; j++) rins[nput][j] = rins[maxatm][j]; 
+  for(j=0 ; j<= 1 ; j++) rins[nput][j] = rins[maxatm][j];
   for(j=0 ; j< MAXmodchr ; j++) mod[nput][j] = mod[maxatm][j];
      /*nmr model # */
   for(j=0 ; j< MAXaspectchars+3 ; j++) aspectstr[nput][j] = aspectstr[nget][j];
@@ -669,46 +669,46 @@ atom      2  ca  arg a   1      25.497  26.862  -1.573  1.00 17.63      4pti  90
 int    screenatompair(int j)
 {
   int    itype;
-  
+
   itype = 1; /*presume ok then test for exceptions */
         /* any pair in this direction will show up in the other direction */
         /* so can safely not connect in a particular direction */
-        
-  if(  atom[natom][1] == 'c' && atom[natom][2] == 'a' 
-    &&   atom[j][1] == 'c' && atom[j][2] == 'b') itype = 0;  
+
+  if(  atom[natom][1] == 'c' && atom[natom][2] == 'a'
+    &&   atom[j][1] == 'c' && atom[j][2] == 'b') itype = 0;
       /*don't base ca on cb */
-        
-  if(  atom[natom][1] == 'c' && atom[natom][2] == ' ' 
-    &&   atom[j][1] == 'o' && atom[j][2] == ' ') itype = 0;  
+
+  if(  atom[natom][1] == 'c' && atom[natom][2] == ' '
+    &&   atom[j][1] == 'o' && atom[j][2] == ' ') itype = 0;
       /*don't base c on o */
 
-  if(  atom[natom][1] == 'c' && atom[natom][2] == 'a' 
-    &&   atom[j][1] == 'c' && atom[j][2] == ' ') itype = 0;  
+  if(  atom[natom][1] == 'c' && atom[natom][2] == 'a'
+    &&   atom[j][1] == 'c' && atom[j][2] == ' ') itype = 0;
       /*don't base ca on c */
 
-  if(  atom[natom][1] == 'n' && atom[natom][2] == ' ' 
-    &&   atom[j][1] == 'c' && atom[j][2] == 'a') itype = 0;  
+  if(  atom[natom][1] == 'n' && atom[natom][2] == ' '
+    &&   atom[j][1] == 'c' && atom[j][2] == 'a') itype = 0;
       /*don't base n on ca */
 
-  if(  atom[natom][2] == 'b' && atom[j][2] == 'g') itype = 0;  
+  if(  atom[natom][2] == 'b' && atom[j][2] == 'g') itype = 0;
        /*don't base _b on _g */
-      
-  if(  atom[natom][2] == 'g' && atom[j][2] == 'd') itype = 0;  
+
+  if(  atom[natom][2] == 'g' && atom[j][2] == 'd') itype = 0;
        /*don't base _g on _d */
 
-  if(  atom[natom][2] == 'd' && atom[j][2] == 'e') itype = 0;  
+  if(  atom[natom][2] == 'd' && atom[j][2] == 'e') itype = 0;
        /*don't base _d on _e */
 
-  if(  atom[natom][2] == 'e' && atom[j][2] == 'z') itype = 0;  
+  if(  atom[natom][2] == 'e' && atom[j][2] == 'z') itype = 0;
        /*don't base _e on _z */
 
-  if(  atom[natom][2] == 'z' && atom[j][2] == 'h') itype = 0;  
+  if(  atom[natom][2] == 'z' && atom[j][2] == 'h') itype = 0;
        /*don't base _z on _h */
 
-  if(  atom[natom][2] == 'a' && atom[j][2] == 'e') itype = 0;  
+  if(  atom[natom][2] == 'a' && atom[j][2] == 'e') itype = 0;
        /*don't base _a on _e proline with ne at position of n*/
 
-  if(  atom[natom][2] == 'e' && atom[j][2] == 'a') itype = 0;  
+  if(  atom[natom][2] == 'e' && atom[j][2] == 'a') itype = 0;
        /*don't base _e on _a proline with ne at position of n*/
 
   return(itype);
@@ -719,12 +719,12 @@ int    screenatompair(int j)
 int    screenhetpairs(int j)
 {
   int    itype,k;
-  
+
   itype = 1; /*presume ok then test for exceptions */
         /* any pair in this direction will show up in the other direction */
         /* so can safely not connect in a particular direction */
-        
-        
+
+
   /*Question being asked is j atom a base for natom atom?*/
   /* Is natom connected to j anywhere else? */
   /* for (1   ->   maxatom)  = k        */
@@ -766,18 +766,18 @@ else if( atom[j][1] == 'o' && atom[j][2] == 'x' && atom[j][3] == 't')
 #ifdef GFPchromophore /*070731 this part works, BUT see PKINCSUB code... */
 /*070731 code for GFP chromophore: flagged 070829*/
 else if(  LGFPchromophore
-        &&(  (atom[j][1]=='n'||atom[j][1]=='c'||atom[j][1]=='o') 
+        &&(  (atom[j][1]=='n'||atom[j][1]=='c'||atom[j][1]=='o')
            &&(atom[j][2]=='1'||atom[j][2]=='2'||atom[j][2]=='3')))Lncacos=TRUE;
 
 else if(  LGFPchromophore
-        &&(  (atom[j][1]=='c'&&atom[j][2]=='a') 
+        &&(  (atom[j][1]=='c'&&atom[j][2]=='a')
            &&(atom[j][3]=='1'||atom[j][3]=='2'||atom[j][3]=='3')))Lncacos=TRUE;
 #endif /*GFPchromophore 070731*/
 
 #ifdef OLDCODE  /*pre 070728*/
 /*070520 this still may be OK even with new hydrogen names ????*/
 else if(  ( atom[j][1] == 'h' || atom[j][1] == 'd' || atom[j][1] == 'q') )
-   if(    ( atom[j][2] == 'a' || atom[j][2] == ' ' ) 
+   if(    ( atom[j][2] == 'a' || atom[j][2] == ' ' )
         &&( atom[j][3] == ' ' && atom[j][0] != '2' ) ) Lncacos = TRUE;/*mc h*/
    if(    ( atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
 #endif
@@ -787,11 +787,11 @@ else if(isahydrogen(name[j],atom[j],element[j]))
    if(   ( atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;/*nucleic*/
    else if(  (atom[j][2] == 'a' || atom[j][2] == ' ')
            &&(atom[j][3] == ' ' ) ) Lncacos = TRUE;/*mc h on ca and n*/
-   else if(  (atom[j][2] == 'a' && atom[j][3] == ' ') 
+   else if(  (atom[j][2] == 'a' && atom[j][3] == ' ')
            &&(atom[j][0] == '1' || atom[j][0] == '2')) Lncacos = TRUE;/*oldgly*/
-   else if(  (atom[j][2] == 'a' && atom[j][0] == ' ') 
+   else if(  (atom[j][2] == 'a' && atom[j][0] == ' ')
            &&(atom[j][3] == '3' || atom[j][3] == '2')) Lncacos = TRUE;/*newgly*/
-   else if(  (atom[j][0] == ' ' && atom[j][3] == ' ') 
+   else if(  (atom[j][0] == ' ' && atom[j][3] == ' ')
            &&(isdigit(atom[j][2]))) Lncacos = TRUE; /*old&new Nterm*/
 }
 else if( atom[j][1] == 'p' && atom[j][2] == ' ' && atom[j][3] == ' ')
@@ -807,25 +807,25 @@ else if( atom[j][1] == 'o' && atom[j][2] == 'p' && atom[j][3] == '1')
 else if( atom[j][1] == 'o' && atom[j][2] == 'p' && atom[j][3] == '2')
          Lncacos = TRUE;
 
-else if( atom[j][1] == 'o' && atom[j][2] == '5' && 
+else if( atom[j][1] == 'o' && atom[j][2] == '5' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
 else if( atom[j][1] == 'c' && atom[j][2] == '5' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'o' && atom[j][2] == '4' && 
+else if( atom[j][1] == 'o' && atom[j][2] == '4' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'c' && atom[j][2] == '4' && 
+else if( atom[j][1] == 'c' && atom[j][2] == '4' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'c' && atom[j][2] == '3' && 
+else if( atom[j][1] == 'c' && atom[j][2] == '3' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'o' && atom[j][2] == '3' && 
+else if( atom[j][1] == 'o' && atom[j][2] == '3' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'c' && atom[j][2] == '2' && 
+else if( atom[j][1] == 'c' && atom[j][2] == '2' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'o' && atom[j][2] == '2' && 
+else if( atom[j][1] == 'o' && atom[j][2] == '2' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'o' && atom[j][2] == '1' && 
+else if( atom[j][1] == 'o' && atom[j][2] == '1' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
-else if( atom[j][1] == 'c' && atom[j][2] == '1' && 
+else if( atom[j][1] == 'c' && atom[j][2] == '1' &&
         (atom[j][3] == '*' || atom[j][3] == '\'') ) Lncacos = TRUE;
 return(Lncacos);
 }
@@ -849,18 +849,18 @@ else if( mutatom[j][1] == 'o' && mutatom[j][2] == 'x' && mutatom[j][3] == 't')
 /*no, gly was HA1 HA2 now HA2 HA3  071222 */
 else if(  ( mutatom[j][1]== 'h' || mutatom[j][1]== 'd' || mutatom[j][1]== 'q')
         &&( mutatom[j][2]== 'a' || mutatom[j][2]== ' ') /*mainchain hydrogen*/
-        &&( mutatom[j][3]== ' ' && mutatom[j][0]!= '2') ) Lncacos = TRUE;  
+        &&( mutatom[j][3]== ' ' && mutatom[j][0]!= '2') ) Lncacos = TRUE;
 #endif
 else if(isahydrogenname(mutatom[j]))
 {
    if(   ( mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;/*nucleic*/
    else if(  (mutatom[j][2] == 'a' || mutatom[j][2] == ' ')
            &&(mutatom[j][3] == ' ' ) ) Lncacos = TRUE;/*mc h on ca and n*/
-   else if(  (mutatom[j][2] == 'a' && mutatom[j][3] == ' ') 
+   else if(  (mutatom[j][2] == 'a' && mutatom[j][3] == ' ')
            &&(mutatom[j][0] == '1' || mutatom[j][0] == '2')) Lncacos = TRUE;/*oldgly*/
-   else if(  (mutatom[j][2] == 'a' && mutatom[j][0] == ' ') 
+   else if(  (mutatom[j][2] == 'a' && mutatom[j][0] == ' ')
            &&(mutatom[j][3] == '3' || mutatom[j][3] == '2')) Lncacos = TRUE;/*newgly*/
-   else if(  (mutatom[j][0] == ' ' && mutatom[j][3] == ' ') 
+   else if(  (mutatom[j][0] == ' ' && mutatom[j][3] == ' ')
            &&(isdigit(mutatom[j][2]))) Lncacos = TRUE; /*old&new Nterm*/
 }
 else if( mutatom[j][1] == 'p' && mutatom[j][2] == ' ' && mutatom[j][3] == ' ')
@@ -876,33 +876,33 @@ else if( mutatom[j][1] == 'o' && mutatom[j][2] == 'p' && mutatom[j][3] == '1')
 else if( mutatom[j][1] == 'o' && mutatom[j][2] == 'p' && mutatom[j][3] == '2')
          Lncacos = TRUE;
 
-else if( mutatom[j][1] == 'o' && mutatom[j][2] == '5' && 
+else if( mutatom[j][1] == 'o' && mutatom[j][2] == '5' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'c' && mutatom[j][2] == '5' && 
+else if( mutatom[j][1] == 'c' && mutatom[j][2] == '5' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'o' && mutatom[j][2] == '4' && 
+else if( mutatom[j][1] == 'o' && mutatom[j][2] == '4' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'c' && mutatom[j][2] == '4' && 
+else if( mutatom[j][1] == 'c' && mutatom[j][2] == '4' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'c' && mutatom[j][2] == '3' && 
+else if( mutatom[j][1] == 'c' && mutatom[j][2] == '3' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'o' && mutatom[j][2] == '3' && 
+else if( mutatom[j][1] == 'o' && mutatom[j][2] == '3' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'c' && mutatom[j][2] == '2' && 
+else if( mutatom[j][1] == 'c' && mutatom[j][2] == '2' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'o' && mutatom[j][2] == '2' && 
+else if( mutatom[j][1] == 'o' && mutatom[j][2] == '2' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'o' && mutatom[j][2] == '1' && 
+else if( mutatom[j][1] == 'o' && mutatom[j][2] == '1' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
-else if( mutatom[j][1] == 'c' && mutatom[j][2] == '1' && 
+else if( mutatom[j][1] == 'c' && mutatom[j][2] == '1' &&
         (mutatom[j][3] == '*' || mutatom[j][3] == '\'') ) Lncacos = TRUE;
 return(Lncacos);
 }
 /*___decidemutmainside()____________________________________________________*/
 /*
 sprintf(temps,CRLF"writesctoscratch(%d,%s) k==%d, xth:%c:"CRLF,j,cntl,k,xth);
-pkintextinsert(temps); 
-adjusttext(1); 
+pkintextinsert(temps);
+adjusttext(1);
 */
 /****writesctoscratch()******************************************************/
 void   writesctoscratch(int j,char* cntl)
@@ -918,9 +918,9 @@ static  char  xth = ' '; /*991128*/
         float radius=0;   /*050211 VRML*/
         char  whostr[32]; /*050211 VRML*/
         char  cs[MAXNAMECHAR+2]; /*051102*/
- 
+
   k = base[j];
-  
+
 /*
     sprintf(temps,CRLF"sca %d: %s %s %s %d , isc== %d"
     ,j,atom[j],res[j],sub[j],num[j],isc[j]);
@@ -932,7 +932,7 @@ static  char  xth = ' '; /*991128*/
      if(Leachsclist)   /*991128*/
      {/*toggle output indicator for changed sidechain*/
         if(xth == '1') xth = '2';
-        else           xth = '1'; 
+        else           xth = '1';
      }
      else xth = ' '; /*for completeness*/
   }
@@ -965,23 +965,23 @@ static  char  xth = ' '; /*991128*/
   Lprint1 = TRUE; /*print the base as P */
   Lprint2 = TRUE; /*print the atom as L */
   if(   (!(Lcbstubsrib && atom[k][1]=='c' && atom[k][2]=='b'))    /*050206*/
-     && (lastsc == k) ) 
+     && (lastsc == k) )
      /*cbstubsrib---CB vector, need explicitly both ends of CB---CG vector */
   {/*polyline*/
      Lprint1 = FALSE;
-     if(Lalts && altstr[2]==' ') 
+     if(Lalts && altstr[2]==' ')
      {/*may be join to primary conf, avoid line jumping previous atom*/
         altstr[2] = atom[k][4];
      }
   }
-  if(Lalts && altstr[2]==' ') 
+  if(Lalts && altstr[2]==' ')
   {/*try NO pointmaster for ' ' case*/
      altstr[0] = '\0';
   }
 
   lastsc = j;
-   
-  if( !scCPKoutl && !rotoutl) 
+
+  if( !scCPKoutl && !rotoutl)
   {
      Listscv = 1;
      if(isc[j]!=2)
@@ -993,23 +993,23 @@ static  char  xth = ' '; /*991128*/
   {
        /*else if(hyoutl && (atom[j][1] == 'h' || atom[j][1] == 'd'))*/
        if(hyoutl && isahydrogen(name[j],atom[j],element[j]) ) /*070520*/
-       {   
+       {
            Listsckh = 1;cntl[2] = 'k';cntl[3] = 'h';cntl[4] = '\0';
        }
        else if(atom[j][1] == 'c')
-       {   
+       {
            Listsckc = 1;cntl[2] = 'k';cntl[3] = 'c';cntl[4] = '\0';
        }
        else if(atom[j][1] == 'o')
-       {   
+       {
            Listscko = 1;cntl[2] = 'k';cntl[3] = 'o';cntl[4] = '\0';
        }
        else if(atom[j][1] == 'n')
-       {   
+       {
            Listsckn = 1;cntl[2] = 'k';cntl[3] = 'n';cntl[4] = '\0';
        }
-       else   
-       {   
+       else
+       {
            Listscks = 1;cntl[2] = 'k';cntl[3] = 's';cntl[4] = '\0';
        }
        Lprint1 = FALSE; /*just need unique atom of the vector pair*/
@@ -1069,7 +1069,7 @@ static  char  xth = ' '; /*991128*/
     {
        colr[0] = '\0'; /*NULL string occupies NO space in %s output field*/
     }
-    if(Bvaloutl && Lprint1) 
+    if(Bvaloutl && Lprint1)
     {/*occ&B for Lprint1*/
        /*whenever occ < 1.0 and when B != 0, include values in ptID*/ /*971213*/
        if(o[k] != 0.0 && o[k] != 1.0)
@@ -1093,8 +1093,8 @@ static  char  xth = ' '; /*991128*/
        sprintf(extra,"%s %s",extra1,ShortNameStr);
        sprintf(extra1,"%s",extra);
     }
-    
-    if(Bvaloutl && Lprint2) 
+
+    if(Bvaloutl && Lprint2)
     {/*occ&B for Lprint2*/
       /*whenever occ < 1.0 and when B != 0, include values in ptID*/ /*971213*/
       if(o[j] != 0.0 && o[j] != 1.0)
@@ -1124,16 +1124,16 @@ static  char  xth = ' '; /*991128*/
        cs[1] = '\0';
        strcat(cs,codestr);
     }
-    else 
+    else
     {
        cs[0] = '\0';
     }
     /*writesctoscratch()----*/
-    if(  (!(Lcbstubsrib && atom[j][1]=='c' && atom[j][2]=='b'))    /*050206*/
-       &&  !Lcbonly 
-       ||  (Lcbonly && atom[j][1]=='c' && atom[j][2]=='b')     ) 
+    if(  ((!(Lcbstubsrib && atom[j][1]=='c' && atom[j][2]=='b'))    /*050206*/
+       &&  !Lcbonly)
+       ||  (Lcbonly && atom[j][1]=='c' && atom[j][2]=='b')     )
        /*when Lcbstubsrib (rib---CB), do not also write the CA---CB vector*/
-    {/*restricted output for sidechain*/ 
+    {/*restricted output for sidechain*/
       if(Lsuperpos)
       {/*sc lumped together with sc for each residue in output*/
         Listsuppos = 1;
@@ -1144,8 +1144,8 @@ static  char  xth = ' '; /*991128*/
         /*NOTE sub[] is now 2 char, extra char goes into preceeding space*/
         /* thus drop the blank-space field in pointID part of output 071222*/
 
-        if(Lprint1)  
-        {            
+        if(Lprint1)
+        {
           /*050916 rds on P so balllists will have atomic radii*/
           /* 050705 altstr on P == that of following L type point (for KiNG)*/
           /* this may be wrong for this Lsuperpos section????*/
@@ -1176,7 +1176,7 @@ static  char  xth = ' '; /*991128*/
       {/*ususal division of mc, sc*/
         if(LdumpVRML && LvectorVRML) /*050208*/
         {/*
-           sprintf(cntl,"scv ");/*goes with sidechain vectors*/
+           sprintf(cntl,"scv "); //goes with sidechain vectors*/
            sprintf(whostr," sc ");
            radius = ribwidVRML/nstrnd;
            writeVRMLvectortoscratch(cntl,colr2,radius,whostr
@@ -1184,7 +1184,7 @@ static  char  xth = ' '; /*991128*/
         }
         else
         {
-           if(Lprint1 && !Lprint2) 
+           if(Lprint1 && !Lprint2)
            {
             /*050916 rds on P so balllists will have atomic radii*/
             /* 050705 altstr on P == that of following L type point (for KiNG)*/
@@ -1198,7 +1198,7 @@ static  char  xth = ' '; /*991128*/
            else if(Lprint2 && !Lprint1)
            {
              /*maybe a continuation of a polyline*/
-          
+
              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s%s%s "
                 "%.3f, %.3f, %.3f"EOLO
                 ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
@@ -1216,20 +1216,20 @@ static  char  xth = ' '; /*991128*/
                 ,altstr,x[k],y[k],z[k]
                 ,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
                 ,aspectstr[j],colr,ballstr,hydrgstr,altstr,rds,sty
-                ,x[j],y[j],z[j]); 
+                ,x[j],y[j],z[j]);
              putonetextblockline(&mainscratch,temps);
              ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
              ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
            }
         }
       }/*ususal division of mc, sc*/
-    }/*restricted output for sidechain*/ 
+    }/*restricted output for sidechain*/
   }/*output*/
 }
 /*___writesctoscratch()_____________________________________________________*/
 /*
-pkintextinsert(temps); 
-adjusttext(1); 
+pkintextinsert(temps);
+adjusttext(1);
 */
 /*name[n],Anum[n],atom[n],res[n],sub[n],&num[n],rins[n],&x[n],&y[n],&z[n]*/
 /*format(a6,a5,1x,a5,a3,1x,a1,i4,a1,3x,3&8.3)*/
@@ -1242,7 +1242,7 @@ atom      2  ca  arg a   1      25.497  26.862  -1.573  1.00 17.63      4pti  90
 */
 /*  --name*6 record designator: atom or hetatom recognized  */
 /*  --Anum*5 hybrid36 atom number: moved blindly to output file  */
-/*  --atom*5 includes atomname*4 and alt-conformation-indicator*1,  */ 
+/*  --atom*5 includes atomname*4 and alt-conformation-indicator*1,  */
 /*  --res*3 residue name  */
 /*  --sub*2 chain ID: subunit designator  */
 /*  --num:i4 residue number  */
@@ -1254,14 +1254,14 @@ atom      2  ca  arg a   1      25.497  26.862  -1.573  1.00 17.63      4pti  90
 void   writescratch(int maxcounter)
 {
    /*actual mc and het write to scratch, writesctoscratch() called for sc */
-   
+
   char  colr1[32],colr2[32];
 static  char  cntl[5]; /* 4 blank characters */
   int  Lprint1,Lprint2;
   int      j,k,lastmc,ij,jj,LOK=1,LheadOK=1;
 static  float  lastcax,lastcay,lastcaz;
   float    Avalue;
-  char extra[16],extra1[20],extra2[20],cell[32];  
+  char extra[16],extra1[20],extra2[20],cell[32];
   float Bvalmax=0;
   int Lnewresidue=0;
   char Bvalmaster[16];
@@ -1353,14 +1353,14 @@ if(Ltestprint)
        ,Laltcontrol,LOK,j,atom[j],base[j],atom[base[j]]);
 }
 #endif
-    if(LOK) 
+    if(LOK)
     {/*do this atom writescratch*/
 
     if(Lalts)
     {
        altstr[0] = ' '; /*leading blank*/
        altstr[2] = atom[j][4]; /*actual unique pointmaster character*/
-       if(altstr[2]==' ') 
+       if(altstr[2]==' ')
        {/*try NO pointmaster of ' '*/
           altstr[0] = '\0';
        }
@@ -1375,7 +1375,7 @@ if(Ltestprint)
     /*identify entry, check range controls, and write to scratch file*/
     if(name[j][0] == 'h') /*hetatm*/
     {/*hetatm*/
-      if( (htoutl || waoutl) && (base[j] > 0) ) 
+      if( (htoutl || waoutl) && (base[j] > 0) )
       /* only write out vectors fully specified */
       {
         if(  htoutl && notawater() )
@@ -1404,7 +1404,7 @@ if(Ltestprint)
             {/*CPKs*/  /*V3UNSAFE 070730, probably unsafe at any speed*/
                 cntl[0] = 'h';cntl[1] = 't';
                 Listht = TRUE;typenow=typeht; /*CPKs subset of het */
-            
+
                 /*else if(hyoutl && (atom[j][1] == 'h' || atom[j][1] == 'd'))*/
                 if(hyoutl && isahydrogen(name[j],atom[j],element[j]) )/*070520*/
                 {   Listhtkh = 1;cntl[2] = 'k';cntl[3] = 'h';cntl[4] = '\0';}
@@ -1414,9 +1414,9 @@ if(Ltestprint)
                 {   Listhtko = 1;cntl[2] = 'k';cntl[3] = 'o';cntl[4] = '\0';}
                 else if(atom[j][1]=='n'&&atom[j][2]!='i') /*e.g. Nickel offset*/
                 {   Listhtkn = 1;cntl[2] = 'k';cntl[3] = 'n';cntl[4] = '\0';}
-                else   
+                else
                 {   Listhtks = 1;cntl[2] = 'k';cntl[3] = 's';cntl[4] = '\0';}
-                Lprint1 = FALSE;Lprint2 = TRUE; 
+                Lprint1 = FALSE;Lprint2 = TRUE;
                    /*just unique atom of the vector pair*/
             }/*CPKs*/
         }/*NON-water hetatm*/
@@ -1451,9 +1451,9 @@ if(Ltestprint)
        /*test for  ( mcoutl || caoutl || caonly )  as one goes along*/
         if(   (caonly || caoutl || tabloutl)
            && (j > maxcounter)  /*the extra, pseudo mainchain, connection*/
-           && atom[j][1] == 'c' 
-           && atom[j][2] == 'a' 
-           && atom[k][1] == 'c' 
+           && atom[j][1] == 'c'
+           && atom[j][2] == 'a'
+           && atom[k][1] == 'c'
            && atom[k][2] == 'a'    )  /*ca-ca*/
         {/*only ca--ca */
           /*j > maxcounter == limit of original atoms, connections back */
@@ -1466,7 +1466,7 @@ if(Ltestprint)
              typenow=typeca;
              Lprint1 = 0;
              Lprint2 = TRUE;
-             cell[0] = getresiduecode(res[j][0],res[j][1],res[j][2]); 
+             cell[0] = getresiduecode(res[j][0],res[j][1],res[j][2]);
                 /*PKINROTL.c*/ /*returns 1-letter code*/
              cell[0] = toupper(cell[0]);
              cell[1] = '\0';
@@ -1478,34 +1478,34 @@ if(Ltestprint)
              Listca = TRUE;typenow=typeca;
              Lprint1 = TRUE;Lprint2 = TRUE;
           }
-          
+
           if(
             lastcax == x[k] &&
             lastcay == y[k] &&
             lastcaz == z[k]   ) Lprint1 = FALSE;
-          
+
           lastcax = x[j];
           lastcay = y[j];
           lastcaz = z[j];
 
         }/*only ca--ca */
         else if
-          ( 
-             (  caoutl                           
+          (
+             (  caoutl
               && (num[j]!=num[k] || rins[j][0]!=rins[k][0])
               && atom[k][1] == 'c' && atom[k][2] == '4'    /*set by oldcon*/
               && (atom[k][3] == '*' || atom[k][3] == '\'')/*from previous*/
               && atom[j][1] == 'p' && atom[j][2] == ' '   /*to present res*/
              )
-           ||(  caoutl  
+           ||(  caoutl
               && num[j]==num[k]  && rins[j][0]==rins[k][0] /*within residue*/
               && atom[k][1] == 'p' && atom[k][2] == ' '   /*from*/
-              && atom[j][1] == 'c' && atom[j][2] == '4'  
+              && atom[j][1] == 'c' && atom[j][2] == '4'
               && (atom[j][3] == '*' || atom[j][3] == '\'')   /*to*/
              )
-           ||(  caoutl                                    
-              && num[j]==num[k]  && rins[j][0]==rins[k][0] /*within residue*/ 
-              && atom[k][1] == 'c' && atom[k][2] == '4' 
+           ||(  caoutl
+              && num[j]==num[k]  && rins[j][0]==rins[k][0] /*within residue*/
+              && atom[k][1] == 'c' && atom[k][2] == '4'
               && (atom[k][3] == '*' || atom[k][3] == '\'')  /*from*/
               && atom[j][1] == 'c' && atom[j][2] == '1'     /*to*/
              )
@@ -1540,7 +1540,7 @@ if(Ltestprint)
         {/*putative mc hydrogen*/
           if( hyoutl && (base[j] > 0) )
           {/*functional hydrogen*/
-            if( !mcCPKoutl ) 
+            if( !mcCPKoutl )
             {
                cntl[0] = 'h';cntl[1] = 'y';cntl[2] = 'm';cntl[3] = 'c';
                cntl[4] = '\0';/*960815*/
@@ -1548,7 +1548,7 @@ if(Ltestprint)
                Lprint1 = TRUE;Lprint2 = TRUE;
             }
             else
-            {/*doing CPK this pass*/ 
+            {/*doing CPK this pass*/
                Listmckh = 1;
                typenow=typehy;
                cntl[0]='m';cntl[1]='c';cntl[2]='k';cntl[3]='h';cntl[4]='\0';
@@ -1556,7 +1556,7 @@ if(Ltestprint)
                Lprint2 = TRUE;
             }
           }/*functional hydrogen*/
-        }/*putative mc hydrogen*/      
+        }/*putative mc hydrogen*/
         else if( mcoutl && base[j] != 0)  /* mc && vector drawn to this atom*/
         {
           cntl[0] = 'm';cntl[1] = 'c';cntl[2] = ' ';cntl[3] = ' ';
@@ -1565,7 +1565,7 @@ if(Ltestprint)
           Lprint1 = TRUE;Lprint2 = TRUE;
           if(lastmc == k) Lprint1 = FALSE;
           lastmc = j;
-          if( !mcCPKoutl ) 
+          if( !mcCPKoutl )
           {
               Listmcv = 1;
               cntl[0] = 'm';cntl[1] = 'c';cntl[2] = 'v';cntl[3] = ' ';
@@ -1574,7 +1574,7 @@ if(Ltestprint)
           else
           {
               /*else if(hyoutl && (atom[j][1] == 'h' || atom[j][1] == 'd'))*/
-              if(hyoutl && isahydrogen(name[j],atom[j],element[j]) ) 
+              if(hyoutl && isahydrogen(name[j],atom[j],element[j]) )
                       /*070520*/
               {   Listmckn = 1;cntl[2] = 'k';cntl[3] = 'h';cntl[4] = '\0';}
                  /*but logic doesn't let a hydrogen get to here ?????*/
@@ -1584,7 +1584,7 @@ if(Ltestprint)
               {   Listmcko = 1;cntl[2] = 'k';cntl[3] = 'o';cntl[4] = '\0';}
               else if(atom[j][1] == 'n')
               {   Listmckn = 1;cntl[2] = 'k';cntl[3] = 'n';cntl[4] = '\0';}
-              else   
+              else
               {   Listmcks = 1;cntl[2] = 'k';cntl[3] = 's';cntl[4] = '\0';}
               Lprint1 = FALSE; /*just need unique atom of the vector pair*/
           }
@@ -1602,13 +1602,13 @@ if(Ltestprint)
             {/*doing hydrogens*/
               if( !rotoutl)
               {/*NOT a rotation sidechain*/
-                if( base[j] > 0)   
+                if( base[j] > 0)
                 {/*do sc hydrogens here, unless doing a rotation residue*/
-                  if( !scCPKoutl ) 
+                  if( !scCPKoutl )
                   {/*NOT CPK*/
                      if(Leachsclist)
                      {/* sc hydrogens just flagged here*/
-                        if( (base[j] > 0) ) 
+                        if( (base[j] > 0) )
                         isc[j] = 2; /*flag this atom as sidechain*/
                           /*2 for hydrogen*/
                       }/* sc hydrogens just flagged here*/
@@ -1631,13 +1631,13 @@ if(Ltestprint)
               }/*NOT a rotation sidechain*/
               else
               {/* sc rotation hydrogens just flagged here*/
-                if( (base[j] > 0) ) 
+                if( (base[j] > 0) )
                    isc[j] = 2; /*flag this atom as sidechain*/
                           /*2 for hydrogen*/
               }/* sc rotation hydrogens just flagged here*/
             }/*doing hydrogens*/
           }/*hydrogen*/
-          else 
+          else
           {/* sc heavy atoms always just flagged here*/
 #ifdef UNIX_X11
 if(Ltestprint)
@@ -1645,7 +1645,7 @@ if(Ltestprint)
    fprintf(stderr,"sc atom[%d]==%s\n",j,atom[j]);
 }
 #endif
-            if( (base[j] > 0) ) 
+            if( (base[j] > 0) )
             {
                isc[j] = 1; /*flag this atom as sidechain*/
 #ifdef UNIX_X11
@@ -1702,13 +1702,13 @@ for(j=1; j<= 9; j++)
     {
        if(name[j][0] == 'h') /*041029 het pt color colorbyNtoC set to white*/
        {
-          sprintf(colr1,"white"); 
-          sprintf(colr2,"white"); 
+          sprintf(colr1,"white");
+          sprintf(colr2,"white");
        }
        else
        {
-          sprintf(colr1,"%s",colorbyNtoC); 
-          sprintf(colr2,"%s",colorbyNtoC); 
+          sprintf(colr1,"%s",colorbyNtoC);
+          sprintf(colr2,"%s",colorbyNtoC);
        }
     }
     else
@@ -1720,7 +1720,7 @@ for(j=1; j<= 9; j++)
     if(Latomradii)
     {
        /*if(atom[j][1]=='h') */
-       if(isahydrogen(name[j],atom[j],element[j]) ) /*070520*/ 
+       if(isahydrogen(name[j],atom[j],element[j]) ) /*070520*/
        {
           if(atom[k][1]=='o'||atom[k][1]=='n')
           {
@@ -1769,8 +1769,8 @@ for(j=1; j<= 9; j++)
        sprintf(extra,"%s %s",extra1,ShortNameStr);
        sprintf(extra1,"%s",extra);
     }
-    
-    if(Bvaloutl && Lprint2) 
+
+    if(Bvaloutl && Lprint2)
     {/*occ&B for Lprint2*/
       /*whenever occ < 1.0 and when B != 0, include values in ptID*/ /*971213*/
       if((o[j] != 0.0 &&  o[j] != 1.0) || typenow==typewa)
@@ -1800,7 +1800,7 @@ for(j=1; j<= 9; j++)
        cs[1] = '\0';
        strcat(cs,codestr);
     }
-    else 
+    else
     {
        cs[0] = '\0';
     }
@@ -1894,12 +1894,12 @@ for(j=1; j<= 9; j++)
           /*first do this residues name, then do its number*/
           /*the resulting scratch lists will be put out in reverse order*/
 
-          
+
           if(pointcnt[typenow]==0)
           {/*create a zeroth cell for both lists: should have ROW title*/
              /*this is passed as the first point in wordlist*/
              if(MolNameStr[0] == '\0')
-                  sprintf(extra,"ROW %d",level);   
+                  sprintf(extra,"ROW %d",level);
              else sprintf(extra,"%s %d",MolNameStr,level);
              cntl[3] = 'l'; /*tabl*/
              sprintf(temps,"%s{ROW} <%s> U %.3f, %.3f, %.3f"EOLO
@@ -1925,10 +1925,10 @@ for(j=1; j<= 9; j++)
             ,x[j],y[j],z[j]);
           ++countxyz;++pointcnt[typenow];countpoints(cntl,0); /*L point only*/
           putonetextblockline(&mainscratch, temps); /*table*/
-          
+
           /*cell with this residue's number*/
           cntl[3] = 'h'; /*tabh*/
-          
+
           if(num[j]%10 != 0) {cell[0] = ' ';}
           else {sprintf(cell,"%d",num[j]);}
           sprintf(temps,"%s{%s%s%s%4d%s%s%s%s} <%s> %.3f, %.3f, %.3f"EOLO
@@ -1979,26 +1979,26 @@ for(j=1; j<= 9; j++)
 
     }/*do this atom*/
   }/*loop over all atoms*/
-  
+
   lastsc = -1; /*impossible value, so always get first atom's base */
-  if(scoutl) 
-  {/*special section to sort sc output */  
-   
-   if(rotoutl > 0) 
+  if(scoutl)
+  {/*special section to sort sc output */
+
+   if(rotoutl > 0)
    {/*rotation residue special case routine*/
        writescrotscratch(); /*calls getresiduerotations() which calls:*/
        /*findrotationaxis() and findrotationriders() actually write to scratch*/
 
        /*rotoutl now is number of rotation axes in the current residue*/
    }
-   
+
    if(rotoutl == 0)/*getresiduerotations() can change rotoutl to 0 sans output*/
    {/*ordinary sidechain, output in a relatively efficient sequence*/
     /*   move this step into writesctoscratch(j);*/ /*PKINCSBS.c*/
     /*build paths through sidechain using nextatm to flag next atom */
     for(ij=1 ; ij<=maxatm ; ij++) /*note j moves on beyond ij */
     {/*2nd loop over all atoms for sc sorting*/
-       if(isc[ij] > 0 && nextatm[ij] == 0) 
+       if(isc[ij] > 0 && nextatm[ij] == 0)
        {/*only look at recognized sc that aren't yet in a path */
           j = ij;  /*start a new P L L ... run */
           /*write this sc to scratch file*/
@@ -2018,7 +2018,7 @@ for(j=1; j<= 9; j++)
                 else
                 {
                    nextatm[j] = jj;
-                   j = jj;       
+                   j = jj;
                    /*write this next sc to scratch file*/
 
                    writesctoscratch(j,cntl); /*PKINCSBS.c*/
@@ -2031,7 +2031,7 @@ for(j=1; j<= 9; j++)
     }/*2nd loop over all atoms for sc sorting*/
     if(Lfillscrings) tesselatescrings(cntl);
    }/*ordinary sidechain, output in a relatively efficient sequence*/
-   
+
   }/*special section to sort sc output */
 }
 /*___writescratch()_________________________________________________________*/
@@ -2041,7 +2041,7 @@ void tesselatescrings(char* cntl)
 {
    int j,jj,tricnt=0,trimax=0,tri[11];
    char cth=' ',dth=' ',typth=' ';
-      
+
    if     (res[maxatm][0]=='h' && res[maxatm][1]=='i' && res[maxatm][2]=='s')
       {trimax =  5;typth='P';}
    else if(res[maxatm][0]=='t' && res[maxatm][1]=='y' && res[maxatm][2]=='r')
@@ -2050,7 +2050,7 @@ void tesselatescrings(char* cntl)
       {trimax =  6;typth='P';}
    else if(res[maxatm][0]=='t' && res[maxatm][1]=='r' && res[maxatm][2]=='p')
       {trimax = 10;typth='P';}
-   
+
    else if(res[maxatm][0]==' ' && res[maxatm][1]==' ' && res[maxatm][2]=='c')
       {trimax =  6;typth='N';}
    else if(res[maxatm][0]==' ' && res[maxatm][1]==' ' && res[maxatm][2]=='t')
@@ -2077,7 +2077,7 @@ void tesselatescrings(char* cntl)
       /*first get specific code for this sidechain of order of ring atoms*/
       /*for doing the tesselation */
       if(typth == 'P')
-      {/*Protein amino acid sidechain*/      
+      {/*Protein amino acid sidechain*/
          if     (jj==1) { cth = 'g'; dth = ' ';}
          else if(jj==2) { cth = 'd'; dth = '1';}
          else if(jj==3) { cth = 'd'; dth = '2';}
@@ -2094,7 +2094,7 @@ void tesselatescrings(char* cntl)
          }/*e.g. trp*/
       }
       else if(typth=='N')
-      {/*Nucleic acid base*/         
+      {/*Nucleic acid base*/
          if(trimax == 6)
          {/*pyrimadines*/
             if     (jj==1) { cth = '1'; dth = ' ';}
@@ -2112,7 +2112,7 @@ void tesselatescrings(char* cntl)
             else if(jj==4) { cth = '7'; dth = ' ';}
             else if(jj==5) { cth = '5'; dth = ' ';}
             else if(jj==6) { cth = '4'; dth = ' ';} /*second time*/
-            else if(jj== 7) { cth = '6'; dth = ' ';} 
+            else if(jj== 7) { cth = '6'; dth = ' ';}
             else if(jj== 8) { cth = '3'; dth = ' ';}
             else if(jj== 9) { cth = '1'; dth = ' ';}
             else if(jj==10) { cth = '2'; dth = ' ';}/*good for a,g*/
@@ -2130,10 +2130,10 @@ void tesselatescrings(char* cntl)
             tricnt++;
             break;
          }
-      
+
       }/*scan over all atoms of this residue*/
    }/*find all atoms that define residue plane for tesselation*/
-   
+
    if(tricnt == trimax)
    {/*found the right number of atoms, write tesselation points*/
       /*Listscring=TRUE;*/  /*instead, add to previous list*/
@@ -2194,14 +2194,14 @@ static  float  dx,dy,dz;
           }
        }/*exclusion*/
     }/*see if this atom meets alternate confromation specification(s)*/
-    if(LOK) 
+    if(LOK)
     {/*do this atom*/
 
     if(Lalts) /*050121*/
     {
        altstr[0] = ' '; /*leading blank*/
        altstr[2] = atom[j][4]; /*actual unique pointmaster character*/
-       if(altstr[2]==' ') 
+       if(altstr[2]==' ')
        {/*try NO pointmaster of ' '*/
           altstr[0] = '\0';
        }
@@ -2213,33 +2213,33 @@ static  float  dx,dy,dz;
 
     Lprint2 = FALSE;
     /*identify entry, check range controls, and write to scratch file*/
-    if(name[j][0] == 'h') 
+    if(name[j][0] == 'h')
     {/*hetatm*/
     /*if( (htaoutl || waaoutl) && (atom[j][1] != 'c') )*/
       if( (htaoutl || waaoutl) )  /*960809*/
       {
         if(  htaoutl && notawater()  )
-        { 
+        {
           cntl[0] = 'h';cntl[1] = 't';Listat = TRUE;
-          
+
           /*else if (atom[j][1] == 'h')*/ /*041020 no balls on hydrogens*/
           if(isahydrogen(name[j],atom[j],element[j]) )/*070520*/
           {
              ; /*NOP*/
           }
-          else if (atom[j][1] == 'n') 
+          else if (atom[j][1] == 'n')
           {
               cntl[2] = 'n'; Listhtn = TRUE;typenow=typehtn;
               Lprint2 = TRUE;
           }
-          else if (atom[j][1] == 'o') 
+          else if (atom[j][1] == 'o')
           {
               cntl[2] = 'o'; Listhto = TRUE;typenow=typehto;
               Lprint2 = TRUE;
           }
           else if (atom[j][1] == 'c')
           {
-              if( htcoutl ) 
+              if( htcoutl )
               {
                   cntl[2] = 'c'; Listhtc = TRUE;typenow=typehtc;
                   Lprint2 = TRUE;
@@ -2273,20 +2273,20 @@ static  float  dx,dy,dz;
         if( mcaoutl )   /*960809*/
         {
           cntl[0] = 'm';cntl[1] = 'c';Listat = TRUE;
-          
-          if (atom[j][1] == 'n') 
+
+          if (atom[j][1] == 'n')
           {
               cntl[2] = 'n'; Listmcn = TRUE;typenow=typemcn;
               Lprint2 = TRUE;
           }
-          else if (atom[j][1] == 'o') 
+          else if (atom[j][1] == 'o')
           {
               cntl[2] = 'o'; Listmco = TRUE;typenow=typemco;
               Lprint2 = TRUE;
           }
           else if (atom[j][1] == 'c')
           {
-              if (mccoutl ) 
+              if (mccoutl )
               {
                   cntl[2] = 'c'; Listmcc = TRUE;typenow=typemcc;
                   Lprint2 = TRUE;
@@ -2296,14 +2296,14 @@ static  float  dx,dy,dz;
           {   /*only n,o,c in protein mc, p in nucleic acid*/
               cntl[2] = 's'; Listmcs = TRUE;typenow=typemcs;
               Lprint2 = TRUE;
-          }  
+          }
         }
       }/*mainchain*/
       else
       {/*sidechain*/
-       
-       if(!Lcbonly || (Lcbonly && atom[j][1]=='c' && atom[j][2]=='b') )  
-       {/*restricted output: only Cbeta*/ 
+
+       if(!Lcbonly || (Lcbonly && atom[j][1]=='c' && atom[j][2]=='b') )
+       {/*restricted output: only Cbeta*/
 
         /*if( atom[j][1] == 'h' || atom[j][1] == 'd' || atom[j][1] == 'q')*/
         if(isahydrogen(name[j],atom[j],element[j]))  /*070520*/
@@ -2314,20 +2314,20 @@ static  float  dx,dy,dz;
         else if( scaoutl )  /*960809*/
         {/*NOT hydrogen*/
           cntl[0] = 's';cntl[1] = 'c';Listat = TRUE;
-          
-          if (atom[j][1] == 'n') 
+
+          if (atom[j][1] == 'n')
           {
               cntl[2] = 'n'; Listscn = TRUE;typenow=typescn;
               Lprint2 = TRUE;
           }
-          else if (atom[j][1] == 'o') 
+          else if (atom[j][1] == 'o')
           {
               cntl[2] = 'o'; Listsco = TRUE;typenow=typesco;
               Lprint2 = TRUE;
           }
           else if (atom[j][1] == 'c')
           {
-            if( sccoutl) 
+            if( sccoutl)
             {
                 cntl[2] = 'c'; Listscc = TRUE;typenow=typescc;
                 Lprint2 = TRUE;
@@ -2349,8 +2349,8 @@ static  float  dx,dy,dz;
               Lprint2 = TRUE;
           }
         }/*NOT hydrogen*/
-       
-       }/*restricted output: only Cbeta*/ 
+
+       }/*restricted output: only Cbeta*/
 
       }/*sidechain*/
     }/*atom*/
@@ -2396,10 +2396,10 @@ static  float  dx,dy,dz;
     }
     else  rds[0] = '\0';
 
-    if(Lprint2) 
-    {/*output writeatomscratch()*/ 
+    if(Lprint2)
+    {/*output writeatomscratch()*/
 
-      if(Bvaloutl) 
+      if(Bvaloutl)
       {/*occ&B for Lprint2*/
         /*whenever occ < 1.0 and when B != 0, include values in ptID*//*971213*/
         if((o[j] != 0.0 &&  o[j] != 1.0) || typenow==typewao)
@@ -2429,7 +2429,7 @@ static  float  dx,dy,dz;
        cs[1] = '\0';
        strcat(cs,codestr);
     }
-    else 
+    else
     {
        cs[0] = '\0';
     }
@@ -2442,25 +2442,25 @@ static  float  dx,dy,dz;
          ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,altstr,x[j],y[j],z[j]
               ,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
               ,aspectstr[j]
-              ,colr,altstr,rds,x[j],y[j],z[j]); 
+              ,colr,altstr,rds,x[j],y[j],z[j]);
         putonetextblockline(&mainscratch,temps); /*PKINSCRT.c*/
         ++countxyz; ++pointcnt[typenow];countpoints(cntl,0);
         ++countxyz; ++pointcnt[typenow];countpoints(cntl,0);
-        for(i=1 ; i<=3 ; i++)   
-        {                       
-          if(i==1) { dx = atmarker; dy = 0.0;      dz = 0.0;     }   
-          if(i==2) { dx = 0.0;      dy = atmarker; dz = 0.0;     }   
-          if(i==3) { dx = 0.0;      dy = 0.0;      dz = atmarker;}   
+        for(i=1 ; i<=3 ; i++)
+        {
+          if(i==1) { dx = atmarker; dy = 0.0;      dz = 0.0;     }
+          if(i==2) { dx = 0.0;      dy = atmarker; dz = 0.0;     }
+          if(i==3) { dx = 0.0;      dy = 0.0;      dz = atmarker;}
           /*the cross arms*/
-          sprintf(temps,"%s{%s%s%s%4d%s} P%s U %.3f, %.3f, %.3f " 
+          sprintf(temps,"%s{%s%s%s%4d%s} P%s U %.3f, %.3f, %.3f "
                           "{%s%s%s%4d%s} L%s U %.3f, %.3f, %.3f"EOLO
      ,cntl,atom[j],res[j],sub[j],num[j],rins[j],altstr,x[j]-dx,y[j]-dy,z[j]-dz
           ,atom[j],res[j],sub[j],num[j],rins[j],altstr,x[j]+dx,y[j]+dy,z[j]+dz);
           putonetextblockline(&mainscratch,temps); /*PKINSCRT.c*/
           ++countxyz; ++pointcnt[typenow]; countpoints(cntl,0);
-          ++countxyz; ++pointcnt[typenow]; countpoints(cntl,0); 
-        }   
-      }/*cross atom marker*/  
+          ++countxyz; ++pointcnt[typenow]; countpoints(cntl,0);
+        }
+      }/*cross atom marker*/
       else
       {/*Single dot or ball*/
         if(LdumpVRML && LsphereVRML) /*050209*/
@@ -2478,7 +2478,7 @@ static  float  dx,dy,dz;
            ++countxyz; ++pointcnt[typenow]; countpoints(cntl,0);
         }
       }/*Single dot or ball*/
-    }/*output*/ 
+    }/*output*/
     }/*do this atom*/
   }/*loop over atoms in "residue"*/
 }
@@ -2494,7 +2494,7 @@ void   writelabelscratch(void)
    int   j,k,icalpha,LOK=1;
    float Avalue;
 
-            
+
 /*PC compiler has trouble with initial assignment if chr str is blank*/
   cntl[0] = ' ';
   cntl[1] = ' ';
@@ -2511,25 +2511,25 @@ void   writelabelscratch(void)
  if     (res[j][0] == 'a' && res[j][1] == 'l' && res[j][2] == 'a') lbl[1]='A';
  else if(res[j][0] == 'c' && res[j][1] == 'y' && res[j][2] == 's') lbl[1]='C';
  else if(res[j][0] == 'a' && res[j][1] == 's' && res[j][2] == 'p') lbl[1]='D';
- else if(res[j][0] == 'g' && res[j][1] == 'l' && res[j][2] == 'u') lbl[1]='E';  
- else if(res[j][0] == 'p' && res[j][1] == 'h' && res[j][2] == 'e') lbl[1]='F';  
- else if(res[j][0] == 'g' && res[j][1] == 'l' && res[j][2] == 'y') lbl[1]='G';  
- else if(res[j][0] == 'h' && res[j][1] == 'i' && res[j][2] == 's') lbl[1]='H';  
- else if(res[j][0] == 'i' && res[j][1] == 'l' && res[j][2] == 'e') lbl[1]='I';  
- else if(res[j][0] == 'l' && res[j][1] == 'y' && res[j][2] == 's') lbl[1]='K';  
- else if(res[j][0] == 'l' && res[j][1] == 'e' && res[j][2] == 'u') lbl[1]='L';  
- else if(res[j][0] == 'm' && res[j][1] == 'e' && res[j][2] == 't') lbl[1]='M';  
- else if(res[j][0] == 'a' && res[j][1] == 's' && res[j][2] == 'n') lbl[1]='N';  
- else if(res[j][0] == 'p' && res[j][1] == 'r' && res[j][2] == 'o') lbl[1]='P';  
- else if(res[j][0] == 'g' && res[j][1] == 'l' && res[j][2] == 'n') lbl[1]='Q';  
- else if(res[j][0] == 'a' && res[j][1] == 'r' && res[j][2] == 'g') lbl[1]='R';  
- else if(res[j][0] == 's' && res[j][1] == 'e' && res[j][2] == 'r') lbl[1]='S';  
- else if(res[j][0] == 't' && res[j][1] == 'h' && res[j][2] == 'r') lbl[1]='T';  
- else if(res[j][0] == 'v' && res[j][1] == 'a' && res[j][2] == 'l') lbl[1]='V';  
- else if(res[j][0] == 't' && res[j][1] == 'r' && res[j][2] == 'p') lbl[1]='W';  
- else if(res[j][0] == 't' && res[j][1] == 'y' && res[j][2] == 'r') lbl[1]='Y';  
- else 
- { 
+ else if(res[j][0] == 'g' && res[j][1] == 'l' && res[j][2] == 'u') lbl[1]='E';
+ else if(res[j][0] == 'p' && res[j][1] == 'h' && res[j][2] == 'e') lbl[1]='F';
+ else if(res[j][0] == 'g' && res[j][1] == 'l' && res[j][2] == 'y') lbl[1]='G';
+ else if(res[j][0] == 'h' && res[j][1] == 'i' && res[j][2] == 's') lbl[1]='H';
+ else if(res[j][0] == 'i' && res[j][1] == 'l' && res[j][2] == 'e') lbl[1]='I';
+ else if(res[j][0] == 'l' && res[j][1] == 'y' && res[j][2] == 's') lbl[1]='K';
+ else if(res[j][0] == 'l' && res[j][1] == 'e' && res[j][2] == 'u') lbl[1]='L';
+ else if(res[j][0] == 'm' && res[j][1] == 'e' && res[j][2] == 't') lbl[1]='M';
+ else if(res[j][0] == 'a' && res[j][1] == 's' && res[j][2] == 'n') lbl[1]='N';
+ else if(res[j][0] == 'p' && res[j][1] == 'r' && res[j][2] == 'o') lbl[1]='P';
+ else if(res[j][0] == 'g' && res[j][1] == 'l' && res[j][2] == 'n') lbl[1]='Q';
+ else if(res[j][0] == 'a' && res[j][1] == 'r' && res[j][2] == 'g') lbl[1]='R';
+ else if(res[j][0] == 's' && res[j][1] == 'e' && res[j][2] == 'r') lbl[1]='S';
+ else if(res[j][0] == 't' && res[j][1] == 'h' && res[j][2] == 'r') lbl[1]='T';
+ else if(res[j][0] == 'v' && res[j][1] == 'a' && res[j][2] == 'l') lbl[1]='V';
+ else if(res[j][0] == 't' && res[j][1] == 'r' && res[j][2] == 'p') lbl[1]='W';
+ else if(res[j][0] == 't' && res[j][1] == 'y' && res[j][2] == 'r') lbl[1]='Y';
+ else
+ {
       lbl[0] = res[j][0];
       lbl[1] = res[j][1];
       lbl[2] = res[j][2];
@@ -2567,14 +2567,14 @@ void   writelabelscratch(void)
     {
 /*s*/ if( decidemainside(j) )  /* in writelabelscratch() */
       {/*mainchain*/
-        if(atom[j][1] == 'c' && atom[j][2] == 'a' )  
+        if(atom[j][1] == 'c' && atom[j][2] == 'a' )
         {
             /*found a ca, remember this */
             icalpha = j;
-            if( (caonly || lbl[1] == 'G')  )  
+            if( (caonly || lbl[1] == 'G')  )
             {
                 /*use ca position since either only doing ca-ca*/
-                /* or this is a glycine*/  
+                /* or this is a glycine*/
                 cntl[0] = 'l';cntl[1] = 'b';Listlb = TRUE;
                 Lprint1 = TRUE;
             }
@@ -2582,12 +2582,12 @@ void   writelabelscratch(void)
       }
       else
       {/*sidechain*/
-        if( lbl[1] != 'G' && atom[j][1] == 'c' && atom[j][2] == 'b' )  
+        if( lbl[1] != 'G' && atom[j][1] == 'c' && atom[j][2] == 'b' )
         {
           /*use cb position to label or simulate sidechain*/
-          /* if this is not a glycine*/ 
+          /* if this is not a glycine*/
           /* Actually, it would be better to calculate a cb position*/
-          /* for glycines and put the label there! */ 
+          /* for glycines and put the label there! */
           cntl[0] = 'l';cntl[1] = 'b';Listlb = TRUE;
           Lprint1 = TRUE;
         }
@@ -2666,7 +2666,7 @@ strcpy(colorscale[10]->origcolor,"white");
         putonetextblockline(&mainscratch,temps);
         ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
       }
-  }  
+  }
 }
 /*___writelabelscratch()____________________________________________________*/
 
@@ -2681,7 +2681,7 @@ void pperptobase(int maxcounter)
    /*3 kinds of output for this residue (base)
      vectors from 5'P to base plane and from 3'P of next residue back to base.
      point in 5'P-->base, nextP-->base, delta_angle : this requires all 3 pts.
-     colon delineated dump of :base ID: 5'P-->base: nextP-->base: 
+     colon delineated dump of :base ID: 5'P-->base: nextP-->base:
         where missing P gives 999 for distance and missing base gives 999:999.
    */
 
@@ -2707,12 +2707,12 @@ void pperptobase(int maxcounter)
    int   LRNA=0; /*070731*/
    char  ptmaster[4] = {'\0','\0','\0','\0'}; /*070731*/
    char  comnt[8] = {'\0','\0','\0','\0','\0','\0','\0','\0'}; /*070731*/
-   
+
    /*SANITY CHECK: calc pperp for RNA only!, i.e. only if find o2' atom 070731*/
    LRNA = 0; /*presume not RNA unless find o2' atom */
    for(j=1 ; j<=maxcounter ; j++)
    {/*loop over atoms in "residue"*/
-      if(   (atom[j][3]=='*' || atom[j][3]=='\'') 
+      if(   (atom[j][3]=='*' || atom[j][3]=='\'')
          && (atom[j][4]==' ' || atom[j][4]== 'a'))
       {/*ribose backbone, i.e. 3rd character * for prime*/
          if(atom[j][1]=='o' && atom[j][2]=='2')
@@ -2725,7 +2725,7 @@ void pperptobase(int maxcounter)
    {/*LRNA*/
       /* 070521 calculate epsilon as well as delta: need P of next residue*/
       /*define and set memory of indexes c4j c3j o3j pnj 070521*/
-      int c4j=-1; int c3j=-1; int o3j=-1; int pnj=-1; 
+      int c4j=-1; int c3j=-1; int o3j=-1; int pnj=-1;
 
       /*070731 punt now, to do this right, use strstr() vs lists in PKINCRTL.h*/
       /*do simple check for pyrimidine by looking at 3rd character of name*/
@@ -2770,7 +2770,7 @@ void pperptobase(int maxcounter)
          /*also need o3prime for connection distance to next nucleotide*/
          /*find ribose backbone atoms*/
          /*Perpendicular to line of ribose c1'--n of base requires c1' 050125*/
-         if(   (atom[j][3]=='*' || atom[j][3]=='\'') 
+         if(   (atom[j][3]=='*' || atom[j][3]=='\'')
             && (atom[j][4]==' ' || atom[j][4]== 'a'))
          {/*ribose backbone, i.e. 3rd character * for prime*/
            /*and 4th character either blank or A  for that alternate*/
@@ -2787,7 +2787,7 @@ void pperptobase(int maxcounter)
             if(atom[j][1]=='c' && atom[j][2]=='1')
              {A1[0]=x[j];A1[1]=y[j];A1[2]=z[j];cofribose=1;}/*Lpperptoc1nline*/
          }
-         
+
       }/*loop over atoms in "residue"*/
       if(   (!Lpperptoc1nline && ncnt == 3)
           ||(Lpperptoc1nline && (nofbase && cofribose)) )
@@ -2805,12 +2805,12 @@ void pperptobase(int maxcounter)
             else if(Bvalmax < 90) {Bset = 'x';}
             else if(Bvalmax <100) {Bset = 'y';}
             else                  {Bset = 'z';}
-            sprintf(colr,colorscale[Ncolorscale].color); /*high value default*/
+            sprintf(colr,"%s",colorscale[Ncolorscale].color); /*high value default*/
             for(j=1; j < Ncolorscale; j++)
             {
                if(Bvalmax< colorscale[j].value)
                {/*under this value*/
-                  sprintf(colr,colorscale[j].color);
+                  sprintf(colr,"%s",colorscale[j].color);
                  break;
                }
             }
@@ -2831,7 +2831,7 @@ void pperptobase(int maxcounter)
             if(Lpperptoc1nline) /*050125*/
             {
                B1[0] = x[patm1]; B1[1] = y[patm1]; B1[2] = z[patm1];
-               DoPerpendicularToLine(A1,A2,B1,B2); 
+               DoPerpendicularToLine(A1,A2,B1,B2);
                /*put point on line into index==5*/
                atm[0][5] = B2[0]; atm[1][5] = B2[1]; atm[2][5] = B2[2];
             }
@@ -2848,7 +2848,7 @@ void pperptobase(int maxcounter)
             }
             else
             {/*show pperps in a kinemage*/
-               if(!Lpperpoutliersonly ) /*when NOT restricted to 3'P outliers*/ 
+               if(!Lpperpoutliersonly ) /*when NOT restricted to 3'P outliers*/
                {/*show 5'P to base plane*/
                   sprintf(colr," green"); /*cntl=="ext "*/
                   sprintf(temps,"%s{%s%s%s%4d%s}%s P %.3f, %.3f, %.3f "
@@ -2859,7 +2859,7 @@ void pperptobase(int maxcounter)
                                    ,res[patm1],sub[patm1],num[patm1],rins[patm1]
                      ,colr,atm[0][5],atm[1][5],atm[2][5]);
                   ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
-                  putonetextblockline(&mainscratch, temps); 
+                  putonetextblockline(&mainscratch, temps);
                }
             }
          }/*compute first perpendicular*/
@@ -2887,7 +2887,7 @@ void pperptobase(int maxcounter)
                /*----- insert calculation of epsilon ------  070521 */
                if(c4j > 0 && c3j > 0 && o3j > 0)
                {/*can calc epsilon*/
-                  epsilon = (float)dihedral4pt( 
+                  epsilon = (float)dihedral4pt(
                      (double)x[c4j], (double)y[c4j], (double)z[c4j],
                      (double)x[c3j], (double)y[c3j], (double)z[c3j],
                      (double)x[o3j], (double)y[o3j], (double)z[o3j],
@@ -2900,7 +2900,7 @@ void pperptobase(int maxcounter)
                if(Lpperptoc1nline) /*050125*/
                {
                   B1[0] = xnext; B1[1] = ynext; B1[2] = znext;
-                  DoPerpendicularToLine(A1,A2,B1,B2); 
+                  DoPerpendicularToLine(A1,A2,B1,B2);
                   /*put point on line into index==5*/
                   atm[0][5] = B2[0]; atm[1][5] = B2[1]; atm[2][5] = B2[2];
                }
@@ -2920,7 +2920,7 @@ void pperptobase(int maxcounter)
                   {/*plot dist1,dist2,delta: no plot if 5'P not present*/
                    /*plot delta,dist2,dist1   040229*/
                      sprintf(cntl,"ext "); /*extra output*/
-                     /*NB spacing not standard*/ 
+                     /*NB spacing not standard*/
                      sprintf(temps,"%s{%s %s %s %d%s Bvalmax: %.2f}"
                                    "%s '%c' P %.3f, %.3f, %.3f "EOLO
                         ,cntl,MolNameStr
@@ -2928,12 +2928,12 @@ void pperptobase(int maxcounter)
                         ,colr,Bset,deltatenth,dist2,dist1);
                      /*MolNameStr as a file code identifier 040229*/
                      ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
-                     putonetextblockline(&mainscratch, temps); 
+                     putonetextblockline(&mainscratch, temps);
                   }
                }
                else
                {/*show pperps in a kinemage, reworked 070731*/
-                 if(!Lpperpoutliersonly) 
+                 if(!Lpperpoutliersonly)
                  {
                     sprintf(ptmaster,"'3'"); /*subclass of extra 070731*/
                  }
@@ -2942,17 +2942,17 @@ void pperptobase(int maxcounter)
                     /*if(Lpperpoutlier) {sprintf(colr," magenta");}*/ /*040705*/
                     /*else {sprintf(colr," gold");} */
 
-                     if(Lpperpoutlier==0)      
+                     if(Lpperpoutlier==0)
                      {sprintf(colr," gold"); comnt[0]='\0';}
-                     else if(Lpperpoutlier==3) 
+                     else if(Lpperpoutlier==3)
                      {sprintf(colr," purple" ); sprintf(comnt," 3'?");}
-                     else if(Lpperpoutlier==2) 
-                     {sprintf(colr," magenta"); sprintf(comnt," 2'?");} 
-                     else /*Lpperpoutlier==1*/ 
-                     {sprintf(colr," white"  ); sprintf(comnt," ???");} 
+                     else if(Lpperpoutlier==2)
+                     {sprintf(colr," magenta"); sprintf(comnt," 2'?");}
+                     else /*Lpperpoutlier==1*/
+                     {sprintf(colr," white"  ); sprintf(comnt," ???");}
                      sprintf(cntl,"ext "); /*extra output*/
                      /*NB non-standard format: pt on base line*/
-                     
+
                      sprintf(temps,"%s{%s%s%s%4d%s%s}%s P %.3f, %.3f, %.3f "
                                      "{base: %s %s%4d%s%s}"
                                      "%s L %s %.3f, %.3f, %.3f "EOLO
@@ -2961,7 +2961,7 @@ void pperptobase(int maxcounter)
                         ,res[patm1],sub[patm1],num[patm1],rins[patm1],comnt
                         ,colr,ptmaster,atm[0][5],atm[1][5],atm[2][5]);
                      ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
-                     putonetextblockline(&mainscratch, temps); 
+                     putonetextblockline(&mainscratch, temps);
                      if(Lpperpoutliersonly)
                      {
                         P[0]=xnext; P[1]=ynext; P[2]=znext;
@@ -3000,7 +3000,7 @@ void pperptobase(int maxcounter)
                  ,dist1,dist2,delta,outc,epsilon,oute);
                /*,cntl,topID,res[patm1],sub[patm1],num[patm1],dist1,dist2);*/
             ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
-            putonetextblockline(&mainscratch, temps); 
+            putonetextblockline(&mainscratch, temps);
          }
       }
    }/*LRNA*/
@@ -3011,13 +3011,13 @@ void pperptobase(int maxcounter)
 int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
 {/*outlier crt delta representing ribose pucker vs distance 3'P to base plane*/
    /* 3' perp dist for C3' pucker (delta==  60° -- 100°) range: 2.9 -- 5.0 */
-   /* 3' perp dist for C2' pucker (delta== 125° -- 165°) range: 0.0 -- 3.0 */ 
+   /* 3' perp dist for C2' pucker (delta== 125° -- 165°) range: 0.0 -- 3.0 */
    float delta3pmin = (float)65,  delta3pmax = (float)104;
    float dist3pmin  = (float)2.9, dist3pmax  = (float)5.0;
    float delta2pmin = (float)129, delta2pmax = (float)162;
    float dist2pmin  = (float)0.0, dist2pmax  = (float)3.0;
    int   Lout = 0; /*not an outlier*/
-  
+
    /*delta values: delta3pmin delta3pmax delta2pmin delta2pmax */
    /*prekin values:   65         104        129        162     */
    /*suitename:       55         110        120        175     */
@@ -3028,7 +3028,7 @@ int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
         &&(dist3pPp >= dist2pmin && dist3pPp <= dist2pmax)))/*OK for 2' pucker*/
    { /*OK, not an outlier*/
       Lout = 0;
-   } 
+   }
    else /*otherwise, is an outlier*/
    {
       if(dist3pPp < 3.0) /*"base-p distance indicates 2'-endo"*/
@@ -3039,24 +3039,24 @@ int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
       {
          Lout = 3;
       }
-   } 
+   }
    return(Lout);
 }
 /*___pperpoutlier()__________________________________________________________*/
 
 #ifdef NICETRY
-   if(delta >= delta3pmin && delta <= delta3pmax)   
+   if(delta >= delta3pmin && delta <= delta3pmax)
    { /*OK 3' delta*/
       if(dist3pPp >= dist3pmin && dist3pPp <= dist3pmax)
       { /*OK for 3' pucker*/
          Lout = 0;
       }
-      else 
+      else
       { /*magenta outlier, too short, unless wildly bad geometry*/
          Lout = 2;
       }
    }
-   else if(delta >= delta2pmin && delta <= delta2pmax)   
+   else if(delta >= delta2pmin && delta <= delta2pmax)
    { /*OK 2' delta*/
       if(dist3pPp >= dist2pmin && dist3pPp <= dist2pmax)
       { /*OK for 2' pucker*/
@@ -3067,10 +3067,10 @@ int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
          Lout = 3;
       }
    }
-   else 
+   else
    { /*otherwise, is a delta outlier*/
       Lout = 1;
-   } 
+   }
    return(Lout);
 
 #endif
@@ -3091,13 +3091,13 @@ int  epsilonoutlier(float epsilon) /*070521*/
 int  pperpoutlier(float delta, float dist3pPp)
 {/*outlier crt delta representing ribose pucker vs distance 3'P to base plane*/
    /* 3' perp dist for C3' pucker (delta==  60° -- 100°) range: 2.9 -- 5.0 */
-   /* 3' perp dist for C2' pucker (delta== 125° -- 165°) range: 0.0 -- 3.0 */ 
+   /* 3' perp dist for C2' pucker (delta== 125° -- 165°) range: 0.0 -- 3.0 */
    float delta3pmin = (float)60,  delta3pmax = (float)100;
    float dist3pmin  = (float)2.9, dist3pmax  = (float)5.0;
    float delta2pmin = (float)125, delta2pmax = (float)165;
    float dist2pmin  = (float)0.0, dist2pmax  = (float)3.0;
    int   Lout = 0;
-  
+
    if     (delta >= delta3pmin && delta <= delta3pmax)
    {/*3'pucker*/
       if(dist3pPp >= dist3pmin && dist3pPp <= dist3pmax) {Lout = 0;}
@@ -3122,7 +3122,7 @@ void drawclaw(float fp[3], float fb[3], float fn[3], char name[256], char* colr)
    char   cntl[5]={'e','x','t',' ','\0'};
    char  ptmaster[4] = {'\0','\0','\0','\0'}; /*070731*/
 
-   if(!Lpperpoutliersonly) 
+   if(!Lpperpoutliersonly)
    {
       sprintf(ptmaster,"'3'"); /*subclass of extra 070731*/
    }
@@ -3151,18 +3151,18 @@ void drawclaw(float fp[3], float fb[3], float fn[3], char name[256], char* colr)
 
    /*claw mark has long big toe toward N1or9 of actual base, heel away, */
    /*and cross wise toes perpendicular to big toe and ankle up to 3'P*/
-   btoe[0] = fb[0] + (float)0.8*(float)bn[0];   
-   btoe[1] = fb[1] + (float)0.8*(float)bn[1];   
-   btoe[2] = fb[2] + (float)0.8*(float)bn[2];   
-   heel[0] = fb[0] - (float)0.4*(float)bn[0];   
-   heel[1] = fb[1] - (float)0.4*(float)bn[1];   
-   heel[2] = fb[2] - (float)0.4*(float)bn[2];   
-   xtoe[0] = fb[0] + (float)0.4*(float)bx[0];   
-   xtoe[1] = fb[1] + (float)0.4*(float)bx[1];   
-   xtoe[2] = fb[2] + (float)0.4*(float)bx[2];   
-   ytoe[0] = fb[0] - (float)0.4*(float)bx[0];   
-   ytoe[1] = fb[1] - (float)0.4*(float)bx[1];   
-   ytoe[2] = fb[2] - (float)0.4*(float)bx[2];   
+   btoe[0] = fb[0] + (float)0.8*(float)bn[0];
+   btoe[1] = fb[1] + (float)0.8*(float)bn[1];
+   btoe[2] = fb[2] + (float)0.8*(float)bn[2];
+   heel[0] = fb[0] - (float)0.4*(float)bn[0];
+   heel[1] = fb[1] - (float)0.4*(float)bn[1];
+   heel[2] = fb[2] - (float)0.4*(float)bn[2];
+   xtoe[0] = fb[0] + (float)0.4*(float)bx[0];
+   xtoe[1] = fb[1] + (float)0.4*(float)bx[1];
+   xtoe[2] = fb[2] + (float)0.4*(float)bx[2];
+   ytoe[0] = fb[0] - (float)0.4*(float)bx[0];
+   ytoe[1] = fb[1] - (float)0.4*(float)bx[1];
+   ytoe[2] = fb[2] - (float)0.4*(float)bx[2];
 
    /*sprintf(colr," magenta");*/ /*040705*/ /*using param, 070731*/
    /*cntl=="ext "*/  /* Unpickable 041001*/
@@ -3172,14 +3172,14 @@ void drawclaw(float fp[3], float fb[3], float fn[3], char name[256], char* colr)
         ,name,colr,heel[0],heel[1],heel[2]
         ,name,colr,ptmaster,btoe[0],btoe[1],btoe[2]);
    ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
-   putonetextblockline(&mainscratch, temps); 
+   putonetextblockline(&mainscratch, temps);
    sprintf(temps,"%s{outlier:%s}%s P U %.3f, %.3f, %.3f "
       "{outlier:%s}%s L U %s width4 %.3f, %.3f, %.3f "EOLO
         ,cntl
         ,name,colr,xtoe[0],xtoe[1],xtoe[2]
         ,name,colr,ptmaster,ytoe[0],ytoe[1],ytoe[2]);
    ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
-   putonetextblockline(&mainscratch, temps); 
+   putonetextblockline(&mainscratch, temps);
 }
 /*___drawclaw()______________________________________________________________*/
 
@@ -3193,12 +3193,12 @@ void Bcoloredoutput(char* color, float Avalue) /*separate routine 050704*/
 
        /**default Scale by f-stop: 1,1.4,2,2.8,4,5.6,8,11,16,22,32,44,64 */
 
-       sprintf(color,colorscale[Ncolorscale].color); /*high value default*/
+       sprintf(color,"%s",colorscale[Ncolorscale].color); /*high value default*/
        for(ncol=1; ncol < Ncolorscale; ncol++)
        {
           if(Avalue< colorscale[ncol].value)
           {/*under this value*/
-             sprintf(color,colorscale[ncol].color);
+             sprintf(color,"%s",colorscale[ncol].color);
              break;
           }
        }
@@ -3223,7 +3223,7 @@ static  char    cntl[5];  /* 4 blank characters */
     cntl[2] = 'm';
     cntl[3] = ' ';
     cntl[4] = '\0';
-    
+
     Listht  = TRUE;
     Listhtm = TRUE;
     typenow = typehtm;
@@ -3231,7 +3231,7 @@ static  char    cntl[5];  /* 4 blank characters */
       sprintf(temps,"%s{%s%s%s%4d%s%s} %.3f, %.3f, %.3f"EOLO
           ,cntl
           ,atom[k],res[k],sub[k],num[k],rins[k],mod[k],x[k],y[k],z[k]);
-   
+
       putonetextblockline(&mainscratch,temps); /*PKINSCRT.c*/
 
       ++countxyz;++pointcnt[typenow];countpoints(cntl,0); /*P point*/

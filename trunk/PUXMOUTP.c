@@ -50,7 +50,7 @@ int    openoutput(void)
 #ifdef UNIX_MOTIF  /*060324 re compile with NOGUI, requires Lquiet=1*/
     static Widget  fileoutdialog=NULL; /*static to remember if dialog created*/
     XmString    xmstring;
-    
+
     /* invoke the standard dialog for finding a file */
     /* "word" holds message, "OutfileStr" has suggested file name */
 
@@ -59,7 +59,7 @@ int    openoutput(void)
         XtSetArg(args[n], XmNvisual, progvisual); n++;
         XtSetArg(args[n], XmNdepth, progdepth); n++;
         XtSetArg(args[n], XmNcolormap, colormap); n++;
-        fileoutdialog = 
+        fileoutdialog =
               XmCreateFileSelectionDialog(grafwindow,"openFileDialog",args,n);
         XtAddCallback(fileoutdialog,XmNokCallback
                       ,(XtCallbackProc)fileout_OK_CB,NULL);
@@ -84,6 +84,7 @@ int    openoutput(void)
     XtManageChild(fileoutdialog); /*puts the file dialog widget on screen */
   return(1);
 #endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
+  return(0);
 }
 /*___openoutput()____________________________________________________________*/
 
@@ -107,7 +108,7 @@ XtCallbackProc scriptfile_OK_CB(Widget w,XtPointer client_da,XtPointer call_data
       if(ScriptoutStr[j]=='\0') break;
   }
            /*if a previous file is open, close it*/
-/*c*/      if(fpscriptout != NULL) fclose(fpscriptout); 
+/*c*/      if(fpscriptout != NULL) fclose(fpscriptout);
 
 /*c*/      if ((fpscriptout = fopen(ScriptoutStr,"w")) == NULL)
            {
@@ -138,14 +139,14 @@ int    openscriptout(void)
 
       Lopenscriptout = 0; /*don't want to return to here*/
       Lscriptout = 0; /*presume no file until proven open*/
-      Lrangecontrols = 0; 
+      Lrangecontrols = 0;
          /*presume go on past rangecontrol unless can write script*/
     {/*always create dialog*/ /*See D.A.Young,1994,pg238*/
         n = 0;
         XtSetArg(args[n], XmNvisual, progvisual); n++;
         XtSetArg(args[n], XmNdepth, progdepth); n++;
         XtSetArg(args[n], XmNcolormap, colormap); n++;
-        scriptfiledialog = 
+        scriptfiledialog =
               XmCreateFileSelectionDialog(grafwindow,"ScriptFileDialog",args,n);
         XtAddCallback(scriptfiledialog,XmNokCallback
                       ,(XtCallbackProc)scriptfile_OK_CB,NULL);
@@ -165,9 +166,10 @@ int    openscriptout(void)
     Lwaiting = 1;
    return(1);
 #endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
+   return(0);
 }
 /*___openscriptout()________________________________________________________*/
-    
+
 /****helpfile_OK_CB()*******************************************************/
 XtCallbackProc helpfile_OK_CB(Widget w,XtPointer client_da,XtPointer call_data)
 {
@@ -187,7 +189,7 @@ XtCallbackProc helpfile_OK_CB(Widget w,XtPointer client_da,XtPointer call_data)
   }
 
    /*if a previous file is open, close it*/
-   if(fphelpout != NULL) fclose(fphelpout); 
+   if(fphelpout != NULL) fclose(fphelpout);
 
    if ((fphelpout = fopen(helpoutStr,"w")) == NULL)
    {
@@ -219,7 +221,7 @@ int    openhelpout(void)
         XtSetArg(args[n], XmNvisual, progvisual); n++;
         XtSetArg(args[n], XmNdepth, progdepth); n++;
         XtSetArg(args[n], XmNcolormap, colormap); n++;
-        helpfiledialog = 
+        helpfiledialog =
               XmCreateFileSelectionDialog(grafwindow,"HelpFileDialog",args,n);
         XtAddCallback(helpfiledialog,XmNokCallback
                       ,(XtCallbackProc)helpfile_OK_CB,NULL);
@@ -241,5 +243,5 @@ int    openhelpout(void)
    return(1);
 }
 /*___openhelpout()________________________________________________________*/
-    
+
 

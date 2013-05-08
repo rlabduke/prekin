@@ -3,17 +3,17 @@
 
 #define EXTERN
     /* that is, EXTERN is blank, so PKIN.H will do initial declarations */
-    
+
 #include "PKIN.h"
 #include "PKINDLOG.h"
 
 /***** main ****************************************************************/
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   /*Ltestprint = TRUE;*/  /*test option, compile as TRUE to invoke,*/
-  Ltestprint = 0;  /* as FALSE for distribution, can also set in Kludges */  
+  Ltestprint = 0;  /* as FALSE for distribution, can also set in Kludges */
   Lerr = 0;
-  
+
   if(Ltestprint) {printf("entered main(argc== %d, argv)\n",argc);}
 
   mainsetup(&argc, argv); /*____INIT.c*/
@@ -35,6 +35,7 @@ if(Ltestprint)
       if(Lquiet==0) /*was Lcommanded 990402*/
           HandleEvent(); /*____MAIN.c*/
   }/*beginning & final endless event loop*/
+  return(0);
 }
 /*___main()_________________________________________________________________*/
 
@@ -54,7 +55,7 @@ void HandleEvent()
 /****HandleloopEvent()*******************************************************/
 /*    Minor event dispatcher, esp. for aborting endless runs. Called   */
 /*    repeatedly by the processing loop, (it  handles only one event). */
- 
+
 int   HandleloopEvent()
 {
   int ireturn = 0;
@@ -68,7 +69,7 @@ int   HandleloopEvent()
 #endif
 
 #ifdef MACINTOSH
-  EventRecord  theevent; 
+  EventRecord  theevent;
   int      ok = 1;
   long charCode = 0;
 
@@ -86,7 +87,7 @@ int   HandleloopEvent()
            }
            else if (charin != 0)  /* meaningful text key */
            {
-              charCode = BitAnd(theEvent.message, charCodeMask); 
+              charCode = BitAnd(theEvent.message, charCodeMask);
               if(charCode==46) /* . */      /* ascii code */
               {
                  ireturn = 1;
@@ -101,7 +102,7 @@ int   HandleloopEvent()
  if(XtAppPending(app_context)) /*960325*/
  {
   XtAppNextEvent(app_context,&theevent); /* get the next event */
-  if(theevent.type == KeyPress) 
+  if(theevent.type == KeyPress)
   {
      size = 1; /*which is guess work , but really need only one byte*/
      length = XLookupString((XKeyEvent*)&theevent
@@ -109,7 +110,7 @@ int   HandleloopEvent()
      if(length>0 && length<=9)
      {
         string[length] = '\0';
-        if( (string[0] == '.')  ) /* '.'  program interruption*/
+        if(string[0] == '.') /* '.'  program interruption*/
         {
            ireturn = 1;
         }
@@ -120,16 +121,16 @@ int   HandleloopEvent()
 #endif /*UNIX_X11*/
 }
 /*___HandleloopEvent()______________________________________________________*/
-       
+
 /****getkeydownstate()*******************************************************/
 int    getkeydownstate()
 {
   int       ireturn;
-    
+
    ireturn = 0;
    if(Lquiet==0) /*was Lcommanded before 990402*/
    {
-     if( HandleloopEvent() ) ireturn = 1; 
+     if( HandleloopEvent() ) ireturn = 1;
    }
    return(ireturn);
 }
