@@ -2005,7 +2005,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         ballradius = ballradiushold; /*restore*/
 
         sprintf(cntl,"cbdb"); /*4 chars*/
-        sprintf(aname,"CB b dev Ball");
+        sprintf(aname,"CB bdev Ball"); /*shorten for aname[13] 130508*/
         sprintf(kol,"pink");
         Lvector = 3; /*balls*/
         sprintf(extra," %s",chain);
@@ -2014,7 +2014,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
         ballradius = ballradiushold; /*restore*/
 
         sprintf(cntl,"cbdc"); /*4 chars*/
-        sprintf(aname,"CB c dev Ball");
+        sprintf(aname,"CB cdev Ball"); /*shorten for aname[13] 130508*/
         sprintf(kol,"red");
         Lvector = 3; /*balls*/
         sprintf(extra," %s",chain);
