@@ -1,29 +1,21 @@
 # prekin
 
-MIN_OS      = -mmacosx-version-min=10.6
-SDK_HOME    = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
-
 ifeq ($(MAKECMDGOALS),debug)
-	CFLAGS = -g  -isysroot $(SDK_HOME) $(MACHINEFLAGS) $(MIN_OS) \
-	         -I/usr/local/include/ -I/usr/X11R6/include/
+        CFLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -I/usr/local/include/ -I/usr/X11R6/include/ -arch x86_64
 else
-	CFLAGS = -isysroot -isysroot $(SDK_HOME) $(MACHINEFLAGS) $(MIN_OS) \
-	         -I/usr/local/include/ -I/usr/X11R6/include/
+        CFLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -I/usr/local/include/ -I/usr/X11R6/include/ -arch x86_64
 endif
-   LIBS = -L/Applications/Mage.app/Contents/lib -L/usr/X11R6/lib \
-          -lXm -lXt -lX11 -lSM -lICE -lpng.3 -ljpeg.62
+
+	LIBS = -lm -Wl -lXm -lXt,-syslibroot,-L/usr/X11R6/lib -lX11 -lSM -lICE,/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -arch x86_64
 
 ifeq ($(MAKECMDGOALS),nogui)
-   CFLAGS = -D NOGUI -isysroot $(SDK_HOME) $(MACHINEFLAGS) $(MIN_OS) \
-            -I/usr/local/include/ -I/usr/X11R6/include/
-   LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
+	CFLAGS = -g -D NOGUI -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -I/usr/local/include/ -I/usr/X11R6/include/ -arch x86_64
+	LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
 endif
 
-ifeq ($(MAKECMDGOALS),debugnogui)
-   CFLAGS = -g -D NOGUI -isysroot $(SDK_HOME) $(MACHINEFLAGS) $(MIN_OS) \
-            -I/usr/local/include/ -I/usr/X11R6/include/
-   LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
-endif
+
+
+
 
    PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h PKINHY36.h
 
@@ -41,8 +33,6 @@ endif
           PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o \
           PUXMTEXT.o PUXMOSX.c
 
-   FIN =  -lm -Wl,-syslibroot,$(SDK_HOME) \
-          -bind_at_load $(MIN_OS)
 # ------------------------------------------------------------------------
 # Commands specific to clients created by this Makefile
 

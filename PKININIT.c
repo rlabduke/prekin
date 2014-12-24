@@ -283,7 +283,7 @@ static char* prekinchanges[] =
 ,"130508 jjh added -segid option to use segid instead of chain id\r"
 ,"       added functionality to read segid field\r"
 ,"       cleaned up compiler warnings\r"
-,"\r"
+,"141223 sj changed the RNA delta angle range for RNA pucker analysis to match suitename and data from RNA11 \r"
 ,"\r"
 ,"END\r"
 }; /*prekinchanges[]*/

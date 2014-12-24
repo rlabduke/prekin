@@ -3010,32 +3010,36 @@ void pperptobase(int maxcounter)
 /****pperpoutlier()***********************************************************/
 int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
 {/*outlier crt delta representing ribose pucker vs distance 3'P to base plane*/
+/* S.J. 12/13/2014 - changes to make delta range consistent with suitename and RNA11, and removing the overlap of 2.9 - 3 ang range for both puckers*/
    /* 3' perp dist for C3' pucker (delta==  60° -- 100°) range: 2.9 -- 5.0 */
    /* 3' perp dist for C2' pucker (delta== 125° -- 165°) range: 0.0 -- 3.0 */
+   
+   /* original code
    float delta3pmin = (float)65,  delta3pmax = (float)104;
    float dist3pmin  = (float)2.9, dist3pmax  = (float)5.0;
    float delta2pmin = (float)129, delta2pmax = (float)162;
-   float dist2pmin  = (float)0.0, dist2pmax  = (float)3.0;
+   float dist2pmin  = (float)0.0, dist2pmax  = (float)3.0; */
+   
+   float delta3pmin = (float)60,  delta3pmax = (float)105; /* changed by S.J.*/
+   float dist3pmin  = (float)2.9, dist3pmax  = (float)6.0;
+   float delta2pmin = (float)125, delta2pmax = (float)165;
+   float dist2pmin  = (float)0.0, dist2pmax  = (float)2.9;
    int   Lout = 0; /*not an outlier*/
-
-   /*delta values: delta3pmin delta3pmax delta2pmin delta2pmax */
-   /*prekin values:   65         104        129        162     */
-   /*suitename:       55         110        120        175     */
 
    if( (  (delta >= delta3pmin && delta <= delta3pmax)     /*OK 3' pucker*/
         &&(dist3pPp >= dist3pmin && dist3pPp <= dist3pmax)) /*OK for 3' pucker*/
      ||(  (delta >= delta2pmin && delta <= delta2pmax)     /*OK 2' pucker*/
-        &&(dist3pPp >= dist2pmin && dist3pPp <= dist2pmax)))/*OK for 2' pucker*/
+        &&(dist3pPp >= dist2pmin && dist3pPp < dist2pmax)))/*OK for 2' pucker*/  /* changed from <= to <, 2.9 belongs to 3'pucker - S.J.*/
    { /*OK, not an outlier*/
       Lout = 0;
    }
    else /*otherwise, is an outlier*/
-   {
-      if(dist3pPp < 3.0) /*"base-p distance indicates 2'-endo"*/
+   {/* changed from 3 to 2.9 - S.J.*/
+      if(dist3pPp < 2.9) /*"base-p distance indicates 2'-endo"*/ 
       {
          Lout = 2;
       }
-      else /*dist3pPp >= 3.0 "base-p distance indicates 3'-endo"*/
+      else /*dist3pPp >= 2.9 "base-p distance indicates 3'-endo"*/
       {
          Lout = 3;
       }
