@@ -189,6 +189,8 @@ static char* prekinchanges[] =
 ,"051108 CPK also for nucleic acid mc P\r"
 ,"051112 continue PKINRIBB coding...\r"
 ,"051114 -spline :meaning changed 051208, use -strand 1 for single mid strand\r"
+,"       -spline :meaning changed back 140520: single mid strand vectorlist\r"
+,"       -skeins 140520 shows all ribbon-defining strands\r"
 ,"       -strand # :  # stranded ribbon, local curvature offsets.\r"
 ,"       -name: name sustitutes for MolNameStr in chain names\r"
 ,"051116 rainbow color across atom-hetatm-atom chain changes: colorbyNtoC \r"
@@ -295,6 +297,9 @@ static char* prekinchanges[] =
 ,"130329 pperpoutlier limits slightly changed\r"
 ,"130406 PKINRIBB prune flawed segment end residue, better alloc and tests\r"
 ,"130725 investigate 3D printing setup for ribbons... \r"
+,"140520 ribbon code to make minimally specified center spline... \r"
+,"       -spline :meaning changed back 140520: single mid strand vectorlist\r"
+,"       -skeins 140520 shows all ribbon-defining strands\r"
 ,"\r"
 ,"\r"
 ,"END\r"
@@ -307,7 +312,7 @@ void getversion()
    char guiness[64];
 
    PREKINVERSION = (float)6.54;
-   sprintf(PREKINDATE,"130725 "); 
+   sprintf(PREKINDATE,"140520 "); 
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
@@ -409,7 +414,10 @@ static char* prekincmdhelp[] =
 ,"-cispep     : cispeptides emphasized as extra part of a ribbon kinemage\r"
 ,"-nofudge : ribbons without fudged width and without curvature fudge offset\r"
 ,"-guide   : ribbon guide points displayed (also for newribbons)\r"
-,"-spline :  (newribbons) ribbon splines displayed\r"
+,"-skeins :  (newribbons) all ribbon-defining splines displayed 140520\r"
+,"       -spline :meaning changed back 140520: single mid strand vectorlist\r"
+,"       -skeins 140520 shows all ribbon-defining strands\r"
+,"-spline :meaning changed back 140520: to single mid strand vectorlist\r"
 ,"-axis: (newribbons) ribbon axial spline \r"
 ,"-density : (newribbons) local density of ribbon axial splines \r"
 ,"-ca3rib : Lca3ribbon perp to ca-1,ca,ca+1 instead of C=O for ribbon plane\r"
@@ -806,6 +814,7 @@ void initialvalues(void)
   Lribbonguidepts = 0; /*050327*/
   Lribbonrawsplines = 0; /*051208*/
   Lribbonaxisspline = 0; /*060115*/
+  Lsplinevector = 0; /*140520*/
   Lribbondensity = 0; /*060115*/
   LvectorCO = 0; /*030125*/
   LvectorCOlabels = 0; /*041023*/
@@ -1553,9 +1562,19 @@ void parsecommandline(int *argc, char** argv)
          {/*-guide : ribbon guide points displayed*/
             Lribbonguidepts = 1;
          }
-         else if(CompArgStr(p+1,"spline", 6))
-         {/*-spline :  (newribbons) ribbon splines displayed 051209 re -guide*/
+         else if(CompArgStr(p+1,"skeins", 6)) /*140520 changed from -spline*/
+         {/*-skeins :  (newribbons) ribbon splines displayed 051209 re -guide*/
             Lribbonrawsplines = 1;
+         }
+         else if(CompArgStr(p+1,"spline", 6)) /*140520 redefined, see -skeins*/
+         {/*-spline :  (newribbons) single mid-spline vectorlist 140520*/
+            Lsplinevector = 1;
+            Lcrosstie = 0;
+            Ledgedribbon = 0;
+            Lskeinedribbon = 1;
+            nstrnd = 1; 
+            Lcommanded = 8;
+            Lbuiltin = 1;
          }
          else if(CompArgStr(p+1,"axis", 4))
          {/*-axis :  (newribbons) ribbon axial spline  re -guide*/

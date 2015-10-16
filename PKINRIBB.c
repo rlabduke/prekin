@@ -56,6 +56,7 @@
    /* additional control for beta-like arrowheads */
    /*faced: curvature dependent variable width always available, */
    /* explicit alpha, beta (fake beta for nucleics) done when 2D regions given*/
+   /*20140520 redefined -spline vs -skeins, -spline now simple vector mid line*/
 /*}}}*/
 
 /*{{{****allocation of structures: model, section, frag, res, pnt ****/
@@ -327,7 +328,7 @@ int  loadribbonatoms()  /*of current residue*/
    float  factor=0;
    int    IOK=0;    /*051214*/
    int    nitr=0,itr=0; /*070801*/
-   char   Q=' '; /*070801*/
+   char   Q=' '; /*070801 Q ...PQR...*/
 
    /* B spline order==4 uses 4 intervals to calculate spline over mid-interval*/
    /* nth spline calc using n-2,n-1,nth,n+1 guidepoints */
@@ -3699,6 +3700,7 @@ rbc  considered coil in PKINCOUT
            /*}}}faced ribbon edges: loop over chords, construct edge vectors  */
          /*}}}faced ribbon*/
 /*+++ FACED RIBBON EDGES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*+++ SKEINED RIBBON +++++++++++++++++++++++++++++++++++++++++++++++(140520)++*/
            /*{{{----skeined ribbon:loop over chords, construct strand vectors*/
            if(Lskeinedribbon)
            {/*skeined ribbon strands*/
@@ -3752,6 +3754,15 @@ rbc  considered coil in PKINCOUT
                {/*kin*/
                   if(j==0 && (num > 4)) /*num==4 is first real residue*/
                   {/*reach back and connect from previous residue's chord 3 */
+                   if(Lsplinevector) /*bare minimum vectorlist 140520*/
+                   {/*bare minimum vectorlist 140520*/
+                     sprintf(temps,"%s{%sR3 %s} %s%s %.3f, %.3f, %.3f"EOLO   
+                         ,cntl,strnd,resIDpre,Ue,color
+                         ,xspre[3].pt->x,xspre[3].pt->y,xspre[3].pt->z);  
+                       putonetextblockline(&mainscratch,temps);
+                   }/*bare minimum vectorlist 140520*/
+                   else
+                   {/*P,L per segment (140520)*/
                      sprintf(temps,"%s{%sR3 %s}P%s%s %.3f, %.3f, %.3f"EOLO   
                          ,cntl,strnd,resIDpre,Ue,color
                          ,xspre[3].pt->x,xspre[3].pt->y,xspre[3].pt->z);  
@@ -3760,9 +3771,19 @@ rbc  considered coil in PKINCOUT
                          ,cntl,strnd,resID,Ue,color
                          ,xs[0].pt->x,xs[0].pt->y,xs[0].pt->z);  /* m0 */
                        putonetextblockline(&mainscratch,temps);
+                   }/*P,L per segment (140520)*/
                   }
                   else if(j>0)  /*interior of a residue-spline region */
                   {/*interior chords*/
+                   if(Lsplinevector) /*bare minimum vectorlist 140520*/
+                   {/*bare minimum vectorlist 140520*/
+                     sprintf(temps,"%s{%sR%d %s} %s%s %.3f, %.3f, %.3f"EOLO   
+                         ,cntl,strnd,j-1,resID,Ue,color
+                         ,xs[j-1].pt->x,xs[j-1].pt->y,xs[j-1].pt->z);  
+                       putonetextblockline(&mainscratch,temps);
+                   }/*bare minimum vectorlist 140520*/
+                   else
+                   {/*P,L per segment (140520)*/
                      sprintf(temps,"%s{%sR%d %s}P%s%s %.3f, %.3f, %.3f"EOLO   
                          ,cntl,strnd,j-1,resID,Ue,color
                          ,xs[j-1].pt->x,xs[j-1].pt->y,xs[j-1].pt->z);  
@@ -3771,6 +3792,7 @@ rbc  considered coil in PKINCOUT
                          ,cntl,strnd,j,resID,Ue,color
                          ,xs[j].pt->x,xs[j].pt->y,xs[j].pt->z);  
                        putonetextblockline(&mainscratch,temps);
+                   }/*P,L per segment (140520)*/
                   }/*interior chords*/
                }/*kin*/
                /*}}}kin splines*/
