@@ -346,6 +346,7 @@ EXTERN    int   Lpeptideperprib,Lnoface,Lnoedge; /*040319*/
 EXTERN    int   Lblackedge; /*040924*/
 EXTERN    int   LNOfudge,Lribbonguidepts; /*050327*/
 EXTERN    int   Lribbonrawsplines,Lribbonaxisspline; /*051208,060115*/
+EXTERN    int   Lsplinevector; /*140520*/
 EXTERN    int   Lribbondensity; /*060115*/
 EXTERN    int   Lribnhet; /*051214 distinguish RCSB PDB ribbon command */
     /* keep track of ribose c1*,c3*,p for nucleic acids */
