@@ -1,15 +1,19 @@
 #
-CFLAGS = -I/usr/X11R6/include  
+#CFLAGS = -I/usr/X11R6/include  
+CFLAGS = -I/usr/X11/include  
 
 ifeq ($(MAKECMDGOALS),debug)
-CFLAGS = -g -I/usr/X11R6/include  
+#CFLAGS = -g -I/usr/X11R6/include  
 endif
 
-LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXm -lXt -lSM -lICE -lXext -lX11
+#LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXm -lXt -lSM -lICE -lXext -lX11
+LIBS = -L/usr/lib -L/usr/X11/lib -lXmu -lXm -lXt -lSM -lICE -lXext -lX11
 
 ifeq ($(MAKECMDGOALS),nogui)
-CFLAGS = -D NOGUI -I/usr/X11R6/include
-LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXt -lSM -lICE -lXext -lX11
+#CFLAGS = -D NOGUI -I/usr/X11R6/include
+#LIBS = -L/usr/lib -L/usr/X11R6/lib -lXmu -lXt -lSM -lICE -lXext -lX11
+CFLAGS = -D NOGUI -I/usr/X11/include
+LIBS = -L/usr/lib -L/usr/X11/lib -lXmu -lXt -lSM -lICE -lXext -lX11
 endif
 
 FIN =  -lm -pthread #for RH9.0, ok for RH7.3 & RH8.0
