@@ -179,7 +179,7 @@ fprintf(stderr,"Listmc %d, Listca %d, Listsc %d, Listss %d, Listhy %d, Listht %d
 #endif
            /*if(fprintf(fpoutput,"@onewidth "EOLO)<0) Lfpoutput=-1;*/
            /*(fprintf(fpoutput,"@onewidth "EOLO)<0); fix warning 130507 JJH */
-           fprintf(fpoutput,"@onewidth "EOLO);
+           fprintf(fpoutput,"@onewidth "EOLO); /*130121 remove (...<0) */
         }/*NOT Lappend: presume a whole new kinemage*/
         /*write file name so MAGE could call prekin or probe to read it*/
         fprintf(fpoutput,"@pdbfile {%s} "EOLO,ShortNameStr);
@@ -2085,6 +2085,7 @@ sprintf(temps,CRLF"output Lthispass %d, Ngroups %d, Nchainfirstpass %d, ichainth
     {/*extra output*/
       /*if(!Lonegroup)*/  /*for Lonegroup there are masters on all lists*/
       /*   fprintf(fpoutput,"@subgroup {extra} "EOLO);*/
+
       sprintf(cntl,"ext "); /*4 chars*/
       sprintf(aname,"ext");
       if(colorextra[0]!='\0') {sprintf(kol,"%s",colorextra);} /*041106*/

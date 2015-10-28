@@ -56,6 +56,7 @@
    /* additional control for beta-like arrowheads */
    /*faced: curvature dependent variable width always available, */
    /* explicit alpha, beta (fake beta for nucleics) done when 2D regions given*/
+   /*20140520 redefined -spline vs -skeins, -spline now simple vector mid line*/
 /*}}}*/
 
 /*{{{****allocation of structures: model, section, frag, res, pnt ****/
@@ -225,7 +226,7 @@ ribresstruct* allocribresstructure(ribfragstruct* thisfragptr )
       newribresptr->ribfragptr = thisfragptr;  /*store parent*/
 
       (thisfragptr->ribsectionptr)->number++; /*090219 residues in section cnt*/
-
+         
       newribresptr->guideptr = NULL; /*initialize members*/
       newribresptr->middlptr = NULL;
       newribresptr->axialptr = NULL;
@@ -261,6 +262,7 @@ ribresstruct* allocribresstructure(ribfragstruct* thisfragptr )
       newribresptr->explicit  = 0;
       newribresptr->extend = 0;
       newribresptr->COside = 0;
+      newribresptr->azmangle = 0; /*for Calpha+COazmuthalangle  100322*/
          /*alloc the vectors needed to define the splines*/
       if(
             (newribresptr->avecaptr=allocribpntstructure(newribresptr))!=NULL
@@ -326,7 +328,7 @@ int  loadribbonatoms()  /*of current residue*/
    float  factor=0;
    int    IOK=0;    /*051214*/
    int    nitr=0,itr=0; /*070801*/
-   char   Q=' '; /*070801*/
+   char   Q=' '; /*070801 Q ...PQR...*/
 
    /* B spline order==4 uses 4 intervals to calculate spline over mid-interval*/
    /* nth spline calc using n-2,n-1,nth,n+1 guidepoints */
@@ -743,6 +745,9 @@ int  loadribbonatoms()  /*of current residue*/
       {/*PROTEIN: partial or fully missing requisite atoms to make a ribbon*/
          Lgotatoms = 0;
          /*as of 051025 still no graceful way of dealing with imperfect data*/
+         /*130406 prune flawed segment end residue, avoid singleton N segfault*/
+ 
+         discon=1; /*force disconnection at this flawed, unuseable, residue*/
       }
     }/*PROTEIN tricks*/
     /*}}}---- PROTEIN tricks*/
@@ -830,6 +835,8 @@ int  loadribbonatoms()  /*of current residue*/
     /*}}}-- if still good, try to define explicit sec str type from header*/
 
     /*{{{-- check for disconnection because residues too far apart */
+       if(!LfakeCaCaspline) /*111106*/
+       {/*really do check*/
          /*check for disconnected fragments at evey residue */
          if(thisribresptr->previousptr != NULL)
          {/*at least on 2nd residue of a fragment*/
@@ -876,17 +883,22 @@ int  loadribbonatoms()  /*of current residue*/
                }
             }/*protein*/
          }/*at least on 2nd residue of a fragment*/
+       }/*really do check*/
     /*}}}-- check for disconnection because residues too far apart */
     }/*full number of atoms in to do a ribbon seqment*/
     /*{{{-- disconnection, alloc new fragment*/
-    if(discon || !Lgotatoms)  /*090219*/
-    {/*this residue disconnects from previous residue: create new fragment...*/
+
+    if(discon || !Lgotatoms)  /*090219, 130406 routine rearranged*/
+    {/*this residue disconnects from previous residue: backoff counters */
             /*reset current global thisribfragptr->lastribresptr  */
             /* to the previous ribresptr */
+
             thisribfragptr->lastribresptr = thisribresptr->previousptr;
             thisribfragptr->lastribresptr->nextptr = NULL; /*an end*/
             /*back-off residue count of working fragment*/
+
             thisribfragptr->number--;
+
             thisribsectionptr->number--;
 
             thisribresptr = NULL;
@@ -894,7 +906,10 @@ int  loadribbonatoms()  /*of current residue*/
             previousribbontype = 4; /*090219 clear flag before next residue*/
             explicitribbontype = 4; /*4==COIL*/
 
-            /*then alloc a new global thisribfragptr */
+      if(Lgotatoms)
+      {/*ribbon could continue in a new fragment with the current residue*/
+     	    /*  Ribbon continues!? try to create new fragment...*/
+            /*  alloc a new global thisribfragptr */
             /*  and start it with the current, disconnected ribresptr */
             /*  if this current residue has sufficient atoms, */
             /*  else skip and expect next residue to start new fragment */
@@ -902,7 +917,7 @@ int  loadribbonatoms()  /*of current residue*/
             thisribfragptr = allocribfragstructure(thisribsectionptr);
                      /* allocates global thisribfragptr  051214*/
 
-            if((thisribfragptr != NULL) && Lgotatoms)
+            if(thisribfragptr != NULL)
             {
                /*re-entrant to start another fragment with current residue*/
                /*reloads a newly allocated ribresptr in this new fragment*/
@@ -910,11 +925,13 @@ int  loadribbonatoms()  /*of current residue*/
 
                loadribbonatoms(); /*works on current inputed residue*/
             }
-    }/*this residue disconnected from previous residue: create new fragment...*/
+      }/*ribbon could continue in a new fragment with the current residue*/
+    }/*this residue disconnected from previous residue*/
     /*}}}-- disconnection, alloc new fragment*/
 
    }/*ribres allocated*/
   }/*itr: iteration for multi-residue pseudo-hets like GFPchromophore*/
+ 
   return(Lgotatoms);
 }
 /*___loadribbonatoms()____________________________________________________}}}*/
@@ -972,6 +989,8 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
   float pmid[4]={0,0,0,0},direc[4]={0,0,0,0},center[4]={0,0,0,0};
   int   j=0;
   int   LOK = 0;  /*070801*/
+  float azmangle=0; /*dihedral CA-1,CA,CA+1,O azmuthal to Carbonyl 100322*/
+  float prevpnt[4]={0,0,0,0}; /*for dihedral: CA-1 100322*/
 
   /*wc--width in coil, no  sec. structure */
   wc = ribwidcoil;
@@ -1082,6 +1101,20 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
         }
         else /*protein*/
         {
+		
+          if(   theribresptr->nextptr->calphptr == NULL  /*100322*/
+             && theribresptr->ccarbptr!=NULL  ) /*100322*/
+          {/*next residue is not really there, use this C instead 100322*/
+fprintf(stderr,"NEXT IS NULL, this is %d\n",theribresptr->numrib);
+             if( (  theribresptr->nextptr->calphptr 
+                  = allocribpntstructure(theribresptr->nextptr))
+                != NULL)
+             {
+              (theribresptr->nextptr->calphptr)->x = theribresptr->ccarbptr->x;
+              (theribresptr->nextptr->calphptr)->y = theribresptr->ccarbptr->y;
+              (theribresptr->nextptr->calphptr)->z = theribresptr->ccarbptr->z;
+             }
+          }
           if(   theribresptr->calphptr!=NULL && theribresptr->ocarbptr!=NULL
              && theribresptr->nextptr->calphptr != NULL )
           {/*this residue has Calpha and Ocarb atoms defined */
@@ -1101,6 +1134,26 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
             distpnt[2] = theribresptr->ocarbptr->y;
             distpnt[3] = theribresptr->ocarbptr->z;
             LOK = 1;
+            if(   theribresptr->previousptr != NULL /*for azmangle 100322 */
+               && theribresptr->previousptr->calphptr != NULL)
+            {
+               prevpnt[1] = theribresptr->previousptr->calphptr->x;
+               prevpnt[2] = theribresptr->previousptr->calphptr->y;
+               prevpnt[3] = theribresptr->previousptr->calphptr->z;
+            }
+            else if(theribresptr->npeptptr!=NULL) /*azmangle 100322*/
+            {/*use N, beware poorly defined dihedral: azmangle 100322*/
+               prevpnt[1] = theribresptr->npeptptr->x;
+               prevpnt[2] = theribresptr->npeptptr->y;
+               prevpnt[3] = theribresptr->npeptptr->z;
+            }
+            else /*reuse Calpha for an undefined dihedral=0, azmangle 100322*/
+            {/*use N, beware poorly defined dihedral: azmangle 100322*/
+               prevpnt[1] = thispnt[1];
+               prevpnt[2] = thispnt[2];
+               prevpnt[3] = thispnt[3];
+            }                                       /*for azmangle 100322 */
+
           }
           else
           {
@@ -1134,10 +1187,22 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
         /*--vector B = c1' - c3' */
         /*--vector B = o   - ca  */
 
-        bvec[1] = distpnt[1] - nearpnt[1];
-        bvec[2] = distpnt[2] - nearpnt[2];
-        bvec[3] = distpnt[3] - nearpnt[3];
-
+        if(Lca3ribbon) /*130121 rib plane use ca-1,ca,ca+1 perp instead of C=O*/
+        {
+           cvec[1] = thispnt[1] - prevpnt[1];
+           cvec[2] = thispnt[2] - prevpnt[2];
+           cvec[3] = thispnt[3] - prevpnt[3];
+           /*crossproduct*/
+           bvec[1] = avec[2]*cvec[3] - cvec[2]*avec[3];
+           bvec[2] = avec[3]*cvec[1] - cvec[3]*avec[1];
+           bvec[3] = avec[1]*cvec[2] - cvec[1]*avec[2];
+        }
+        else /*distpnt is Carbonyl Oxygen or surrogate*/
+        {
+           bvec[1] = distpnt[1] - nearpnt[1];
+           bvec[2] = distpnt[2] - nearpnt[2];
+           bvec[3] = distpnt[3] - nearpnt[3];
+        }
         /*--vector C = AxB normal to pseudo-plane p,c3',c1',p+1, */
         /*--vector C = AxB normal to peptide plane ca,o,ca+1, */
         /*             points out of RH helix */
@@ -1155,7 +1220,7 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
         cmag = (float)(sqrt(  cvec[1]*cvec[1]
                             + cvec[2]*cvec[2]
                             + cvec[3]*cvec[3] ));
-        if(cmag > 0.01 || thisribresptr->number < 4) /*see else*/
+        if(cmag > 0.01 || theribresptr->number < 4)/*see else,was this,100322*/
         {
            cvec[1] = cvec[1]/cmag;
            cvec[2] = cvec[2]/cmag;
@@ -1174,13 +1239,35 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
           /*rather than figure out what really should be done, */
           /*just set the d-vector to an earlier value if cmag very small*/
             /*BEWARE: PREVIOUS NOT DEFINED FOR 1st residue == #3 */
-           cvec[1] = thisribresptr->previousptr->cvecnptr->x;
-           cvec[2] = thisribresptr->previousptr->cvecnptr->y;
-           cvec[3] = thisribresptr->previousptr->cvecnptr->z;
-           dvec[1] = thisribresptr->previousptr->dvecnptr->x;
-           dvec[2] = thisribresptr->previousptr->dvecnptr->y;
-           dvec[3] = thisribresptr->previousptr->dvecnptr->z;
+           cvec[1] = theribresptr->previousptr->cvecnptr->x;/*was this,100322*/
+           cvec[2] = theribresptr->previousptr->cvecnptr->y;/*was this,100322*/
+           cvec[3] = theribresptr->previousptr->cvecnptr->z;/*was this,100322*/
+           dvec[1] = theribresptr->previousptr->dvecnptr->x;/*was this,100322*/
+           dvec[2] = theribresptr->previousptr->dvecnptr->y;/*was this,100322*/
+           dvec[3] = theribresptr->previousptr->dvecnptr->z;/*was this,100322*/
         }
+        if(LvectCOpdb) /*only Calpha,azimuth --> pdb format 100322*/
+        {
+            theribresptr->azmangle = (float)dihedral4pt( /*was this,100322*/
+                (double)prevpnt[1]
+               ,(double)prevpnt[2]
+               ,(double)prevpnt[3]
+               ,(double)thispnt[1]
+               ,(double)thispnt[2]
+               ,(double)thispnt[3]
+               ,(double)nextpnt[1]
+               ,(double)nextpnt[2]
+               ,(double)nextpnt[3]
+               ,(double)distpnt[1]
+               ,(double)distpnt[2]
+               ,(double)distpnt[3]
+              );
+fprintf(stderr,"CA %d: %8.3f,%8.3f,%8.3f "
+,theribresptr->numrib,(double)thispnt[1],(double)thispnt[2],(double)thispnt[3]);
+fprintf(stderr,"CA %d: %8.3f,%8.3f,%8.3f\n"
+,theribresptr->numrib+1,(double)nextpnt[1],(double)nextpnt[2],(double)nextpnt[3]);
+        }              /*only Calpha,azimuth --> pdb format 100322*/
+
         /*}}}--------- vector A, vector B --> vectors C and D                */
 
          /*{{{---------- adjust D vs C for nucleics, set guide ==midpoint of A*/
@@ -1271,7 +1358,7 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
            /*extend back to earlier (dummy) residues*/
            /*--extend back half distance of vector A */
            /* (back-extension has evolved to be essentially at 1st atom)*/
-           /*nm1resptr == thisribresptr->previousptr*/
+           /*nm1resptr == theribresptr->previousptr*/ /* was this... 100322*/
            nm1resptr->guideptr->x = midpnt[1] -avec[1]/2;
            nm1resptr->guideptr->y = midpnt[2] -avec[2]/2;
            nm1resptr->guideptr->z = midpnt[3] -avec[3]/2;
@@ -1711,6 +1798,7 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
 
           /*alloc a final dummy residue to extend the spline*/
           theribresptr = allocribresstructure(theribfragptr);
+             /* dummy lastribresptr, others alloc in loadribbonatoms() 100322*/
           if(theribresptr != NULL )
           {/*pad end with a dummy residue so ribbon can tail off nicely*/
             /*update the rolling pointers to current five residues*/
@@ -1721,11 +1809,12 @@ void buildsectionguides(ribsectionstruct* theribsectionptr)
             nthresptr = theribresptr; /*which is now a C (3prime) end dummy*/
 
 /*090223 if total of actual residues is less than 4, no info to tweak guides*/
-/*so just skip this and hope for the best */
+/*so just skip this and hope for the best re: dirty trick DIRTY TRICK*/
 /*  meanwhile, make sure that HETATMs not artificially fragmenting chain*/
 /* i.e. deal with travesty of non-std residues being declared hets */
-if(theribresptr->number >= 8)/*3 start dummies + 4 actual + 1 end dummy 090223*/
-{/*at least 4 actual residues in this fragment 090223*/
+           if(theribresptr->number >= 8)/*3 start dummies + 4 actual + 1 end dummy 090223*/
+           {/*at least 4 actual residues in this fragment 090223*/
+
             /*assign cross direction of penultimate guide to ultimate guide*/
             nm1resptr->dvecnptr->x = nm2resptr->dvecnptr->x;
             nm1resptr->dvecnptr->y = nm2resptr->dvecnptr->y;
@@ -1852,9 +1941,9 @@ if(theribresptr->number >= 8)/*3 start dummies + 4 actual + 1 end dummy 090223*/
          */
                  /*so will trigger Lhead at finish end*/
 
-}/*at least 4 actual residues in this fragment 090223*/
+           }/*at least 4 actual residues in this fragment 090223*/
           }/*pad end with a dummy residue so ribbon can tail off nicely*/
-
+           
           theribresptr = NULL; /*now we can end this fragment*/
       }/*at the last ribresptr*/
       else
@@ -1916,7 +2005,7 @@ void buildallguides()  /*051214*/
 
 /*{{{expandsectionguides()****************************************************/
 void expandsectionguides(ribsectionstruct* theribsectionptr)
-{
+{  /*safer allocations and tests, 130406 */
   /*{{{--declarations:                                                       */
   ribfragstruct*    theribfragptr=NULL;
   ribresstruct*     theribresptr=NULL;
@@ -1928,6 +2017,7 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
   float deldcx=0,deldcy=0,deldcz=0; /* width direction of ribbon */
   float widena=0,widenb=0,widenc=0;
   int   j=0;
+  int   LOK = 0; /*130406*/
   /*}}}*/
 
     /*{{{---- loop down through fragments to the residues                    */
@@ -1936,45 +2026,72 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
 
     if(theribsectionptr->type == 'N') {Lnucleic = 1;}
     else                              {Lnucleic = 0;}
+    
     theribfragptr = theribsectionptr->firstribfragptr;
     while(theribfragptr != NULL)
     {/*frag*/
+
       if(theribfragptr->guideset == NULL)
-      {
+      {/*alloc guideset for this ribfrag*/
         /*alloc the guide array to hold guide points of this frag*/
-        mmaxres = theribfragptr->lastribresptr->number;
-        theribfragptr->guideset = (guide*)malloc(sizeof(guide)*(mmaxres+1));
-        /*alloc the residue array of indexed residue pointers of this frag*/
+        /*protect from unforeseen as unneeded extra allocations*/
+
+        if(theribfragptr->lastribresptr != NULL)
+        {/*theribfragptr OK, initialize guideset and alloc residueset*/
+           
+           mmaxres = theribfragptr->lastribresptr->number;
+
+           /*alloc the residue array of indexed residue pointers of this frag*/
+        theribfragptr->guideset=(guide*)malloc(sizeof(guide)*(mmaxres+1));
+           /*alloc the residue array of indexed residue pointers of this frag*/
         theribfragptr->residueset=(residue*)malloc(sizeof(residue)*(mmaxres+1));
-        /*guideset has just be created, presumably first time through coords*/
-        for(j=0; j<mmaxres+1; j++)
-        {
-            /*initialize members of each indexed guideset*/
-            /*guide members will be calculated below in this subroutine*/
-            theribfragptr->guideset[j].m0 = NULL;
-            theribfragptr->guideset[j].a1 = NULL;
-            theribfragptr->guideset[j].a2 = NULL;
-            theribfragptr->guideset[j].b3 = NULL;
-            theribfragptr->guideset[j].b4 = NULL;
-            theribfragptr->guideset[j].c5 = NULL;
-            theribfragptr->guideset[j].c6 = NULL;
-            theribfragptr->guideset[j].x7 = NULL; /*axis 060115*/
+           /* all real & dummy residues are in, now know maxres. 100322*/
+           
+           if(  (theribfragptr->guideset != NULL) 
+              &&(theribfragptr->residueset != NULL))
+           {/*guideset and residueset are allocated*/           
+              
+              for(j=0; j<mmaxres+1; j++) 
+              { 
+                 /*initialize members of each indexed guideset*/
+                 /*guide members will be calculated below in this subroutine*/
+                 theribfragptr->guideset[j].m0 = NULL;
+                 theribfragptr->guideset[j].a1 = NULL;
+                 theribfragptr->guideset[j].a2 = NULL;
+                 theribfragptr->guideset[j].b3 = NULL;
+                 theribfragptr->guideset[j].b4 = NULL;
+                 theribfragptr->guideset[j].c5 = NULL;
+                 theribfragptr->guideset[j].c6 = NULL;
+                 theribfragptr->guideset[j].x7 = NULL; /*axis 060115*/
+              
+                 /*initialize the member of each indexed residueset*/
+                 /*residue pointers point to existing residues of this frag*/
+                 theribfragptr->residueset[j].resptr = NULL;
+                 /* define residue-set array 100322*/
+              }
 
-            /*initialize the member of each indexed residueset*/
-            /*residue pointers will point to existing residues of this frag*/
-            theribfragptr->residueset[j].resptr = NULL;
+              /*initialization avoid problem: first time through, */
+              /*when allocating members, expect them to have been NULL.*/
+              /*Later, when re-doing all, expect just to change values,*/
+              /*BUT cannot trust uninitiated members to actually be NULL */
+           }/*guideset and residueset are allocated*/
+           LOK = 1;
+        }/*theribfragptr OK, initialize guideset and alloc residueset*/
+        else
+        {/*NOT OK, do not work this fragment*/
+           LOK = 0;	
         }
-        /*initialization avoid problem: first time through, */
-        /*when allocating members, expect them to have been NULL.*/
-        /*Later, when re-doing all, expect just to change values,*/
-        /*BUT cannot trust uninitiated members to actually be NULL */
-      }
-      /*}}}loop down through fragments to the residues*/
+      }/*alloc guideset for this ribfrag*/
+    /*}}}loop down through fragments to the residues*/
 
-     /*{{{---- for each strand of each residue, calc width offset and apply */
+     /*{{{---- for each strand of each residue, calc width offset and apply  */
+     if(LOK)
+     {/*build guides for this fragment*/
+
      theribresptr = theribfragptr->firstribresptr;
      while(theribresptr != NULL)
      {/*res*/
+
        num = theribresptr->number;
 
        /*{{{----calc widena, widenb, widenc                                  */
@@ -1998,6 +2115,7 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
        /*}}}calc widena, widenb, widenc */
 
        /*{{{----calc offset delta and apply for each strand (a,b,c pairs)    */
+
        deldax = (theribresptr->dvecnptr->x)*((widena) );
        delday = (theribresptr->dvecnptr->y)*((widena) );
        deldaz = (theribresptr->dvecnptr->z)*((widena) );
@@ -2065,6 +2183,8 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
                      (ribresstruct*)malloc(sizeof(ribresstruct*));
        }
        theribfragptr->residueset[num].resptr = theribresptr;
+           /* ++++++ IMPORTANT: register theribresptr as member of set 100322*/
+       
        /*}}}calc offset delta and apply for each strand (a,b,c pairs)*/
 
        /*now for this num: all theribresptr->guideset[num] members defined */
@@ -2076,13 +2196,17 @@ void expandsectionguides(ribsectionstruct* theribsectionptr)
        {
           theribresptr = theribresptr->nextptr;
        }
+
      }/*res*/ /*while(theribresptr != NULL)*/
      /*}}}for each strand of each residue, calc width offset and apply*/
 
-     /*{{{---- loop back up through fragments                                   */
+     /*{{{---- loop back up through fragments                */
+
      if(theribfragptr == theribsectionptr->lastribfragptr)
          {  theribfragptr = NULL;}
      else{  theribfragptr = theribfragptr->nextptr;}
+
+     }/*build guides for this fragment*/
     }/*frag*/ /*while(theribfragptr != NULL)*/
   /*}}}loop back up through fragments*/
 }
@@ -2549,6 +2673,7 @@ void constructsectionribbons(ribsectionstruct* theribsectionptr)
   int   cnt = 0, nnt=0;
   float   distance=0;
   float   tenth=0; /*061029 colorNtoC*/
+  float angle=0; /*for Calphas+azmangle  100322*/
 #define ALPHA 1
 #define BETA  2
 #define COIL  3
@@ -2770,7 +2895,52 @@ rbc  considered coil in PKINCOUT
 
          /*++++}}}TEST: output density of spline points for all residues*/
 
-    /*{{{--- for each residue, calculate ribbon section, can do TEST splines*/
+         /*++++{{{Calphas+COazmangle  100322 */
+         if(LvectCOpdb)
+         {/*only CA,azimuth to pdb format (the azmangle value)  100322*/
+            for(num=1; num < maxres+1; num++)
+            {/*loop over all residues, incl dummies on ends*/
+               Listext = 1;
+               extoutl = 1;
+               sprintf(cntl,"pdb ");/*extra output*/
+               
+               /*angle = theribfragptr->ribresptr->azmangle;*/
+               /*angle = theribfragptr->residueset[num].azmangle;*/
+               angle = theresidueset[num].resptr->azmangle;
+               if(angle < 0) angle = 360 + angle; /*130121 = */
+
+               if(   theresidueset[num].resptr != NULL 
+                  && theresidueset[num].resptr->calphptr != NULL)
+               {/*Calpha exists for a residue...*/               
+                sprintf(temps
+,"%sATOM  %5d  CA  %s%s%4d%s   %8.3f%8.3f%8.3f           %7.1fVCCO%4d"EOLO
+               ,cntl
+               ,num
+               ,theresidueset[num].resptr->resrib
+               ,theresidueset[num].resptr->subrib
+               ,theresidueset[num].resptr->numrib
+               ,theresidueset[num].resptr->rinsrib
+               ,theresidueset[num].resptr->calphptr->x
+               ,theresidueset[num].resptr->calphptr->y
+               ,theresidueset[num].resptr->calphptr->z
+               ,angle
+               ,num-1);
+
+               putonetextblockline(&mainscratch,temps);
+                  
+               typenow=typeext; /*global output controls for old prekin*/
+               ++pointcnt[typenow]; 
+
+               }
+            }/*loop over all residues, incl dummies on ends*/
+         }
+         /*++++}}}Calphas+COazmangle  100322 */
+         
+         /*{{{--- for each residue, calculate ribbon section, can do TEST splines*/
+         /*--------------THE ACTUAL RIBBON CODE -----------------------------*/
+
+         if(!LvectCOpdb)
+         {/*The actual ribbon code  100322*/
 
          for(num=CORDER; num < maxres; num++) /*THE loop over residues*/
          {/*loop over residues in a fragment, num is residue position in frag*/
@@ -3084,7 +3254,7 @@ rbc  considered coil in PKINCOUT
             }
             else if(LcolorbyBval)
             {/*021213*/
-               sprintf(color,"%s",colorscale[Ncolorscale].color);
+               sprintf(color," %s",colorscale[Ncolorscale].color); /*130121 %s*/
                   /*high value default*/
                for(ncol=1; ncol < Ncolorscale; ncol++)
                {
@@ -3529,6 +3699,7 @@ rbc  considered coil in PKINCOUT
            /*}}}faced ribbon edges: loop over chords, construct edge vectors  */
          /*}}}faced ribbon*/
 /*+++ FACED RIBBON EDGES +++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*+++ SKEINED RIBBON +++++++++++++++++++++++++++++++++++++++++++++++(140520)++*/
            /*{{{----skeined ribbon:loop over chords, construct strand vectors*/
            if(Lskeinedribbon)
            {/*skeined ribbon strands*/
@@ -3582,6 +3753,15 @@ rbc  considered coil in PKINCOUT
                {/*kin*/
                   if(j==0 && (num > 4)) /*num==4 is first real residue*/
                   {/*reach back and connect from previous residue's chord 3 */
+                   if(Lsplinevector) /*bare minimum vectorlist 140520*/
+                   {/*bare minimum vectorlist 140520*/
+                     sprintf(temps,"%s{%sR3 %s} %s%s %.3f, %.3f, %.3f"EOLO   
+                         ,cntl,strnd,resIDpre,Ue,color
+                         ,xspre[3].pt->x,xspre[3].pt->y,xspre[3].pt->z);  
+                       putonetextblockline(&mainscratch,temps);
+                   }/*bare minimum vectorlist 140520*/
+                   else
+                   {/*P,L per segment (140520)*/
                      sprintf(temps,"%s{%sR3 %s}P%s%s %.3f, %.3f, %.3f"EOLO
                          ,cntl,strnd,resIDpre,Ue,color
                          ,xspre[3].pt->x,xspre[3].pt->y,xspre[3].pt->z);
@@ -3590,9 +3770,19 @@ rbc  considered coil in PKINCOUT
                          ,cntl,strnd,resID,Ue,color
                          ,xs[0].pt->x,xs[0].pt->y,xs[0].pt->z);  /* m0 */
                        putonetextblockline(&mainscratch,temps);
+                   }/*P,L per segment (140520)*/
                   }
                   else if(j>0)  /*interior of a residue-spline region */
                   {/*interior chords*/
+                   if(Lsplinevector) /*bare minimum vectorlist 140520*/
+                   {/*bare minimum vectorlist 140520*/
+                     sprintf(temps,"%s{%sR%d %s} %s%s %.3f, %.3f, %.3f"EOLO   
+                         ,cntl,strnd,j-1,resID,Ue,color
+                         ,xs[j-1].pt->x,xs[j-1].pt->y,xs[j-1].pt->z);  
+                       putonetextblockline(&mainscratch,temps);
+                   }/*bare minimum vectorlist 140520*/
+                   else
+                   {/*P,L per segment (140520)*/
                      sprintf(temps,"%s{%sR%d %s}P%s%s %.3f, %.3f, %.3f"EOLO
                          ,cntl,strnd,j-1,resID,Ue,color
                          ,xs[j-1].pt->x,xs[j-1].pt->y,xs[j-1].pt->z);
@@ -3601,6 +3791,7 @@ rbc  considered coil in PKINCOUT
                          ,cntl,strnd,j,resID,Ue,color
                          ,xs[j].pt->x,xs[j].pt->y,xs[j].pt->z);
                        putonetextblockline(&mainscratch,temps);
+                   }/*P,L per segment (140520)*/
                   }/*interior chords*/
                }/*kin*/
                /*}}}kin splines*/
@@ -3714,6 +3905,9 @@ rbc  considered coil in PKINCOUT
            /*}}}CBstubs (optional) */
 
          }/*loop over residues*/
+
+	 }/*The actual ribbon code  100322*/ //DCR SML 20151028: if there is a compile error here, it's a mismatched curly brace related this line
+
 
     /*}}}for each residue, calculate the appropriate ribbon section*/
 

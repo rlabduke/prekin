@@ -323,7 +323,8 @@ EXTERN    float c4srib[5][4]; /*040419*/
 EXTERN    float cbrib[5][4]; /*041205*/
 EXTERN    char  resrib[5][4],subrib[5][2],rinsrib[5][2],ribnam[10][13];
 EXTERN    float Bvalrib[5]; /*021213*/
-EXTERN    int LvectorCO,LazimuthCO,LphipsiCO,LpsiphiCO,LvectCOpdb,LpdbCACOpdb;
+EXTERN    int LvectorCO,LazimuthCO,LphipsiCO,LpsiphiCO,LvectCOpdb,LpdbCACOpdb; 
+EXTERN    int LfakeCaCaspline; /*111106*/
 EXTERN    int   LvectorCOlabels,Ldumpcispeptides,Lcispeptides; /*041023,041102*/
 EXTERN    int   LdumpVRML,LsplineVRML,LheaderVRML,LvectorVRML; /*050204,08*/
 EXTERN    int   LsphereVRML,LarrowVRML; /*050208,12*/
@@ -345,6 +346,7 @@ EXTERN    int   Lpeptideperprib,Lnoface,Lnoedge; /*040319*/
 EXTERN    int   Lblackedge; /*040924*/
 EXTERN    int   LNOfudge,Lribbonguidepts; /*050327*/
 EXTERN    int   Lribbonrawsplines,Lribbonaxisspline; /*051208,060115*/
+EXTERN    int   Lsplinevector; /*140520*/
 EXTERN    int   Lribbondensity; /*060115*/
 EXTERN    int   Lribnhet; /*051214 distinguish RCSB PDB ribbon command */
     /* keep track of ribose c1*,c3*,p for nucleic acids */
@@ -354,7 +356,8 @@ EXTERN    int   Lcurvednucleics; /*040420 curvature offset ribbons*/
 EXTERN    int   Lc4primenucleics; /*040420 curvature offset ribbons to c4prime*/
 EXTERN    int   Lribbonnew;  /*051102*/
 EXTERN    int   Lribbonhbonds;  /*051212*/
-#define ALPHA2D    1
+EXTERN    int   Lmagekinjas;  /*101225*/
+#define ALPHA2D    1  
 #define BETA2D     2
 #define COIL2D     4
 #define NUCLEIC2D  8
@@ -390,6 +393,7 @@ EXTERN int  altstd,altcfa[2],altcfb[2],altcfc[2],Lalts;
 EXTERN char altstr[5];
 EXTERN int  Lpointmasteralta,Lpointmasteraltb,Lpointmasteraltc; /*030503*/
 EXTERN int  Lribbonmasters; /*051128 for alpha,beta,coil  now optional*/
+EXTERN int  Lca3ribbon;/*130121 rib plane use ca-1,ca,ca+1 perp instead of C=O*/
 
 /*------control logicals, one for each type */
 EXTERN int  mcoutl,scoutl,lboutl,croutl,htoutl,hyoutl;
@@ -583,6 +587,7 @@ EXTERN int   Ltestprint, Loption,Lscriptin,Lscriptout,Lcoordin,Lhetconnect;
 EXTERN int   Lopenscriptout,Lscriptfileopen,LRCDialogInput;
 EXTERN int   Lopenscriptin;
 EXTERN int   Ltest, Limittext;
+EXTERN int   Lreport;/*130324 made global*/
 EXTERN long  maxtextchar;
 EXTERN int  Lgetranges,Lrangecontrols,Lfinishranges;
 EXTERN int  Ldetails;
@@ -601,6 +606,7 @@ EXTERN int  Lkinmasters; /*030519*/
 EXTERN int  Lstdoutreport,Lpperptobase,Lplotpperptobase; /*030502,15,19*/
 EXTERN int  Ldumppperptobase,Lpperpoutliersonly; /*040202,040705*/
 EXTERN int  Lpperptoc1nline; /*050125*/
+EXTERN int  Loperptoc1nline; /*091129*/
 EXTERN int Lquiet,Lcommanded,Lcommandsub,Lappend,Lanimate,Laltcontrol;
 EXTERN int Loldpdb; /*071215*/
 EXTERN int Lnobutton,Lresiduegroups; /*060120 multi-poses of ligand as ATOMs*/

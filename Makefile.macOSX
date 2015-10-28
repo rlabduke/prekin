@@ -31,7 +31,7 @@ endif
           PKINHY36.o PKININPT.o PKININIT.o PKINRIBB.o PKINRNGE.o \
           PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o \
           PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o \
-          PUXMTEXT.o PUXMOSX.c
+          PUXMTEXT.o PUXMOSX.o
 
 # ------------------------------------------------------------------------
 # Commands specific to clients created by this Makefile

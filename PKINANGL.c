@@ -1445,8 +1445,7 @@ void    doaxisrot(double *dxp,double *dyp,double *dzp,float theta
 /*___doaxisrot()____________________________________________________________*/
 /*3456789_123456789_123456789_123456789_123456789_123456789_123456789_12345678*/
 
-/****constructcircle()********************************************************/
-int constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float radius)
+int  constructcircle(float Cxyz[SEGMENTS][3], float Axyz[3], float Bxyz[3], float radius)
 {
    /*taken from MAGEUTIL/arrowtoscreen() */
 

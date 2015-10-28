@@ -8,7 +8,7 @@
 #include "PKINDLOG.h"
 
 /***** main ****************************************************************/
-int main(int argc, char** argv)
+int main(int argc, char** argv) /*main is of type int !? 130121*/
 {
   /*Ltestprint = TRUE;*/  /*test option, compile as TRUE to invoke,*/
   Ltestprint = 0;  /* as FALSE for distribution, can also set in Kludges */
@@ -110,7 +110,7 @@ int   HandleloopEvent()
      if(length>0 && length<=9)
      {
         string[length] = '\0';
-        if(string[0] == '.') /* '.'  program interruption*/
+        if( string[0] == '.'  ) /* '.'  program interruption*/
         {
            ireturn = 1;
         }

@@ -82,9 +82,10 @@ int    openoutput(void)
      XmStringFree(xmstring);
 
     XtManageChild(fileoutdialog); /*puts the file dialog widget on screen */
-  return(1);
+  /* return(1); 130121 move out of conditional  to avoid compiler warning*/ 
+    return(1);
 #endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
-  return(0);
+    return(0); // this return(0) has two purposes: 1) prevents a compiler warning, function must have return even if the whole ifdef-endif block isn't present, 2) returning non-1 gives a different behavior from when it works right (block otherwise returns 1).  SML DCR 20151028
 }
 /*___openoutput()____________________________________________________________*/
 
@@ -164,9 +165,11 @@ int    openscriptout(void)
 
     XtManageChild(scriptfiledialog); /*puts the file dialog widget on screen */
     Lwaiting = 1;
-   return(1);
+    /* return(1); 130121 move out of conditional to avoid compile warning*/
+    return(1);
 #endif /* UNIX_MOTIF  060324 re compile with NOGUI, requires Lquiet=1*/
-   return(0);
+    return(0);  // this return(0) has two purposes: 1) prevents a compiler warning, function must have return even if the whole ifdef-endif block isn't present, 2) returning non-1 gives a different behavior from when it works right (block otherwise returns 1).  SML DCR 20151028
+
 }
 /*___openscriptout()________________________________________________________*/
 

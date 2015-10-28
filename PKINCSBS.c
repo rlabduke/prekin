@@ -6,10 +6,10 @@
 
   typedef struct resatomstruct {
      char subc[3];
-     char resc[4];
-     char numc[5];
-     char rinsc[2];
-     char atomc[6];
+     char resc[5];
+     char numc[6];
+     char rinsc[3];
+     char atomc[7];
   }resatomstruct;
 static  struct resatomstruct* resatomptr;
 static  struct resatomstruct* resAtomOLDptr;
@@ -1130,8 +1130,8 @@ static  char  xth = ' '; /*991128*/
     }
     /*writesctoscratch()----*/
     if(  ((!(Lcbstubsrib && atom[j][1]=='c' && atom[j][2]=='b'))    /*050206*/
-       &&  !Lcbonly)
-       ||  (Lcbonly && atom[j][1]=='c' && atom[j][2]=='b')     )
+       &&  !Lcbonly) 
+       ||  (Lcbonly && atom[j][1]=='c' && atom[j][2]=='b')     )/*130121(...&&...)*/
        /*when Lcbstubsrib (rib---CB), do not also write the CA---CB vector*/
     {/*restricted output for sidechain*/
       if(Lsuperpos)
@@ -1175,8 +1175,8 @@ static  char  xth = ' '; /*991128*/
       else
       {/*ususal division of mc, sc*/
         if(LdumpVRML && LvectorVRML) /*050208*/
-        {/*
-           sprintf(cntl,"scv "); //goes with sidechain vectors*/
+        {
+	  sprintf(cntl,"scv ");/*goes with sidechain vectors*/ //There was a merge problem with this sprintf statement - not sure if it should be in or not SML DCR 20151028
            sprintf(whostr," sc ");
            radius = ribwidVRML/nstrnd;
            writeVRMLvectortoscratch(cntl,colr2,radius,whostr
@@ -1189,35 +1189,85 @@ static  char  xth = ' '; /*991128*/
             /*050916 rds on P so balllists will have atomic radii*/
             /* 050705 altstr on P == that of following L type point (for KiNG)*/
             /* on spec: when is Lprint1 true, Lprint2 false? Only for water?*/
-             sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P%s%s %.3f, %.3f, %.3f "
-             ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
+      
+
+             if(Lmagekinjas) /*101225*/ 
+             {
+              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P,%s%s %.3f, %.3f, %.3f "
+                ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
                   ,aspectstr[k],colr,altstr,rds,x[k],y[k],z[k]);
+             }
+             else
+             {
+              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P%s%s %.3f, %.3f, %.3f "
+                ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
+                  ,aspectstr[k],colr,altstr,rds,x[k],y[k],z[k]);
+             
+             }
+
+
              putonetextblockline(&mainscratch,temps);
              ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
            }
            else if(Lprint2 && !Lprint1)
            {
              /*maybe a continuation of a polyline*/
-
-             sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s%s%s "
-                "%.3f, %.3f, %.3f"EOLO
+             if(Lmagekinjas) /*101225*/
+             {
+              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L,%s%s%s%s%s "
+                "%.3f, %.3f, %.3f"
+                EOLO
                 ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
                 ,aspectstr[j],colr,ballstr,hydrgstr,altstr,rds,sty
                 ,x[j],y[j],z[j]);
+             }
+             else
+             {
+              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s%s%s "
+                "%.3f, %.3f, %.3f"
+                EOLO
+                ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
+                ,aspectstr[j],colr,ballstr,hydrgstr,altstr,rds,sty
+                ,x[j],y[j],z[j]);
+             }
+
+
              putonetextblockline(&mainscratch,temps);
                 ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
            }
            if(Lprint1 && Lprint2)
            {
              /*050705 altstr on P == that of following L type point (for KiNG)*/
+
+
+             if(Lmagekinjas) /*101225*/
+             {
+              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s} P,%s %.3f, %.3f, %.3f "
+                EOLO
+                ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
+                ,altstr,x[k],y[k],z[k]);
+             putonetextblockline(&mainscratch,temps);
+
+              sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L,%s%s%s%s%s %.3f, %.3f, %.3f"
+                EOLO
+                ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
+                ,aspectstr[j],colr,ballstr,hydrgstr,altstr,rds,sty
+                ,x[j],y[j],z[j]); 
+             putonetextblockline(&mainscratch,temps);
+             }
+             else
+             {
               sprintf(temps,"%s{%s%s%s%4d%s%s%s%s} P%s %.3f, %.3f, %.3f "
-                    "{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s%s%s %.3f, %.3f, %.3f"EOLO
+                    "{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s%s%s %.3f, %.3f, %.3f"
+                EOLO
                 ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
                 ,altstr,x[k],y[k],z[k]
                 ,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
                 ,aspectstr[j],colr,ballstr,hydrgstr,altstr,rds,sty
                 ,x[j],y[j],z[j]);
              putonetextblockline(&mainscratch,temps);
+             }
+
              ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
              ++countxyz;++pointcnt[typenow];countpoints(cntl,0);
            }
@@ -1830,7 +1880,8 @@ for(j=1; j<= 9; j++)
           /*050705 altstr on P == that of following L type point (for KiNG)*/
           /* this could be wrong for this Lsuperpos option? */
           if(colr1[0]=='\0') sprintf(colr1," white");
-          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P%s%s %.3f, %.3f, %.3f "EOLO
+          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P%s%s %.3f, %.3f, %.3f "
+           EOLO
            ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
            ,aspectstr[k],colr1,altstr,rds,x[k],y[k],z[k]);
           ++countxyz;++pointcnt[typenow];countpoints(cntl,0);/*P point only*/
@@ -1854,9 +1905,24 @@ for(j=1; j<= 9; j++)
           /*050916 rds on P so balllists will have atomic radii*/
           /*050705 altstr on P == that of following L type point (for KiNG)*/
           /*but when does 1 but not 2 happen, and just what altstr is defined?*/
-          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P%s%s %.3f, %.3f, %.3f "EOLO
+
+
+         if(Lmagekinjas) /*101225*/
+         {
+          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P,%s%s %.3f, %.3f, %.3f "
+           EOLO
            ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
            ,aspectstr[k],colr1,altstr,rds,x[k],y[k],z[k]);
+         }
+         else
+         {
+          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s P%s%s %.3f, %.3f, %.3f "
+           EOLO
+           ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
+           ,aspectstr[k],colr1,altstr,rds,x[k],y[k],z[k]);
+         }
+
+
           ++countxyz;++pointcnt[typenow];countpoints(cntl,0);/*P point only*/
           putonetextblockline(&mainscratch, temps); /*mc and het to scratch*/
        }
@@ -1880,10 +1946,24 @@ for(j=1; j<= 9; j++)
         }/*intermediate point divides vector into halves*/
         else
         {/*vector ending on atom 2*/
-          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s %.3f, %.3f, %.3f "
+
+
+          if(Lmagekinjas) /*101225*/
+          {
+           sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L,%s%s%s %.3f, %.3f, %.3f "
            EOLO
            ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
            ,aspectstr[j],colr2,altstr,rds,sty,x[j],y[j],z[j]);
+          }
+          else
+          {
+           sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s %.3f, %.3f, %.3f "
+           EOLO
+           ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
+           ,aspectstr[j],colr2,altstr,rds,sty,x[j],y[j],z[j]);
+          }
+
+
           ++countxyz;++pointcnt[typenow];countpoints(cntl,0); /*L point only*/
           putonetextblockline(&mainscratch, temps); /*mc and het to scratch*/
         }/*vector ending on atom 2*/
@@ -1963,15 +2043,37 @@ for(j=1; j<= 9; j++)
         }/*intermediate point divides vector into halves*/
         else
         {/*vector from atom 1 to atom 2*/
-         sprintf(temps,"%s{%s%s%s%4d%s%s%s%s} P%s %.3f, %.3f, %.3f "
-                         "{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s %.3f, %.3f, %.3f"EOLO
+
+
+         if(Lmagekinjas) /*101225*/
+         {
+          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s} P,%s %.3f, %.3f, %.3f "
+           EOLO
+           ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
+           ,altstr,x[k],y[k],z[k]);
+         putonetextblockline(&mainscratch, temps); /*mc and het to scratch*/
+
+          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s}%s%s L,%s%s%s %.3f, %.3f, %.3f"
+           EOLO
+           ,cntl,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
+           ,aspectstr[j],colr2,altstr,rds,sty,x[j],y[j],z[j]);
+         putonetextblockline(&mainscratch, temps); /*mc and het to scratch*/
+         }
+         else
+         {
+          sprintf(temps,"%s{%s%s%s%4d%s%s%s%s} P%s %.3f, %.3f, %.3f "
+                         "{%s%s%s%4d%s%s%s%s}%s%s L%s%s%s %.3f, %.3f, %.3f"
+           EOLO
            ,cntl,atom[k],res[k],sub[k],num[k],rins[k],extra1,mod[k],cs
            ,altstr,x[k],y[k],z[k]
                 ,atom[j],res[j],sub[j],num[j],rins[j],extra2,mod[j],cs
            ,aspectstr[j],colr2,altstr,rds,sty,x[j],y[j],z[j]);
+         putonetextblockline(&mainscratch, temps); /*mc and het to scratch*/
+         }
+
+
          ++countxyz;++pointcnt[typenow];countpoints(cntl,0); /*P point*/
          ++countxyz;++pointcnt[typenow];countpoints(cntl,0); /*L point*/
-         putonetextblockline(&mainscratch, temps); /*mc and het to scratch*/
         }/*vector from atom 1 to atom 2*/
        }
       }/*ususal division of mc, sc*/
@@ -2698,6 +2800,8 @@ void pperptobase(int maxcounter)
    float B1[3] = {0,0,0}; /*050125 for Lpperptoc1nline*/
    float B2[3] = {0,0,0}; /*050125 for Lpperptoc1nline*/
    int   nofbase = 0, cofribose = 0; /*050125 for Lpperptoc1nline*/
+   int   oofribose = 0; /*091129 for Loperptoc1nline*/
+   float distoO3=999; /*091129 for Loperptoc1nline*/
    float disto3p=999;
    int   Lpperpoutlier=0; /*040705*/
    char  outc = ' ';      /*040705*/
@@ -2783,7 +2887,7 @@ void pperptobase(int maxcounter)
             if(atom[j][1]=='c' && atom[j][2]=='3')
                {x3=x[j];y3=y[j];z3=z[j]; c3j = j;}
             if(atom[j][1]=='o' && atom[j][2]=='3')
-               {x4=x[j];y4=y[j];z4=z[j]; o3j = j;}
+               {x4=x[j];y4=y[j];z4=z[j]; o3j = j;oofribose=1;}/*operp 091129*/
             if(atom[j][1]=='c' && atom[j][2]=='1')
              {A1[0]=x[j];A1[1]=y[j];A1[2]=z[j];cofribose=1;}/*Lpperptoc1nline*/
          }
@@ -2805,12 +2909,13 @@ void pperptobase(int maxcounter)
             else if(Bvalmax < 90) {Bset = 'x';}
             else if(Bvalmax <100) {Bset = 'y';}
             else                  {Bset = 'z';}
-            sprintf(colr,"%s",colorscale[Ncolorscale].color); /*high value default*/
+            sprintf(colr," %s",colorscale[Ncolorscale].color); 
+               /*high value default*/ /*" %s", 130121*/
             for(j=1; j < Ncolorscale; j++)
             {
                if(Bvalmax< colorscale[j].value)
                {/*under this value*/
-                  sprintf(colr,"%s",colorscale[j].color);
+                  sprintf(colr," %s",colorscale[j].color); /*" %s", 130121*/
                  break;
                }
             }
@@ -3008,7 +3113,7 @@ void pperptobase(int maxcounter)
 /*___pperptobase()___________________________________________________________*/
 
 /****pperpoutlier()***********************************************************/
-int  pperpoutlier(float delta, float dist3pPp) /*mod 060208*/
+int  pperpoutlier(float delta, float dist3pPp) /*mod 060208, 130329 */
 {/*outlier crt delta representing ribose pucker vs distance 3'P to base plane*/
 /* S.J. 12/13/2014 - changes to make delta range consistent with suitename and RNA11, and removing the overlap of 2.9 - 3 ang range for both puckers*/
    /* 3' perp dist for C3' pucker (delta==  60° -- 100°) range: 2.9 -- 5.0 */
@@ -3196,13 +3301,13 @@ void Bcoloredoutput(char* color, float Avalue) /*separate routine 050704*/
  int ncol=0,jth=0;
 
        /**default Scale by f-stop: 1,1.4,2,2.8,4,5.6,8,11,16,22,32,44,64 */
-
-       sprintf(color,"%s",colorscale[Ncolorscale].color); /*high value default*/
+       /*" %s", 130121*/
+       sprintf(color," %s",colorscale[Ncolorscale].color);/*high value default*/
        for(ncol=1; ncol < Ncolorscale; ncol++)
        {
           if(Avalue< colorscale[ncol].value)
           {/*under this value*/
-             sprintf(color,"%s",colorscale[ncol].color);
+             sprintf(color," %s",colorscale[ncol].color); /*" %s", 130121*/
              break;
           }
        }

@@ -1,26 +1,16 @@
-# prekin 
-
 ifeq ($(MAKECMDGOALS),debug)
-	CFLAGS = -g  -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-	         -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
+   CFLAGS = -g -D NOGUI -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk \
+       -arch x86_64 -I/usr/X11/include/
 else
-	CFLAGS = -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-	         -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
-endif
-   LIBS = -L/Applications/Mage.app/Contents/lib -L/usr/X11R6/lib \
-          -lXm -lXt -lX11 -lSM -lICE -lpng.3 -ljpeg.62
-
-ifeq ($(MAKECMDGOALS),nogui)
-   CFLAGS = -D NOGUI -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-            -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
-   LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
+   CFLAGS = -D NOGUI -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk \
+       -arch x86_64 -I/usr/X11R6/include/
 endif
 
-ifeq ($(MAKECMDGOALS),debugnogui)
-   CFLAGS = -g -D NOGUI -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc \
-            -I/usr/local/include/ -I/usr/X11R6/include/ -headerpad_max_install_names
-   LIBS = -L/usr/X11R6/lib -lXt -lX11 -lSM -lICE
-endif
+   FIN =  -lm -Wl,-syslibroot,/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk \
+          -arch x86_64
+
+   LIBS = -L/usr/X11/lib -lXt -lX11 -lSM -lICE
+
 
    PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h PKINHY36.h
 
@@ -37,9 +27,6 @@ endif
           PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o \
           PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o \
           PUXMTEXT.o PUXMOSX.o
-
-   FIN =  -lm -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk \
-          -arch i386 -arch ppc -bind_at_load
 
 # ------------------------------------------------------------------------
 # Commands specific to clients created by this Makefile 

@@ -707,7 +707,7 @@ OldTickCounts[9] = ncountticks;
 
 /*----------------------------------------------------------------------------*/
       residuetype = ' '; /*not even a guess */
-      if(maxatm > 0) /*guess residuetype P,N,H,W,U, , 061006*/
+      if(maxatm > 0) /*guess residuetype: P,N,H,W,U, , 061006*/
       {
 
 #ifdef GFPchromophore  /*070801*/ /*Perhaps do this as Lspecialresidue ???? */
@@ -1011,7 +1011,9 @@ printf(" %f %f %f\n" ,x[natom] ,y[natom] ,z[natom]);
             {/*connecthydrogen for h and h_nn cns hydrogen names  030920*/
                if(iscan == 1)
                {
-                  connecthydrogen(); /*PKINCSUB*/ /*do this on first pass only*/
+                  /*connecthydrogen(); superseded 130318*/  /*by distance*/
+                  connecthydrogenbyname(); /*supersede 130318*/
+                    /*PKINCSUB*/ /*do this on first pass only*/
                }
             }
             else /*if(!caonly)*/ /*930123*/ /* not a hydrogen atom so: */
