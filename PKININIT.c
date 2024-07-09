@@ -305,6 +305,7 @@ static char* prekinchanges[] =
 ,"       -spline :meaning changed back 140520: single mid strand vectorlist\r"
 ,"       -skeins 140520 shows all ribbon-defining strands\r"
 ,"141223 sj changed the RNA delta angle range for RNA pucker analysis to match suitename and data from RNA11 \r"
+,"240709 rt removed duplicate definition of Lribbonnew in header file to allow compiling on new compilers \r"
 ,"\r"
 ,"\r"
 ,"END\r"
@@ -316,8 +317,8 @@ void getversion()
    char *OS;
    char guiness[64];
 
-   PREKINVERSION = (float)6.57;
-   sprintf(PREKINDATE,"141223 ");
+   PREKINVERSION = (float)6.58;
+   sprintf(PREKINDATE,"240709 ");
 
    OS = (char *)operatingsystem(); /*PUXMLNX.c,PUXMOSX.c,... or ____INIT*/
    guiness[0] = '\0'; /*060324 initialize to take no space in output str*/
