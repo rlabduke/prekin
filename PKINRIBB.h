@@ -5,7 +5,6 @@
 #define PKINRIBB extern
 #endif
 
-PKINRIBB    int   Lribbonnew;  /*051025 new ribbon structures: PKINRIBB*/
 PKINRIBB    int   Lnewribbonstart; /*090219 clear mind for new ribbon section*/
 PKINRIBB    int   previousribbontype; /*090219 global: clear for new fragment*/
 
