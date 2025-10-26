@@ -1,0 +1,96 @@
+# prekin
+CC = cc
+
+# Get paths for Homebrew libraries
+MOTIF_PREFIX = $(shell brew --prefix openmotif)
+LIBXP_PREFIX = $(shell brew --prefix libxp)
+
+ifeq ($(MAKECMDGOALS),debug)
+	# Added MOTIF and LIBXP include paths
+	CFLAGS = -g -I/usr/local/include/ -I/opt/X11/include/ -I$(MOTIF_PREFIX)/include -I$(LIBXP_PREFIX)/include
+else
+	# Added MOTIF and LIBXP include paths
+	CFLAGS = -I/usr/local/include/ -I/opt/X11/include/ -I$(MOTIF_PREFIX)/include -I$(LIBXP_PREFIX)/include
+endif
+
+# Added MOTIF and LIBXP lib paths, and -lXp linker flag
+LIBS = -lm -L/opt/X11/lib -L$(MOTIF_PREFIX)/lib -L$(LIBXP_PREFIX)/lib -lXm -lXt -lXp -lX11 -lSM -lICE
+
+ifeq ($(MAKECMDGOALS),nogui)
+	# Added MOTIF and LIBXP include paths
+	CFLAGS = -g -D NOGUI -I/usr/local/include/ -I/opt/X11/include/ -I$(MOTIF_PREFIX)/include -I$(LIBXP_PREFIX)/include
+	# Added MOTIF and LIBXP lib paths, and -lXp linker flag
+	LIBS = -L/opt/X11/lib -L$(MOTIF_PREFIX)/lib -L$(LIBXP_PREFIX)/lib -lXt -lXp -lX11 -lSM -lICE
+endif
+
+PKINHEADERS = PKIN.h PKINhdr.h PKINCRTL.h PKINMENU.h PKINDLOG.h PKINRIBB.h PKINHY36.h
+
+SRCS = PKINANGL.c PKINCRTL.c PKINCSBS.c PKINCSUB.c PKINCOUT.c \
+ PKINMENU.c PKINROTL.c PKINDLOG.c PKINFILE.c PKINHBND.c \
+ PKINHY36.c PKININPT.c PKININIT.c PKINRIBB.c PKINRNGE.c \
+ PKINRSUB.c PKINSCRT.c PKINSPOS.c PKINUTIL.c PUXMFILE.c \
+ PUXMMAIN.c PUXMINIT.c PUXMDLOG.c PUXMMENU.c PUXMOUTP.c \
+ PUXMTEXT.c PUXMOSX.c
+
+OBJS = PKINANGL.o PKINCRTL.o PKINCSBS.o PKINCSUB.o PKINCOUT.o \
+ PKINMENU.o PKINROTL.o PKINDLOG.o PKINFILE.o PKINHBND.o \
+ PKINHY36.o PKININPT.o PKININIT.o PKINRIBB.o PKINRNGE.o \
+ PKINRSUB.o PKINSCRT.o PKINSPOS.o PKINUTIL.o PUXMFILE.o \
+ PUXMMAIN.o PUXMINIT.o PUXMDLOG.o PUXMMENU.o PUXMOUTP.o \
+ PUXMTEXT.o PUXMOSX.o
+
+# ------------------------------------------------------------------------
+# Implicit rule for .c to .o compilation
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# ------------------------------------------------------------------------
+# Commands specific to clients created by this Makefile
+
+prekin: $(OBJS)
+	$(CC) -o prekin $(CFLAGS) $(OBJS) $(LIBS)
+
+debug: $(OBJS)
+	$(CC) -o prekin $(CFLAGS) $(OBJS) $(LIBS)
+
+nogui: $(OBJS)
+	$(CC) -o prekin $(CFLAGS) $(OBJS) $(LIBS)
+
+debugnogui: $(OBJS)
+	$(CC) -o prekin $(CFLAGS) $(OBJS) $(LIBS)
+
+clean:
+	rm -f *.o
+
+# ------------------------------------------------------------------------
+# Dependencies 
+
+PKINANGL.o: $(PKINHEADERS)
+PKINCRTL.o: $(PKINHEADERS)
+PKINCSBS.o: $(PKINHEADERS)
+PKINCSUB.o: $(PKINHEADERS)
+PKINCOUT.o: $(PKINHEADERS)
+PKINMENU.o: $(PKINHEADERS)
+PKINROTL.o: $(PKINHEADERS)
+PKINDLOG.o: $(PKINHEADERS)
+PKINFILE.o: $(PKINHEADERS)
+PKINHBND.o: $(PKINHEADERS)
+PKINHY36.o: $(PKINHEADERS)
+PKININPT.o: $(PKINHEADERS)
+PKININIT.o: $(PKINHEADERS)
+PKINRIBB.o: $(PKINHEADERS)
+PKINRNGE.o: $(PKINHEADERS)
+PKINRSUB.o: $(PKINHEADERS)
+PKINSCRT.o: $(PKINHEADERS)
+PKINSPOS.o: $(PKINHEADERS)
+PKINUTIL.o: $(PKINHEADERS)
+PUXMFILE.o: $(PKINHEADERS)
+PUXMMAIN.o: $(PKINHEADERS)
+PUXMINIT.o: $(PKINHEADERS)
+PUXMDLOG.o: $(PKINHEADERS)
+PUXMMENU.o: $(PKINHEADERS)
+PUXMOUTP.o: $(PKINHEADERS)
+PUXMTEXT.o: $(PKINHEADERS)
+PUXMOSX.o: $(PKINHEADERS)
+
+
