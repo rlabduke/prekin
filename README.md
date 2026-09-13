@@ -5,3 +5,7 @@ Shamelessly copied from the prekin software page: Prekin prepares molecular kine
 http://kinemage.biochem.duke.edu/software/prekin.php
 
 For installing prekin, look at INSTALL.md in this directory.
+
+## License
+
+BSD-3-Clause; see [LICENSE](LICENSE).
